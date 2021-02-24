@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.App.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210223205116_Initial")]
+    [Migration("20210224143802_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,19 +27,98 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("GenderId")
+                    b.Property<Guid?>("ErUserPictureId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Name")
+                    b.Property<Guid>("ErUserTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid?>("GenderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ErUserPictureId")
+                        .IsUnique()
+                        .HasFilter("[ErUserPictureId] IS NOT NULL");
+
+                    b.HasIndex("ErUserTypeId")
+                        .IsUnique();
 
                     b.HasIndex("GenderId");
 
                     b.ToTable("ErUsers");
+                });
+
+            modelBuilder.Entity("Domain.ErUserPicture", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ErUserPictures");
+                });
+
+            modelBuilder.Entity("Domain.ErUserReview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ErUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Rating")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ErUserId");
+
+                    b.ToTable("ErUserReviews");
+                });
+
+            modelBuilder.Entity("Domain.ErUserType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ErUserTypes");
                 });
 
             modelBuilder.Entity("Domain.Gender", b =>
@@ -260,13 +339,38 @@ namespace DAL.App.EF.Migrations
 
             modelBuilder.Entity("Domain.ErUser", b =>
                 {
+                    b.HasOne("Domain.ErUserPicture", "ErUserPicture")
+                        .WithOne("ErUser")
+                        .HasForeignKey("Domain.ErUser", "ErUserPictureId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.ErUserType", "ErUserType")
+                        .WithOne("ErUser")
+                        .HasForeignKey("Domain.ErUser", "ErUserTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.Gender", "Gender")
                         .WithMany("ErUsers")
                         .HasForeignKey("GenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ErUserPicture");
+
+                    b.Navigation("ErUserType");
 
                     b.Navigation("Gender");
+                });
+
+            modelBuilder.Entity("Domain.ErUserReview", b =>
+                {
+                    b.HasOne("Domain.ErUser", "ErUser")
+                        .WithMany("ErUserReviews")
+                        .HasForeignKey("ErUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ErUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -274,7 +378,7 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -283,7 +387,7 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -292,7 +396,7 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -301,13 +405,13 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -316,8 +420,23 @@ namespace DAL.App.EF.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.ErUser", b =>
+                {
+                    b.Navigation("ErUserReviews");
+                });
+
+            modelBuilder.Entity("Domain.ErUserPicture", b =>
+                {
+                    b.Navigation("ErUser");
+                });
+
+            modelBuilder.Entity("Domain.ErUserType", b =>
+                {
+                    b.Navigation("ErUser");
                 });
 
             modelBuilder.Entity("Domain.Gender", b =>

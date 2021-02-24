@@ -10,22 +10,23 @@ using Domain;
 
 namespace WebApp.Controllers
 {
-    public class GenderController : Controller
+    public class ErUserReviewsController : Controller
     {
         private readonly AppDbContext _context;
 
-        public GenderController(AppDbContext context)
+        public ErUserReviewsController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Gender
+        // GET: ErUserReviews
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Genders.ToListAsync());
+            var appDbContext = _context.ErUserReviews.Include(e => e.ErUser);
+            return View(await appDbContext.ToListAsync());
         }
 
-        // GET: Gender/Details/5
+        // GET: ErUserReviews/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -33,40 +34,43 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var gender = await _context.Genders
+            var erUserReview = await _context.ErUserReviews
+                .Include(e => e.ErUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (gender == null)
+            if (erUserReview == null)
             {
                 return NotFound();
             }
 
-            return View(gender);
+            return View(erUserReview);
         }
 
-        // GET: Gender/Create
+        // GET: ErUserReviews/Create
         public IActionResult Create()
         {
+            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName");
             return View();
         }
 
-        // POST: Gender/Create
+        // POST: ErUserReviews/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,GenderValue")] Gender gender)
+        public async Task<IActionResult> Create([Bind("Id,Rating,Comment,ErUserId,CreatedOn,UpdatedOn")] ErUserReview erUserReview)
         {
             if (ModelState.IsValid)
             {
-                gender.Id = Guid.NewGuid();
-                _context.Add(gender);
+                erUserReview.Id = Guid.NewGuid();
+                _context.Add(erUserReview);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(gender);
+            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", erUserReview.ErUserId);
+            return View(erUserReview);
         }
 
-        // GET: Gender/Edit/5
+        // GET: ErUserReviews/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -74,22 +78,23 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var gender = await _context.Genders.FindAsync(id);
-            if (gender == null)
+            var erUserReview = await _context.ErUserReviews.FindAsync(id);
+            if (erUserReview == null)
             {
                 return NotFound();
             }
-            return View(gender);
+            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", erUserReview.ErUserId);
+            return View(erUserReview);
         }
 
-        // POST: Gender/Edit/5
+        // POST: ErUserReviews/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,GenderValue")] Gender gender)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Rating,Comment,ErUserId")] ErUserReview erUserReview)
         {
-            if (id != gender.Id)
+            if (id != erUserReview.Id)
             {
                 return NotFound();
             }
@@ -98,12 +103,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(gender);
+                    _context.Update(erUserReview);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GenderExists(gender.Id))
+                    if (!ErUserReviewExists(erUserReview.Id))
                     {
                         return NotFound();
                     }
@@ -114,10 +119,11 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(gender);
+            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", erUserReview.ErUserId);
+            return View(erUserReview);
         }
 
-        // GET: Gender/Delete/5
+        // GET: ErUserReviews/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -125,30 +131,31 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var gender = await _context.Genders
+            var erUserReview = await _context.ErUserReviews
+                .Include(e => e.ErUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (gender == null)
+            if (erUserReview == null)
             {
                 return NotFound();
             }
 
-            return View(gender);
+            return View(erUserReview);
         }
 
-        // POST: Gender/Delete/5
+        // POST: ErUserReviews/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var gender = await _context.Genders.FindAsync(id);
-            _context.Genders.Remove(gender);
+            var erUserReview = await _context.ErUserReviews.FindAsync(id);
+            _context.ErUserReviews.Remove(erUserReview);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GenderExists(Guid id)
+        private bool ErUserReviewExists(Guid id)
         {
-            return _context.Genders.Any(e => e.Id == id);
+            return _context.ErUserReviews.Any(e => e.Id == id);
         }
     }
 }
