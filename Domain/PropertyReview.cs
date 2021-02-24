@@ -1,9 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace Domain
 {
-    public class ErUserReview : BaseEntity
+    public class PropertyReview
     {
         public Guid Id { get; set; }
 
@@ -11,6 +10,9 @@ namespace Domain
 
         public string? Comment { get; set; }
 
+        public Guid PropertyId { get; set; }
+        public Property? Property { get; set; }
+        
         public Guid ErUserId { get; set; }
         public ErUser? ErUser { get; set; }
     }

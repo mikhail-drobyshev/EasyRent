@@ -10,22 +10,22 @@ using Domain;
 
 namespace WebApp.Controllers
 {
-    public class GendersController : Controller
+    public class PropertyTypesController : Controller
     {
         private readonly AppDbContext _context;
 
-        public GendersController(AppDbContext context)
+        public PropertyTypesController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Genders
+        // GET: PropertyTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Genders.ToListAsync());
+            return View(await _context.PropertyTypes.ToListAsync());
         }
 
-        // GET: Genders/Details/5
+        // GET: PropertyTypes/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -33,40 +33,40 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var gender = await _context.Genders
+            var propertyType = await _context.PropertyTypes
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (gender == null)
+            if (propertyType == null)
             {
                 return NotFound();
             }
 
-            return View(gender);
+            return View(propertyType);
         }
 
-        // GET: Genders/Create
+        // GET: PropertyTypes/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Genders/Create
+        // POST: PropertyTypes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,GenderValue")] Gender gender)
+        public async Task<IActionResult> Create([Bind("Id,PropertyTypeValue")] PropertyType propertyType)
         {
             if (ModelState.IsValid)
             {
-                gender.Id = Guid.NewGuid();
-                _context.Add(gender);
+                propertyType.Id = Guid.NewGuid();
+                _context.Add(propertyType);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(gender);
+            return View(propertyType);
         }
 
-        // GET: Genders/Edit/5
+        // GET: PropertyTypes/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -74,22 +74,22 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var gender = await _context.Genders.FindAsync(id);
-            if (gender == null)
+            var propertyType = await _context.PropertyTypes.FindAsync(id);
+            if (propertyType == null)
             {
                 return NotFound();
             }
-            return View(gender);
+            return View(propertyType);
         }
 
-        // POST: Genders/Edit/5
+        // POST: PropertyTypes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,GenderValue")] Gender gender)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,PropertyTypeValue")] PropertyType propertyType)
         {
-            if (id != gender.Id)
+            if (id != propertyType.Id)
             {
                 return NotFound();
             }
@@ -98,12 +98,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(gender);
+                    _context.Update(propertyType);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GenderExists(gender.Id))
+                    if (!PropertyTypeExists(propertyType.Id))
                     {
                         return NotFound();
                     }
@@ -114,10 +114,10 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(gender);
+            return View(propertyType);
         }
 
-        // GET: Genders/Delete/5
+        // GET: PropertyTypes/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -125,30 +125,30 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var gender = await _context.Genders
+            var propertyType = await _context.PropertyTypes
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (gender == null)
+            if (propertyType == null)
             {
                 return NotFound();
             }
 
-            return View(gender);
+            return View(propertyType);
         }
 
-        // POST: Genders/Delete/5
+        // POST: PropertyTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var gender = await _context.Genders.FindAsync(id);
-            _context.Genders.Remove(gender);
+            var propertyType = await _context.PropertyTypes.FindAsync(id);
+            _context.PropertyTypes.Remove(propertyType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GenderExists(Guid id)
+        private bool PropertyTypeExists(Guid id)
         {
-            return _context.Genders.Any(e => e.Id == id);
+            return _context.PropertyTypes.Any(e => e.Id == id);
         }
     }
 }

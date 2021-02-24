@@ -19,6 +19,111 @@ namespace DAL.App.EF.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.3");
 
+            modelBuilder.Entity("Domain.Dispute", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DisputeStatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ErApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisputeStatusId");
+
+                    b.HasIndex("ErApplicationId");
+
+                    b.ToTable("Disputes");
+                });
+
+            modelBuilder.Entity("Domain.DisputeStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DisputeStatusValue")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DisputeStatuses");
+                });
+
+            modelBuilder.Entity("Domain.ErApplication", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ErApplicationStatusId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ErUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RentFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ErApplicationStatusId");
+
+                    b.HasIndex("ErUserId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("ErApplications");
+                });
+
+            modelBuilder.Entity("Domain.ErApplicationStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ErApplicationStatusValue")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ErApplicationStatuses");
+                });
+
             modelBuilder.Entity("Domain.ErUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -50,8 +155,7 @@ namespace DAL.App.EF.Migrations
                         .IsUnique()
                         .HasFilter("[ErUserPictureId] IS NOT NULL");
 
-                    b.HasIndex("ErUserTypeId")
-                        .IsUnique();
+                    b.HasIndex("ErUserTypeId");
 
                     b.HasIndex("GenderId");
 
@@ -89,9 +193,8 @@ namespace DAL.App.EF.Migrations
                     b.Property<Guid>("ErUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Rating")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("datetime2");
@@ -133,6 +236,145 @@ namespace DAL.App.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Genders");
+                });
+
+            modelBuilder.Entity("Domain.Property", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BedroomCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ErUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PropertyTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("TenantsCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ErUserId");
+
+                    b.HasIndex("PropertyTypeId");
+
+                    b.ToTable("Properties");
+                });
+
+            modelBuilder.Entity("Domain.PropertyLocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Building")
+                        .HasColumnType("int");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("PropertyLocations");
+                });
+
+            modelBuilder.Entity("Domain.PropertyPicture", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("PropertyPictures");
+                });
+
+            modelBuilder.Entity("Domain.PropertyReview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ErUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ErUserId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("PropertyReviews");
+                });
+
+            modelBuilder.Entity("Domain.PropertyType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PropertyTypeValue")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PropertyTypes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -335,6 +577,52 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Domain.Dispute", b =>
+                {
+                    b.HasOne("Domain.DisputeStatus", "DisputeStatus")
+                        .WithMany("Disputes")
+                        .HasForeignKey("DisputeStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.ErApplication", "ErApplication")
+                        .WithMany()
+                        .HasForeignKey("ErApplicationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DisputeStatus");
+
+                    b.Navigation("ErApplication");
+                });
+
+            modelBuilder.Entity("Domain.ErApplication", b =>
+                {
+                    b.HasOne("Domain.ErApplicationStatus", "ErApplicationStatus")
+                        .WithMany("ErApplications")
+                        .HasForeignKey("ErApplicationStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.ErUser", "ErUser")
+                        .WithMany("ErApplications")
+                        .HasForeignKey("ErUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Property", "Property")
+                        .WithMany("ErApplications")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ErApplicationStatus");
+
+                    b.Navigation("ErUser");
+
+                    b.Navigation("Property");
+                });
+
             modelBuilder.Entity("Domain.ErUser", b =>
                 {
                     b.HasOne("Domain.ErUserPicture", "ErUserPicture")
@@ -343,8 +631,8 @@ namespace DAL.App.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.ErUserType", "ErUserType")
-                        .WithOne("ErUser")
-                        .HasForeignKey("Domain.ErUser", "ErUserTypeId")
+                        .WithMany("ErUsers")
+                        .HasForeignKey("ErUserTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -369,6 +657,66 @@ namespace DAL.App.EF.Migrations
                         .IsRequired();
 
                     b.Navigation("ErUser");
+                });
+
+            modelBuilder.Entity("Domain.Property", b =>
+                {
+                    b.HasOne("Domain.ErUser", "ErUser")
+                        .WithMany("Properties")
+                        .HasForeignKey("ErUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.PropertyType", "PropertyType")
+                        .WithMany("Properties")
+                        .HasForeignKey("PropertyTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ErUser");
+
+                    b.Navigation("PropertyType");
+                });
+
+            modelBuilder.Entity("Domain.PropertyLocation", b =>
+                {
+                    b.HasOne("Domain.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("Domain.PropertyPicture", b =>
+                {
+                    b.HasOne("Domain.Property", "Property")
+                        .WithMany("PropertyPictures")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("Domain.PropertyReview", b =>
+                {
+                    b.HasOne("Domain.ErUser", "ErUser")
+                        .WithMany()
+                        .HasForeignKey("ErUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Property", "Property")
+                        .WithMany("PropertyReviews")
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ErUser");
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -422,9 +770,23 @@ namespace DAL.App.EF.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.DisputeStatus", b =>
+                {
+                    b.Navigation("Disputes");
+                });
+
+            modelBuilder.Entity("Domain.ErApplicationStatus", b =>
+                {
+                    b.Navigation("ErApplications");
+                });
+
             modelBuilder.Entity("Domain.ErUser", b =>
                 {
+                    b.Navigation("ErApplications");
+
                     b.Navigation("ErUserReviews");
+
+                    b.Navigation("Properties");
                 });
 
             modelBuilder.Entity("Domain.ErUserPicture", b =>
@@ -434,12 +796,26 @@ namespace DAL.App.EF.Migrations
 
             modelBuilder.Entity("Domain.ErUserType", b =>
                 {
-                    b.Navigation("ErUser");
+                    b.Navigation("ErUsers");
                 });
 
             modelBuilder.Entity("Domain.Gender", b =>
                 {
                     b.Navigation("ErUsers");
+                });
+
+            modelBuilder.Entity("Domain.Property", b =>
+                {
+                    b.Navigation("ErApplications");
+
+                    b.Navigation("PropertyPictures");
+
+                    b.Navigation("PropertyReviews");
+                });
+
+            modelBuilder.Entity("Domain.PropertyType", b =>
+                {
+                    b.Navigation("Properties");
                 });
 #pragma warning restore 612, 618
         }

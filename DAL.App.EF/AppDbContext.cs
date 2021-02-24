@@ -17,6 +17,20 @@ namespace DAL.App.EF
         public DbSet<ErUserReview> ErUserReviews { get; set; } = default!;
         public DbSet<ErUserType> ErUserTypes { get; set; } = default!;
         public DbSet<ErUserPicture> ErUserPictures { get; set; } = default!;
+        
+        public DbSet<Property> Properties { get; set; } = default!;
+        public DbSet<PropertyType> PropertyTypes { get; set; } = default!;
+
+        public DbSet<PropertyLocation> PropertyLocations { get; set; } = default!;
+        public DbSet<PropertyPicture> PropertyPictures { get; set; } = default!;
+        public DbSet<PropertyReview> PropertyReviews { get; set; } = default!;
+        
+        public DbSet<ErApplication> ErApplications { get; set; } = default!;
+        public DbSet<ErApplicationStatus> ErApplicationStatuses { get; set; } = default!;
+        public DbSet<Dispute> Disputes { get; set; } = default!;
+        public DbSet<DisputeStatus> DisputeStatuses { get; set; } = default!;
+
+        
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)

@@ -10,22 +10,22 @@ using Domain;
 
 namespace WebApp.Controllers
 {
-    public class ErUserPicturesController : Controller
+    public class ErApplicationStatusesController : Controller
     {
         private readonly AppDbContext _context;
 
-        public ErUserPicturesController(AppDbContext context)
+        public ErApplicationStatusesController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: ErUserPictures
+        // GET: ErApplicationStatuses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ErUserPictures.ToListAsync());
+            return View(await _context.ErApplicationStatuses.ToListAsync());
         }
 
-        // GET: ErUserPictures/Details/5
+        // GET: ErApplicationStatuses/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -33,40 +33,40 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserPicture = await _context.ErUserPictures
+            var erApplicationStatus = await _context.ErApplicationStatuses
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (erUserPicture == null)
+            if (erApplicationStatus == null)
             {
                 return NotFound();
             }
 
-            return View(erUserPicture);
+            return View(erApplicationStatus);
         }
 
-        // GET: ErUserPictures/Create
+        // GET: ErApplicationStatuses/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: ErUserPictures/Create
+        // POST: ErApplicationStatuses/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PictureUrl")] ErUserPicture erUserPicture)
+        public async Task<IActionResult> Create([Bind("Id,ErApplicationStatusValue")] ErApplicationStatus erApplicationStatus)
         {
             if (ModelState.IsValid)
             {
-                erUserPicture.Id = Guid.NewGuid();
-                _context.Add(erUserPicture);
+                erApplicationStatus.Id = Guid.NewGuid();
+                _context.Add(erApplicationStatus);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(erUserPicture);
+            return View(erApplicationStatus);
         }
 
-        // GET: ErUserPictures/Edit/5
+        // GET: ErApplicationStatuses/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -74,22 +74,22 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserPicture = await _context.ErUserPictures.FindAsync(id);
-            if (erUserPicture == null)
+            var erApplicationStatus = await _context.ErApplicationStatuses.FindAsync(id);
+            if (erApplicationStatus == null)
             {
                 return NotFound();
             }
-            return View(erUserPicture);
+            return View(erApplicationStatus);
         }
 
-        // POST: ErUserPictures/Edit/5
+        // POST: ErApplicationStatuses/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,PictureUrl")] ErUserPicture erUserPicture)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,ErApplicationStatusValue")] ErApplicationStatus erApplicationStatus)
         {
-            if (id != erUserPicture.Id)
+            if (id != erApplicationStatus.Id)
             {
                 return NotFound();
             }
@@ -98,12 +98,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(erUserPicture);
+                    _context.Update(erApplicationStatus);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ErUserPictureExists(erUserPicture.Id))
+                    if (!ErApplicationStatusExists(erApplicationStatus.Id))
                     {
                         return NotFound();
                     }
@@ -114,10 +114,10 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(erUserPicture);
+            return View(erApplicationStatus);
         }
 
-        // GET: ErUserPictures/Delete/5
+        // GET: ErApplicationStatuses/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -125,30 +125,30 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserPicture = await _context.ErUserPictures
+            var erApplicationStatus = await _context.ErApplicationStatuses
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (erUserPicture == null)
+            if (erApplicationStatus == null)
             {
                 return NotFound();
             }
 
-            return View(erUserPicture);
+            return View(erApplicationStatus);
         }
 
-        // POST: ErUserPictures/Delete/5
+        // POST: ErApplicationStatuses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var erUserPicture = await _context.ErUserPictures.FindAsync(id);
-            _context.ErUserPictures.Remove(erUserPicture);
+            var erApplicationStatus = await _context.ErApplicationStatuses.FindAsync(id);
+            _context.ErApplicationStatuses.Remove(erApplicationStatus);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ErUserPictureExists(Guid id)
+        private bool ErApplicationStatusExists(Guid id)
         {
-            return _context.ErUserPictures.Any(e => e.Id == id);
+            return _context.ErApplicationStatuses.Any(e => e.Id == id);
         }
     }
 }

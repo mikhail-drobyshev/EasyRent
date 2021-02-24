@@ -14,8 +14,9 @@ namespace Domain
         [MaxLength(64)] public string LastName { get; set; } = default!;
         
         public ICollection<ErUserReview>? ErUserReviews { get; set; }
-        
-        
+        public ICollection<Property>? Properties { get; set; }
+        public ICollection<ErApplication>? ErApplications { get; set; }
+
         public Guid? ErUserPictureId { get; set; }
         public ErUserPicture? ErUserPicture { get; set; }
         

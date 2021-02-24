@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain
 {
-    public class ErUserType
+    public class DisputeStatus
     {
         public Guid Id { get; set; }
 
         [MaxLength(32)] 
-        public string UserType { get; set; } = default!;
-
-        public ICollection<ErUser>? ErUsers { get; set; }
+        public string DisputeStatusValue { get; set; } = default!;
+        
+        public ICollection<Dispute>? Disputes { get; set; }
     }
 }
