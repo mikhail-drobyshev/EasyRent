@@ -21,6 +21,10 @@
 **/.idea/**/contentModel.xml
 **/.idea/**/modules.xml
 
+# Rider Cache
+.idea/
+Assets/Plugins/Editor/JetBrains*
+
 *.suo
 *.user
 .vs/
@@ -32,3 +36,4 @@ _UpgradeReport_Files/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
