@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Domain
 {
@@ -12,7 +13,6 @@ namespace Domain
 
         public int Building { get; set; } = default!;
         
-        public Guid PropertyId { get; set; }
-        public Property? Property { get; set; }
+        public ICollection<ErUser>? ErUsers { get; set; }
     }
 }

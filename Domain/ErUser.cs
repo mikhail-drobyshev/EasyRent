@@ -20,9 +20,6 @@ namespace Domain
         public Guid? ErUserPictureId { get; set; }
         public ErUserPicture? ErUserPicture { get; set; }
         
-        public Guid ErUserTypeId { get; set; }
-        public ErUserType? ErUserType { get; set; }
-        
         public Guid? GenderId { get; set; }
         public Gender? Gender { get; set; }
         

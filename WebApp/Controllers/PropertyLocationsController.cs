@@ -10,23 +10,22 @@ using Domain;
 
 namespace WebApp.Controllers
 {
-    public class PropertiesController : Controller
+    public class PropertyLocationsController : Controller
     {
         private readonly AppDbContext _context;
 
-        public PropertiesController(AppDbContext context)
+        public PropertyLocationsController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Properties
+        // GET: PropertyLocations
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Properties.Include(e => e.ErUser).Include(e => e.PropertyType);
-            return View(await appDbContext.ToListAsync());
+            return View(await _context.PropertyLocations.ToListAsync());
         }
 
-        // GET: Properties/Details/5
+        // GET: PropertyLocations/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -34,46 +33,40 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var eproperty = await _context.Properties
-                .Include(e => e.ErUser)
-                .Include(e => e.PropertyType)
+            var propertyLocation = await _context.PropertyLocations
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (eproperty == null)
+            if (propertyLocation == null)
             {
                 return NotFound();
             }
 
-            return View(eproperty);
+            return View(propertyLocation);
         }
 
-        // GET: Properties/Create
+        // GET: PropertyLocations/Create
         public IActionResult Create()
         {
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName");
-            ViewData["PropertyTypeId"] = new SelectList(_context.PropertyTypes, "Id", "PropertyTypeValue");
             return View();
         }
 
-        // POST: Properties/Create
+        // POST: PropertyLocations/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Price,Description,BedroomCount,TenantsCount,ErUserId,PropertyTypeId")] Property eproperty)
+        public async Task<IActionResult> Create([Bind("Id,City,Street,Building")] PropertyLocation propertyLocation)
         {
             if (ModelState.IsValid)
             {
-                eproperty.Id = Guid.NewGuid();
-                _context.Add(eproperty);
+                propertyLocation.Id = Guid.NewGuid();
+                _context.Add(propertyLocation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", eproperty.ErUserId);
-            ViewData["PropertyTypeId"] = new SelectList(_context.PropertyTypes, "Id", "PropertyTypeValue", eproperty.PropertyTypeId);
-            return View(eproperty);
+            return View(propertyLocation);
         }
 
-        // GET: Properties/Edit/5
+        // GET: PropertyLocations/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -81,24 +74,22 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var eproperty = await _context.Properties.FindAsync(id);
-            if (eproperty == null)
+            var propertyLocation = await _context.PropertyLocations.FindAsync(id);
+            if (propertyLocation == null)
             {
                 return NotFound();
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", eproperty.ErUserId);
-            ViewData["PropertyTypeId"] = new SelectList(_context.PropertyTypes, "Id", "PropertyTypeValue", eproperty.PropertyTypeId);
-            return View(eproperty);
+            return View(propertyLocation);
         }
 
-        // POST: Properties/Edit/5
+        // POST: PropertyLocations/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Title,Price,Description,BedroomCount,TenantsCount,ErUserId,PropertyTypeId")] Property eproperty)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,City,Street,Building")] PropertyLocation propertyLocation)
         {
-            if (id != eproperty.Id)
+            if (id != propertyLocation.Id)
             {
                 return NotFound();
             }
@@ -107,12 +98,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(eproperty);
+                    _context.Update(propertyLocation);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PropertyExists(eproperty.Id))
+                    if (!PropertyLocationExists(propertyLocation.Id))
                     {
                         return NotFound();
                     }
@@ -123,12 +114,10 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", eproperty.ErUserId);
-            ViewData["PropertyTypeId"] = new SelectList(_context.PropertyTypes, "Id", "PropertyTypeValue", eproperty.PropertyTypeId);
-            return View(eproperty);
+            return View(propertyLocation);
         }
 
-        // GET: Properties/Delete/5
+        // GET: PropertyLocations/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -136,33 +125,30 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var eproperty = await _context.Properties
-                .Include(e => e.ErUser)
-                .Include(e => e.PropertyType)
+            var propertyLocation = await _context.PropertyLocations
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (eproperty == null)
+            if (propertyLocation == null)
             {
                 return NotFound();
             }
 
-            return View(eproperty);
+            return View(propertyLocation);
         }
 
-        // POST: Properties/Delete/5
+        // POST: PropertyLocations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var eproperty = await _context.Properties.FindAsync(id);
-            _context.Properties.Remove(eproperty);
+            var propertyLocation = await _context.PropertyLocations.FindAsync(id);
+            _context.PropertyLocations.Remove(propertyLocation);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PropertyExists(Guid id)
+        private bool PropertyLocationExists(Guid id)
         {
-            return _context.Properties.Any(e => e.Id == id);
+            return _context.PropertyLocations.Any(e => e.Id == id);
         }
     }
 }
-

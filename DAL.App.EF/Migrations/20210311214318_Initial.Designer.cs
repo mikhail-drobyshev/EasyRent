@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.App.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210224172743_Initial")]
+    [Migration("20210311214318_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -135,9 +135,6 @@ namespace DAL.App.EF.Migrations
                     b.Property<Guid?>("ErUserPictureId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ErUserTypeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -151,15 +148,18 @@ namespace DAL.App.EF.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<Guid?>("PropertyLocationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ErUserPictureId")
                         .IsUnique()
                         .HasFilter("[ErUserPictureId] IS NOT NULL");
 
-                    b.HasIndex("ErUserTypeId");
-
                     b.HasIndex("GenderId");
+
+                    b.HasIndex("PropertyLocationId");
 
                     b.ToTable("ErUsers");
                 });
@@ -208,22 +208,6 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("ErUserReviews");
                 });
 
-            modelBuilder.Entity("Domain.ErUserType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserType")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ErUserTypes");
-                });
-
             modelBuilder.Entity("Domain.Gender", b =>
                 {
                     b.Property<Guid>("Id")
@@ -261,6 +245,9 @@ namespace DAL.App.EF.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("PropertyLocationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("PropertyTypeId")
                         .HasColumnType("uniqueidentifier");
 
@@ -277,6 +264,8 @@ namespace DAL.App.EF.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ErUserId");
+
+                    b.HasIndex("PropertyLocationId");
 
                     b.HasIndex("PropertyTypeId");
 
@@ -296,16 +285,11 @@ namespace DAL.App.EF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PropertyId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Street")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PropertyId");
 
                     b.ToTable("PropertyLocations");
                 });
@@ -632,20 +616,17 @@ namespace DAL.App.EF.Migrations
                         .HasForeignKey("Domain.ErUser", "ErUserPictureId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.ErUserType", "ErUserType")
-                        .WithMany("ErUsers")
-                        .HasForeignKey("ErUserTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.Gender", "Gender")
                         .WithMany("ErUsers")
                         .HasForeignKey("GenderId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("ErUserPicture");
+                    b.HasOne("Domain.PropertyLocation", null)
+                        .WithMany("ErUsers")
+                        .HasForeignKey("PropertyLocationId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("ErUserType");
+                    b.Navigation("ErUserPicture");
 
                     b.Navigation("Gender");
                 });
@@ -669,6 +650,12 @@ namespace DAL.App.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.PropertyLocation", "PropertyLocation")
+                        .WithMany()
+                        .HasForeignKey("PropertyLocationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.PropertyType", "PropertyType")
                         .WithMany("Properties")
                         .HasForeignKey("PropertyTypeId")
@@ -677,18 +664,9 @@ namespace DAL.App.EF.Migrations
 
                     b.Navigation("ErUser");
 
+                    b.Navigation("PropertyLocation");
+
                     b.Navigation("PropertyType");
-                });
-
-            modelBuilder.Entity("Domain.PropertyLocation", b =>
-                {
-                    b.HasOne("Domain.Property", "Property")
-                        .WithMany()
-                        .HasForeignKey("PropertyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("Domain.PropertyPicture", b =>
@@ -796,11 +774,6 @@ namespace DAL.App.EF.Migrations
                     b.Navigation("ErUser");
                 });
 
-            modelBuilder.Entity("Domain.ErUserType", b =>
-                {
-                    b.Navigation("ErUsers");
-                });
-
             modelBuilder.Entity("Domain.Gender", b =>
                 {
                     b.Navigation("ErUsers");
@@ -813,6 +786,11 @@ namespace DAL.App.EF.Migrations
                     b.Navigation("PropertyPictures");
 
                     b.Navigation("PropertyReviews");
+                });
+
+            modelBuilder.Entity("Domain.PropertyLocation", b =>
+                {
+                    b.Navigation("ErUsers");
                 });
 
             modelBuilder.Entity("Domain.PropertyType", b =>

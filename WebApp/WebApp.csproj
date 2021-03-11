@@ -25,6 +25,16 @@
       <_ContentIncludedByDefault Remove="Views\ErUsers\Details.cshtml" />
       <_ContentIncludedByDefault Remove="Views\ErUsers\Edit.cshtml" />
       <_ContentIncludedByDefault Remove="Views\ErUsers\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ErUserTypes\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ErUserTypes\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ErUserTypes\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ErUserTypes\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ErUserTypes\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Properties\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Properties\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Properties\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Properties\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Properties\Index.cshtml" />
     </ItemGroup>
 
 </Project>

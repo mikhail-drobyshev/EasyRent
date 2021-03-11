@@ -31,6 +31,9 @@ namespace Domain
 
         public Guid PropertyTypeId { get; set; }
         public PropertyType? PropertyType { get; set; }
+        
+        public Guid PropertyLocationId { get; set; }
+        public PropertyLocation? PropertyLocation { get; set; }
 
 
     }

@@ -15,7 +15,6 @@ namespace DAL.App.EF
         public DbSet<Gender> Genders { get; set; } = default!;
         
         public DbSet<ErUserReview> ErUserReviews { get; set; } = default!;
-        public DbSet<ErUserType> ErUserTypes { get; set; } = default!;
         public DbSet<ErUserPicture> ErUserPictures { get; set; } = default!;
         
         public DbSet<Property> Properties { get; set; } = default!;

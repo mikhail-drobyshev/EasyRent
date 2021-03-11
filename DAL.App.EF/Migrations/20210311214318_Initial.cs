@@ -83,18 +83,6 @@ namespace DAL.App.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ErUserTypes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserType = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ErUserTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Genders",
                 columns: table => new
                 {
@@ -104,6 +92,20 @@ namespace DAL.App.EF.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Genders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PropertyLocations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Building = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PropertyLocations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -232,8 +234,8 @@ namespace DAL.App.EF.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     ErUserPictureId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ErUserTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    GenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PropertyLocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -245,15 +247,15 @@ namespace DAL.App.EF.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ErUsers_ErUserTypes_ErUserTypeId",
-                        column: x => x.ErUserTypeId,
-                        principalTable: "ErUserTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_ErUsers_Genders_GenderId",
                         column: x => x.GenderId,
                         principalTable: "Genders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ErUsers_PropertyLocations_PropertyLocationId",
+                        column: x => x.PropertyLocationId,
+                        principalTable: "PropertyLocations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -292,6 +294,7 @@ namespace DAL.App.EF.Migrations
                     TenantsCount = table.Column<int>(type: "int", nullable: true),
                     ErUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PropertyTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PropertyLocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -302,6 +305,12 @@ namespace DAL.App.EF.Migrations
                         name: "FK_Properties_ErUsers_ErUserId",
                         column: x => x.ErUserId,
                         principalTable: "ErUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Properties_PropertyLocations_PropertyLocationId",
+                        column: x => x.PropertyLocationId,
+                        principalTable: "PropertyLocations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -342,27 +351,6 @@ namespace DAL.App.EF.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ErApplications_Properties_PropertyId",
-                        column: x => x.PropertyId,
-                        principalTable: "Properties",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PropertyLocations",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Building = table.Column<int>(type: "int", nullable: false),
-                    PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PropertyLocations", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PropertyLocations_Properties_PropertyId",
                         column: x => x.PropertyId,
                         principalTable: "Properties",
                         principalColumn: "Id",
@@ -522,14 +510,14 @@ namespace DAL.App.EF.Migrations
                 filter: "[ErUserPictureId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ErUsers_ErUserTypeId",
-                table: "ErUsers",
-                column: "ErUserTypeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ErUsers_GenderId",
                 table: "ErUsers",
                 column: "GenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ErUsers_PropertyLocationId",
+                table: "ErUsers",
+                column: "PropertyLocationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Properties_ErUserId",
@@ -537,14 +525,14 @@ namespace DAL.App.EF.Migrations
                 column: "ErUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Properties_PropertyLocationId",
+                table: "Properties",
+                column: "PropertyLocationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Properties_PropertyTypeId",
                 table: "Properties",
                 column: "PropertyTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PropertyLocations_PropertyId",
-                table: "PropertyLocations",
-                column: "PropertyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PropertyPictures_PropertyId",
@@ -586,9 +574,6 @@ namespace DAL.App.EF.Migrations
                 name: "ErUserReviews");
 
             migrationBuilder.DropTable(
-                name: "PropertyLocations");
-
-            migrationBuilder.DropTable(
                 name: "PropertyPictures");
 
             migrationBuilder.DropTable(
@@ -622,10 +607,10 @@ namespace DAL.App.EF.Migrations
                 name: "ErUserPictures");
 
             migrationBuilder.DropTable(
-                name: "ErUserTypes");
+                name: "Genders");
 
             migrationBuilder.DropTable(
-                name: "Genders");
+                name: "PropertyLocations");
         }
     }
 }

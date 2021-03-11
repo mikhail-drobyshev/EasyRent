@@ -22,7 +22,7 @@ namespace WebApp.Controllers
         // GET: ErUsers
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.ErUsers.Include(e => e.ErUserPicture).Include(e => e.ErUserType).Include(e => e.Gender);
+            var appDbContext = _context.ErUsers.Include(e => e.ErUserPicture).Include(e => e.Gender);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -36,7 +36,6 @@ namespace WebApp.Controllers
 
             var erUser = await _context.ErUsers
                 .Include(e => e.ErUserPicture)
-                .Include(e => e.ErUserType)
                 .Include(e => e.Gender)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (erUser == null)
@@ -51,7 +50,6 @@ namespace WebApp.Controllers
         public IActionResult Create()
         {
             ViewData["ErUserPictureId"] = new SelectList(_context.ErUserPictures, "Id", "PictureUrl");
-            ViewData["ErUserTypeId"] = new SelectList(_context.ErUserTypes, "Id", "UserType");
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "GenderValue");
             return View();
         }
@@ -71,7 +69,6 @@ namespace WebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ErUserPictureId"] = new SelectList(_context.ErUserPictures, "Id", "PictureUrl", erUser.ErUserPictureId);
-            ViewData["ErUserTypeId"] = new SelectList(_context.ErUserTypes, "Id", "UserType", erUser.ErUserTypeId);
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "GenderValue", erUser.GenderId);
             return View(erUser);
         }
@@ -90,7 +87,6 @@ namespace WebApp.Controllers
                 return NotFound();
             }
             ViewData["ErUserPictureId"] = new SelectList(_context.ErUserPictures, "Id", "PictureUrl", erUser.ErUserPictureId);
-            ViewData["ErUserTypeId"] = new SelectList(_context.ErUserTypes, "Id", "UserType", erUser.ErUserTypeId);
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "GenderValue", erUser.GenderId);
             return View(erUser);
         }
@@ -128,7 +124,6 @@ namespace WebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ErUserPictureId"] = new SelectList(_context.ErUserPictures, "Id", "PictureUrl", erUser.ErUserPictureId);
-            ViewData["ErUserTypeId"] = new SelectList(_context.ErUserTypes, "Id", "UserType", erUser.ErUserTypeId);
             ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "GenderValue", erUser.GenderId);
             return View(erUser);
         }
@@ -143,7 +138,6 @@ namespace WebApp.Controllers
 
             var erUser = await _context.ErUsers
                 .Include(e => e.ErUserPicture)
-                .Include(e => e.ErUserType)
                 .Include(e => e.Gender)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (erUser == null)
