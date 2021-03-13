@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain.App;
 
 namespace WebApp.Controllers
@@ -13,17 +15,20 @@ namespace WebApp.Controllers
     public class DisputesController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly DisputeRepository _repository;
 
         public DisputesController(AppDbContext context)
         {
             _context = context;
+            _repository = new DisputeRepository(_context);
         }
 
         // GET: Disputes
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Disputes.Include(d => d.DisputeStatus).Include(d => d.ErApplication);
-            return View(await appDbContext.ToListAsync());
+            var res = await _repository.GetAllAsync();
+         
+            return View(res);
         }
 
         // GET: Disputes/Details/5
@@ -63,8 +68,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                dispute.Id = Guid.NewGuid();
-                _context.Add(dispute);
+                _repository.Add(dispute);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

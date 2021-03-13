@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Applications.DAL.App.Repositories;
@@ -20,6 +21,26 @@ namespace DAL.App.EF.Repositories
             {
                 Remove(dispute);
             }
+        }
+
+        public override async Task<IEnumerable<Dispute>> GetAllAsync(bool noTracking = true)
+        {
+            var query = RepoDbSet.AsQueryable();
+            if (noTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            query = query
+                .Include(d => d.DisputeStatus)
+                .Include(d => d.ErApplication);
+            var res = await query.ToListAsync();
+            // if (res.Count > 0)
+            // {
+            //     await RepoDbContext.Entry(res.First())
+            //         .Reference(x=>)
+            // }
+            return res;
         }
     }
 }
