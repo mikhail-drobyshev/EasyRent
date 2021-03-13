@@ -1,11 +1,10 @@
 using System;
+using Domain.Base;
 
 namespace Domain.App
 {
-    public class PropertyReview
+    public class PropertyReview : DomainEntityId
     {
-        public Guid Id { get; set; }
-
         public int Rating { get; set; } = default!;
 
         public string? Comment { get; set; }

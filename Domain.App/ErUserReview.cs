@@ -1,10 +1,10 @@
 ﻿using System;
+using Domain.Base;
 
 namespace Domain.App
 {
-    public class ErUserReview
+    public class ErUserReview : DomainEntityId
     {
-        public Guid Id { get; set; }
 
         public int Rating { get; set; } = default!;
 

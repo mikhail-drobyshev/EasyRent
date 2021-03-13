@@ -1,12 +1,11 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Domain.Base;
 
 namespace Domain.App
 {
-    public class ErUserPicture
+    public class ErUserPicture : DomainEntityId
     {
-        public Guid Id { get; set; }
-
         [MaxLength(255)] 
         public string PictureUrl { get; set; } = default!;
 

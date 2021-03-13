@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Domain.Base;
 
 namespace Domain.App
 {
-    public class PropertyLocation
+    public class PropertyLocation : DomainEntityId
     {
-        public Guid Id { get; set; }
-        
         public string City { get; set; } = default!;
 
         public string Street { get; set; } = default!;

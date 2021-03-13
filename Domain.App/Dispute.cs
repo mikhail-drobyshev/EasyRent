@@ -1,10 +1,10 @@
 using System;
+using Domain.Base;
 
 namespace Domain.App
 {
-    public class Dispute
+    public class Dispute : DomainEntityId
     {
-        public Guid Id { get; set; }
 
         public string Title { get; set; } = default!;
 

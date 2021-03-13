@@ -1,11 +1,10 @@
 using System;
+using Domain.Base;
 
 namespace Domain.App
 {
-    public class ErApplication
+    public class ErApplication : DomainEntityId
     {
-        public Guid Id { get; set; }
-        
         public DateTime? RentFrom { get; set; }
         
         public string? Comment { get; set; }
