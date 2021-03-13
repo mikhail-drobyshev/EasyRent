@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Net.Mime;
-using System.Runtime.CompilerServices;
-using System.Security.Principal;
 
-namespace Domain
+namespace Domain.App
 {
-    public class Property : BaseEntity
+    public class Property
     {
         public Guid Id { get; set; }
 

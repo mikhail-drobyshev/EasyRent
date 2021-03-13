@@ -1,8 +1,8 @@
 using System;
 
-namespace Domain
+namespace Domain.App
 {
-    public class ErApplication : BaseEntity
+    public class ErApplication
     {
         public Guid Id { get; set; }
         

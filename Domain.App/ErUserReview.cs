@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 
-namespace Domain
+namespace Domain.App
 {
-    public class PropertyReview
+    public class ErUserReview
     {
         public Guid Id { get; set; }
 
@@ -10,9 +10,6 @@ namespace Domain
 
         public string? Comment { get; set; }
 
-        public Guid PropertyId { get; set; }
-        public Property? Property { get; set; }
-        
         public Guid ErUserId { get; set; }
         public ErUser? ErUser { get; set; }
     }

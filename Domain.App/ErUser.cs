@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.VisualBasic.CompilerServices;
 
-namespace Domain
+namespace Domain.App
 {
     public class ErUser
     {

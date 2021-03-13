@@ -1,8 +1,8 @@
 using System;
 
-namespace Domain
+namespace Domain.App
 {
-    public class Dispute : BaseEntity
+    public class Dispute
     {
         public Guid Id { get; set; }
 
