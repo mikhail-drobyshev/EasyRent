@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Applications.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ namespace WebApp.Controllers
     public class DisputesController : Controller
     {
         private readonly AppDbContext _context;
-        private readonly DisputeRepository _repository;
+        private readonly IDisputeRepository _repository;
 
         public DisputesController(AppDbContext context)
         {
