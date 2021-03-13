@@ -8,12 +8,12 @@ using Applications.Domain.Base;
 namespace Applications.DAL.Base.Repository
 {
     public interface IBaseRepository<TEntity> : IBaseRepository<TEntity, Guid>
-        where TEntity : class, IDomainEntity
+        where TEntity : class, IDomainEntityId
     {
         
     }
     public interface IBaseRepository<TEntity, TKey>
-    where TEntity: class, IDomainEntity<TKey>
+    where TEntity: class, IDomainEntityId<TKey>
     where TKey: IEquatable<TKey>
     {
         Task<IEnumerable<TEntity>> GetAllAsync(bool noTracking = true);
@@ -21,7 +21,7 @@ namespace Applications.DAL.Base.Repository
         TEntity Add(TEntity entity);
         TEntity Update(TEntity entity);
         TEntity Remove(TEntity entity);
-        TEntity Remove(TKey id);
+        Task<TEntity> Remove(TKey id);
         Task<bool> ExistAsync(TKey id);
 
     }
