@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using DAL.App.EF.Repositories;
 using Domain.App;
 
 namespace WebApp.Controllers
@@ -13,17 +15,20 @@ namespace WebApp.Controllers
     public class ErUsersController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IErUserRepository _repository;
 
         public ErUsersController(AppDbContext context)
         {
             _context = context;
+            _repository = new ErUserRepository(_context);
+            
         }
 
         // GET: ErUsers
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.ErUsers.Include(e => e.ErUserPicture).Include(e => e.Gender);
-            return View(await appDbContext.ToListAsync());
+            var res = await _repository.GetAllAsync();
+            return View(res);
         }
 
         // GET: ErUsers/Details/5
