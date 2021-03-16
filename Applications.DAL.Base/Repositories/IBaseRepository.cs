@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
 using Applications.Domain.Base;
 
-namespace Applications.DAL.Base.Repository
+namespace Applications.DAL.Base.Repositories
 {
     public interface IBaseRepository<TEntity> : IBaseRepository<TEntity, Guid>
         where TEntity : class, IDomainEntityId

@@ -21,6 +21,7 @@ namespace DAL.App.EF
         public DbSet<PropertyType> PropertyTypes { get; set; } = default!;
 
         public DbSet<PropertyLocation> PropertyLocations { get; set; } = default!;
+        
         public DbSet<PropertyPicture> PropertyPictures { get; set; } = default!;
         public DbSet<PropertyReview> PropertyReviews { get; set; } = default!;
         

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Applications.DAL.Base.Repository;
+using Applications.DAL.Base.Repositories;
 using Applications.Domain.Base;
 using Microsoft.EntityFrameworkCore;
 

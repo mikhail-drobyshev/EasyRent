@@ -4,8 +4,8 @@ using Domain.App;
 
 namespace Applications.DAL.App.Repositories
 {
-    public interface IDisputeRepository : IBaseRepository<Dispute>
+    public interface IErUserRepository : IBaseRepository<ErUser>
     {
-        Task DeleteAllByStatusCancelled(DisputeStatus status);
+       
     }
 }
