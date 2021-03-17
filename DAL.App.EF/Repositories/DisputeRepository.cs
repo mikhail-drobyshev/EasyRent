@@ -6,6 +6,7 @@ using Applications.DAL.App.Repositories;
 using DAL.Base.EF.Repositories;
 using Domain.App;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace DAL.App.EF.Repositories
 {

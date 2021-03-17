@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Formats.Asn1;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Applications.DAL.App;
 using Applications.DAL.App.Repositories;
@@ -30,7 +26,7 @@ namespace WebApp.Controllers
         private readonly IDiTransient _diTransient;
         private readonly IServiceProvider _serviceProvider;
 
-        public DisputesController(AppUnitOfWork uow,Singleton singleton, Transient transient, Scoped scoped, IDiScoped diScoped,
+        public DisputesController(IAppUnitOfWork uow,Singleton singleton, Transient transient, Scoped scoped, IDiScoped diScoped,
             IDiSingleton diSingleton, IDiTransient diTransient, IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -73,7 +69,7 @@ namespace WebApp.Controllers
             }
 
             var dispute = await _uow.Disputes.FirstOrDefaultAsync(id.Value);
-
+            
             if (dispute == null)
             {
                 return NotFound();
@@ -104,7 +100,7 @@ namespace WebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), "Id", "DisputeStatusValue",
+            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(false), "Id", "DisputeStatusValue",
                 dispute.DisputeStatusId);
             ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Id", dispute.ErApplicationId);
             return View(dispute);
