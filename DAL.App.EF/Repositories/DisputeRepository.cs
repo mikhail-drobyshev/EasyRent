@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class DisputeRepository : BaseRepository<Dispute>, IDisputeRepository
+    public class DisputeRepository : BaseRepository<Dispute, AppDbContext>, IDisputeRepository
     {
         public DisputeRepository(AppDbContext dbContext) : base(dbContext)
         {
@@ -17,6 +17,7 @@ namespace DAL.App.EF.Repositories
 
         public async Task DeleteAllByStatusCancelled(DisputeStatus status)
         {
+            
             foreach (var dispute in await RepoDbSet.Where(x=>x.DisputeStatus == status).ToListAsync())
             {
                 Remove(dispute);

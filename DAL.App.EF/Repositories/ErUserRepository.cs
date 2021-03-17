@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class ErUserRepository : BaseRepository<ErUser>, IErUserRepository
+    public class ErUserRepository : BaseRepository<ErUser, AppDbContext>, IErUserRepository
     {
 
-        public ErUserRepository(DbContext dbContext) : base(dbContext)
+        public ErUserRepository(AppDbContext dbContext) : base(dbContext)
         {
             
         }

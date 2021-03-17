@@ -12,6 +12,7 @@ using DAL.App.EF;
 using DAL.App.EF.Repositories;
 using Domain.App;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.ObjectPool;
 using WebApp.Helpers;
 
 namespace WebApp.Controllers
@@ -20,7 +21,7 @@ namespace WebApp.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IDisputeRepository _repository;
-        
+
         private readonly Singleton _singleton;
         private readonly Transient _transient;
         private readonly Scoped _scoped;
@@ -28,9 +29,9 @@ namespace WebApp.Controllers
         private readonly IDiSingleton _diSingleton;
         private readonly IDiTransient _diTransient;
         private readonly IServiceProvider _serviceProvider;
-        
+
         public DisputesController(AppDbContext context, IDisputeRepository repository
-            , Singleton singleton, Transient transient, Scoped scoped, IDiScoped diScoped, 
+            , Singleton singleton, Transient transient, Scoped scoped, IDiScoped diScoped,
             IDiSingleton diSingleton, IDiTransient diTransient, IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -48,10 +49,10 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var res = await _repository.GetAllAsync();
-         
+
             return View(res);
         }
-        
+
         public string TestId()
         {
             var res = $"singleton id: {_singleton.Id}, transient id: {_transient.Id}, scoped id: {_scoped.Id}";
@@ -97,7 +98,9 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Comment,DisputeStatusId,ErApplicationId,CreatedOn,UpdatedOn")] Dispute dispute)
+        public async Task<IActionResult> Create(
+            [Bind("Id,Title,Comment,DisputeStatusId,ErApplicationId,CreatedOn,UpdatedOn")]
+            Dispute dispute)
         {
             if (ModelState.IsValid)
             {
@@ -105,7 +108,9 @@ namespace WebApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DisputeStatusId"] = new SelectList(_context.DisputeStatuses, "Id", "DisputeStatusValue", dispute.DisputeStatusId);
+
+            ViewData["DisputeStatusId"] = new SelectList(_context.DisputeStatuses, "Id", "DisputeStatusValue",
+                dispute.DisputeStatusId);
             ViewData["ErApplicationId"] = new SelectList(_context.ErApplications, "Id", "Id", dispute.ErApplicationId);
             return View(dispute);
         }
@@ -123,7 +128,9 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["DisputeStatusId"] = new SelectList(_context.DisputeStatuses, "Id", "DisputeStatusValue", dispute.DisputeStatusId);
+
+            ViewData["DisputeStatusId"] = new SelectList(_context.DisputeStatuses, "Id", "DisputeStatusValue",
+                dispute.DisputeStatusId);
             ViewData["ErApplicationId"] = new SelectList(_context.ErApplications, "Id", "Id", dispute.ErApplicationId);
             return View(dispute);
         }
@@ -133,7 +140,9 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Title,Comment,DisputeStatusId,ErApplicationId,CreatedOn,UpdatedOn")] Dispute dispute)
+        public async Task<IActionResult> Edit(Guid id,
+            [Bind("Id,Title,Comment,DisputeStatusId,ErApplicationId,CreatedOn,UpdatedOn")]
+            Dispute dispute)
         {
             if (id != dispute.Id)
             {
@@ -158,9 +167,12 @@ namespace WebApp.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DisputeStatusId"] = new SelectList(_context.DisputeStatuses, "Id", "DisputeStatusValue", dispute.DisputeStatusId);
+
+            ViewData["DisputeStatusId"] = new SelectList(_context.DisputeStatuses, "Id", "DisputeStatusValue",
+                dispute.DisputeStatusId);
             ViewData["ErApplicationId"] = new SelectList(_context.ErApplications, "Id", "Id", dispute.ErApplicationId);
             return View(dispute);
         }
@@ -200,5 +212,6 @@ namespace WebApp.Controllers
         {
             return _context.Disputes.Any(e => e.Id == id);
         }
+        
     }
 }
