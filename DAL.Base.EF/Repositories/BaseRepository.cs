@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Applications.DAL.Base.Repositories;
 using Applications.Domain.Base;
@@ -29,6 +30,8 @@ namespace DAL.Base.EF.Repositories
             RepoDbContext = dbContext;
             RepoDbSet = dbContext.Set<TEntity>();
         }
+        
+
         public virtual async Task<IEnumerable<TEntity>> GetAllAsync(bool noTracking = true)
         {
             if (noTracking)
@@ -37,6 +40,22 @@ namespace DAL.Base.EF.Repositories
             }
 
             return await RepoDbSet.ToListAsync();
+        }
+        
+        public virtual async Task<TEntity?> FirstOrDefaultAsync(TKey id, bool noTracking = true)
+        {
+            var query = RepoDbSet.AsQueryable();
+            
+            if (noTracking)
+            {
+                query = query.AsNoTracking();
+            }
+            
+            return await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+        }
+        public IEnumerable<TEntity> GetAll(bool noTracking = true)
+        {
+            return RepoDbSet.ToList();
         }
 
         public virtual async Task<TEntity> FirstOrDefault(TKey id, bool noTracking = true)
@@ -65,7 +84,7 @@ namespace DAL.Base.EF.Repositories
             return RepoDbSet.Remove(entity).Entity;
         }
 
-        public virtual async Task<TEntity> Remove(TKey id)
+        public virtual async Task<TEntity> RemoveAsync(TKey id)
         {
             var entity = await FirstOrDefault(id);
             return Remove(entity);

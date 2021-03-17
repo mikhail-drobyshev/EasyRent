@@ -43,5 +43,25 @@ namespace DAL.App.EF.Repositories
             // }
             return res;
         }
+        public override async Task<Dispute?> FirstOrDefaultAsync(Guid id, bool noTracking = true)
+        {
+            var query = RepoDbSet.AsQueryable();
+
+            if (noTracking)
+            {
+                query = query.AsNoTracking();
+            }
+            
+            query = query
+                .Include(d => d.DisputeStatus)
+                .Include(d => d.ErApplication);
+
+            var res = await query.FirstOrDefaultAsync(m => m.Id == id);
+
+            return res;
+        }
+
+
+
     }
 }

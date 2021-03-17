@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Applications.DAL.App.Repositories;
 using DAL.App.EF;
 using DAL.App.EF.AppDataInit;
@@ -39,7 +40,7 @@ namespace WebApp
                     .EnableSensitiveDataLogging()
             );
             
-            services.AddScoped<IDisputeRepository, DisputeRepository>();
+            services.AddScoped<IAppUnitOfWork, AppUnitOfWork>();
             
             
             services.AddSingleton<Singleton>();

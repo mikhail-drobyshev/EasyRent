@@ -4,6 +4,7 @@ using System.Formats.Asn1;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Applications.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,8 +20,7 @@ namespace WebApp.Controllers
 {
     public class DisputesController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IDisputeRepository _repository;
+        private readonly IAppUnitOfWork _uow;
 
         private readonly Singleton _singleton;
         private readonly Transient _transient;
@@ -30,8 +30,7 @@ namespace WebApp.Controllers
         private readonly IDiTransient _diTransient;
         private readonly IServiceProvider _serviceProvider;
 
-        public DisputesController(AppDbContext context, IDisputeRepository repository
-            , Singleton singleton, Transient transient, Scoped scoped, IDiScoped diScoped,
+        public DisputesController(AppUnitOfWork uow,Singleton singleton, Transient transient, Scoped scoped, IDiScoped diScoped,
             IDiSingleton diSingleton, IDiTransient diTransient, IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -41,14 +40,14 @@ namespace WebApp.Controllers
             _scoped = scoped;
             _singleton = singleton;
             _transient = transient;
-            _context = context;
-            _repository = repository;
+            _uow = uow;
         }
 
         // GET: Disputes
         public async Task<IActionResult> Index()
         {
-            var res = await _repository.GetAllAsync();
+            var res = await _uow.Disputes.GetAllAsync();
+            await _uow.SaveChangesAsync();
 
             return View(res);
         }
@@ -73,10 +72,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dispute = await _context.Disputes
-                .Include(d => d.DisputeStatus)
-                .Include(d => d.ErApplication)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id.Value);
+
             if (dispute == null)
             {
                 return NotFound();
@@ -86,10 +83,10 @@ namespace WebApp.Controllers
         }
 
         // GET: Disputes/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["DisputeStatusId"] = new SelectList(_context.DisputeStatuses, "Id", "DisputeStatusValue");
-            ViewData["ErApplicationId"] = new SelectList(_context.ErApplications, "Id", "Id");
+            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), "Id", "DisputeStatusValue");
+            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Id");
             return View();
         }
 
@@ -98,20 +95,18 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-            [Bind("Id,Title,Comment,DisputeStatusId,ErApplicationId,CreatedOn,UpdatedOn")]
-            Dispute dispute)
+        public async Task<IActionResult> Create(Dispute dispute)
         {
             if (ModelState.IsValid)
             {
-                _repository.Add(dispute);
-                await _context.SaveChangesAsync();
+                _uow.Disputes.Add(dispute);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["DisputeStatusId"] = new SelectList(_context.DisputeStatuses, "Id", "DisputeStatusValue",
+            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), "Id", "DisputeStatusValue",
                 dispute.DisputeStatusId);
-            ViewData["ErApplicationId"] = new SelectList(_context.ErApplications, "Id", "Id", dispute.ErApplicationId);
+            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Id", dispute.ErApplicationId);
             return View(dispute);
         }
 
@@ -123,15 +118,15 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dispute = await _context.Disputes.FindAsync(id);
+            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id.Value);
             if (dispute == null)
             {
                 return NotFound();
             }
 
-            ViewData["DisputeStatusId"] = new SelectList(_context.DisputeStatuses, "Id", "DisputeStatusValue",
+            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), "Id", "DisputeStatusValue",
                 dispute.DisputeStatusId);
-            ViewData["ErApplicationId"] = new SelectList(_context.ErApplications, "Id", "Id", dispute.ErApplicationId);
+            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Id", dispute.ErApplicationId);
             return View(dispute);
         }
 
@@ -140,9 +135,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id,
-            [Bind("Id,Title,Comment,DisputeStatusId,ErApplicationId,CreatedOn,UpdatedOn")]
-            Dispute dispute)
+        public async Task<IActionResult> Edit(Guid id, Dispute dispute)
         {
             if (id != dispute.Id)
             {
@@ -153,12 +146,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(dispute);
-                    await _context.SaveChangesAsync();
+                    _uow.Disputes.Update(dispute);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DisputeExists(dispute.Id))
+                    if (!await DisputeExists(dispute.Id))
                     {
                         return NotFound();
                     }
@@ -171,9 +164,9 @@ namespace WebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["DisputeStatusId"] = new SelectList(_context.DisputeStatuses, "Id", "DisputeStatusValue",
+            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), "Id", "DisputeStatusValue",
                 dispute.DisputeStatusId);
-            ViewData["ErApplicationId"] = new SelectList(_context.ErApplications, "Id", "Id", dispute.ErApplicationId);
+            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Id", dispute.ErApplicationId);
             return View(dispute);
         }
 
@@ -185,10 +178,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dispute = await _context.Disputes
-                .Include(d => d.DisputeStatus)
-                .Include(d => d.ErApplication)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id.Value);
             if (dispute == null)
             {
                 return NotFound();
@@ -202,15 +192,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var dispute = await _context.Disputes.FindAsync(id);
-            _context.Disputes.Remove(dispute);
-            await _context.SaveChangesAsync();
+            var dispute = await _uow.Disputes.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DisputeExists(Guid id)
+        private async Task<bool> DisputeExists(Guid id)
         {
-            return _context.Disputes.Any(e => e.Id == id);
+            return await _uow.Disputes.ExistAsync(id);
         }
         
     }
