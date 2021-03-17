@@ -11,7 +11,7 @@ namespace DAL.App.EF.Repositories
 {
     public class DisputeRepository : BaseRepository<Dispute>, IDisputeRepository
     {
-        public DisputeRepository(DbContext dbContext) : base(dbContext)
+        public DisputeRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
 

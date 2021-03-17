@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using DAL.App.EF.Repositories;
 using Domain.App;
+using Microsoft.AspNetCore.Builder;
+using WebApp.Helpers;
 
 namespace WebApp.Controllers
 {
@@ -17,11 +20,28 @@ namespace WebApp.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IDisputeRepository _repository;
-
-        public DisputesController(AppDbContext context)
+        
+        private readonly Singleton _singleton;
+        private readonly Transient _transient;
+        private readonly Scoped _scoped;
+        private readonly IDiScoped _diScoped;
+        private readonly IDiSingleton _diSingleton;
+        private readonly IDiTransient _diTransient;
+        private readonly IServiceProvider _serviceProvider;
+        
+        public DisputesController(AppDbContext context, IDisputeRepository repository
+            , Singleton singleton, Transient transient, Scoped scoped, IDiScoped diScoped, 
+            IDiSingleton diSingleton, IDiTransient diTransient, IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
+            _diScoped = diScoped;
+            _diSingleton = diSingleton;
+            _diTransient = diTransient;
+            _scoped = scoped;
+            _singleton = singleton;
+            _transient = transient;
             _context = context;
-            _repository = new DisputeRepository(_context);
+            _repository = repository;
         }
 
         // GET: Disputes
@@ -30,6 +50,18 @@ namespace WebApp.Controllers
             var res = await _repository.GetAllAsync();
          
             return View(res);
+        }
+        
+        public string TestId()
+        {
+            var res = $"singleton id: {_singleton.Id}, transient id: {_transient.Id}, scoped id: {_scoped.Id}";
+            var singleton = _serviceProvider.GetService(typeof(Singleton)) as Singleton;
+            var transient = _serviceProvider.GetService(typeof(Transient)) as Transient;
+            var scoped = _serviceProvider.GetService(typeof(Scoped)) as Scoped;
+
+            var res2 = $"singleton id: {singleton?.Id}, transient id: {transient?.Id}, scoped id: {scoped?.Id}";
+
+            return res + "\n" + res2;
         }
 
         // GET: Disputes/Details/5
