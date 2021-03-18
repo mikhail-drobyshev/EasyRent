@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,20 @@ namespace WebApp.Controllers
 {
     public class ErApplicationsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ErApplicationsController(AppDbContext context)
+        public ErApplicationsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: ErApplications
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.ErApplications.Include(e => e.ErApplicationStatus).Include(e => e.ErUser).Include(e => e.Property);
-            return View(await appDbContext.ToListAsync());
+            var res = await _uow.ErApplications.GetAllAsync();
+            await _uow.SaveChangesAsync();
+
+            return View(res);
         }
 
         // GET: ErApplications/Details/5
@@ -34,11 +37,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erApplication = await _context.ErApplications
-                .Include(e => e.ErApplicationStatus)
-                .Include(e => e.ErUser)
-                .Include(e => e.Property)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var erApplication = await _uow.ErApplications.FirstOrDefaultAsync(id.Value);
             if (erApplication == null)
             {
                 return NotFound();
@@ -48,11 +47,11 @@ namespace WebApp.Controllers
         }
 
         // GET: ErApplications/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["ErApplicationStatusId"] = new SelectList(_context.ErApplicationStatuses, "Id", "ErApplicationStatusValue");
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName");
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title");
+            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "ErApplicationStatusValue");
+            ViewData["ErUserId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "FirstName");
+            ViewData["PropertyId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Title");
             return View();
         }
 
@@ -61,18 +60,17 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RentFrom,Comment,ErUserId,PropertyId,ErApplicationStatusId,CreatedOn,UpdatedOn")] ErApplication erApplication)
+        public async Task<IActionResult> Create(ErApplication erApplication)
         {
             if (ModelState.IsValid)
             {
-                erApplication.Id = Guid.NewGuid();
-                _context.Add(erApplication);
-                await _context.SaveChangesAsync();
+                _uow.ErApplications.Add(erApplication);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErApplicationStatusId"] = new SelectList(_context.ErApplicationStatuses, "Id", "ErApplicationStatusValue", erApplication.ErApplicationStatusId);
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", erApplication.ErUserId);
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", erApplication.PropertyId);
+            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "ErApplicationStatusValue", erApplication.ErApplicationStatusId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "FirstName", erApplication.ErUserId);
+            ViewData["PropertyId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Title", erApplication.PropertyId);
             return View(erApplication);
         }
 
@@ -84,14 +82,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erApplication = await _context.ErApplications.FindAsync(id);
+            var erApplication = await _uow.ErApplications.FirstOrDefaultAsync(id.Value);
             if (erApplication == null)
             {
                 return NotFound();
             }
-            ViewData["ErApplicationStatusId"] = new SelectList(_context.ErApplicationStatuses, "Id", "ErApplicationStatusValue", erApplication.ErApplicationStatusId);
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", erApplication.ErUserId);
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", erApplication.PropertyId);
+            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "ErApplicationStatusValue", erApplication.ErApplicationStatusId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "FirstName", erApplication.ErUserId);
+            ViewData["PropertyId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Title", erApplication.PropertyId);
             return View(erApplication);
         }
 
@@ -111,12 +109,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(erApplication);
-                    await _context.SaveChangesAsync();
+                    _uow.ErApplications.Update(erApplication);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ErApplicationExists(erApplication.Id))
+                    if (!await ErApplicationExists(erApplication.Id))
                     {
                         return NotFound();
                     }
@@ -127,9 +125,9 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErApplicationStatusId"] = new SelectList(_context.ErApplicationStatuses, "Id", "ErApplicationStatusValue", erApplication.ErApplicationStatusId);
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", erApplication.ErUserId);
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", erApplication.PropertyId);
+            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "ErApplicationStatusValue", erApplication.ErApplicationStatusId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "FirstName", erApplication.ErUserId);
+            ViewData["PropertyId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Title", erApplication.PropertyId);
             return View(erApplication);
         }
 
@@ -141,11 +139,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erApplication = await _context.ErApplications
-                .Include(e => e.ErApplicationStatus)
-                .Include(e => e.ErUser)
-                .Include(e => e.Property)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var erApplication = await _uow.ErApplications.FirstOrDefaultAsync(id.Value);
             if (erApplication == null)
             {
                 return NotFound();
@@ -159,15 +153,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var erApplication = await _context.ErApplications.FindAsync(id);
-            _context.ErApplications.Remove(erApplication);
-            await _context.SaveChangesAsync();
+            await _uow.ErApplications.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ErApplicationExists(Guid id)
+        private async Task<bool> ErApplicationExists(Guid id)
         {
-            return _context.ErApplications.Any(e => e.Id == id);
+            return await _uow.ErApplications.ExistAsync(id);
         }
     }
 }

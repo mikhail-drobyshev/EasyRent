@@ -16,11 +16,28 @@ namespace DAL.App.EF
         {
             Disputes = new DisputeRepository(uowDbContext);
             DisputeStatuses = new BaseRepository<DisputeStatus, AppDbContext>(uowDbContext);
-            ErApplications = new BaseRepository<ErApplication, AppDbContext>(uowDbContext);
+            ErApplications = new ErApplicationRepository(uowDbContext);
+            ErApplicationsStatuses = new BaseRepository<ErApplicationStatus, AppDbContext>(uowDbContext);
+            ErUsers = new ErUserRepository(uowDbContext);
+            ErUserReviews = new ErUserReviewRepository(uowDbContext);
+            PropertyLocations = new PropertyLocationRepository(uowDbContext);
+            PropertyPictures = new PropertyPictureRepository(uowDbContext);
+            Properties = new PropertyRepository(uowDbContext);
+            PropertyReviews = new PropertyReviewRepository(uowDbContext);
+            PropertyTypes = new BaseRepository<PropertyType, AppDbContext>(uowDbContext);
         }
 
         public IDisputeRepository Disputes { get; }
         public IBaseRepository<DisputeStatus> DisputeStatuses { get; }
-        public IBaseRepository<ErApplication> ErApplications { get; }
+        public IErApplicationRepository ErApplications { get; }
+        public IBaseRepository<ErApplicationStatus> ErApplicationsStatuses { get; }
+        public IErUserRepository ErUsers { get; }
+        public IErUserReviewRepository ErUserReviews { get; }
+        public IPropertyLocationRepository PropertyLocations { get; }
+        public IPropertyPictureRepository PropertyPictures { get; }
+        public IPropertyRepository Properties { get; }
+        public IPropertyReviewRepository PropertyReviews { get; }
+        
+        public IBaseRepository<PropertyType> PropertyTypes { get; }
     }
 }

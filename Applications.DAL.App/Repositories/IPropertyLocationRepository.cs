@@ -3,7 +3,7 @@ using Domain.App;
 
 namespace Applications.DAL.App.Repositories
 {
-    public interface IDisputeStatusRepository : IBaseRepository<DisputeStatus>
+    public interface IPropertyLocationRepository : IBaseRepository<PropertyLocation>
     {
         
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Applications.DAL.App.Repositories;
 using Applications.DAL.Base.Repositories;
@@ -9,14 +10,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class ErUserRepository : BaseRepository<ErUser, AppDbContext>, IErUserRepository
+    public class ErApplicationRepository : BaseRepository<ErApplication, AppDbContext>, IErApplicationRepository
     {
-
-        public ErUserRepository(AppDbContext dbContext) : base(dbContext)
+        public ErApplicationRepository(AppDbContext dbContext) : base(dbContext)
         {
-            
         }
-        public override async Task<IEnumerable<ErUser>> GetAllAsync(bool noTracking = true)
+        
+
+        public override async Task<IEnumerable<ErApplication>> GetAllAsync(bool noTracking = true)
         {
             var query = RepoDbSet.AsQueryable();
             if (noTracking)
@@ -25,8 +26,9 @@ namespace DAL.App.EF.Repositories
             }
 
             query = query
-                .Include(e => e.ErUserPicture)
-                .Include(e => e.Gender);
+                .Include(e => e.ErApplicationStatus)
+                .Include(e => e.ErUser)
+                .Include(e => e.Property);
             var res = await query.ToListAsync();
             // if (res.Count > 0)
             // {
@@ -35,7 +37,7 @@ namespace DAL.App.EF.Repositories
             // }
             return res;
         }
-        public override async Task<ErUser?> FirstOrDefaultAsync(Guid id, bool noTracking = true)
+        public override async Task<ErApplication?> FirstOrDefaultAsync(Guid id, bool noTracking = true)
         {
             var query = RepoDbSet.AsQueryable();
 
@@ -45,12 +47,16 @@ namespace DAL.App.EF.Repositories
             }
             
             query = query
-                .Include(e => e.ErUserPicture)
-                .Include(e => e.Gender);
+                .Include(e => e.ErApplicationStatus)
+                .Include(e => e.ErUser)
+                .Include(e => e.Property);
 
             var res = await query.FirstOrDefaultAsync(m => m.Id == id);
 
             return res;
         }
+
+
+
     }
 }

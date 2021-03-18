@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,19 @@ namespace WebApp.Controllers
 {
     public class ErUserReviewsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ErUserReviewsController(AppDbContext context)
+        public ErUserReviewsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: ErUserReviews
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.ErUserReviews.Include(e => e.ErUser);
-            return View(await appDbContext.ToListAsync());
+            var res = await _uow.ErUserReviews.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: ErUserReviews/Details/5
@@ -34,9 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserReview = await _context.ErUserReviews
-                .Include(e => e.ErUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var erUserReview = await _uow.ErUserReviews.FirstOrDefaultAsync(id.Value);
             if (erUserReview == null)
             {
                 return NotFound();
@@ -46,9 +46,9 @@ namespace WebApp.Controllers
         }
 
         // GET: ErUserReviews/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName");
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUserReviews.GetAllAsync(), "Id", "FirstName");
             return View();
         }
 
@@ -57,16 +57,15 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Rating,Comment,ErUserId,CreatedOn,UpdatedOn")] ErUserReview erUserReview)
+        public async Task<IActionResult> Create(ErUserReview erUserReview)
         {
             if (ModelState.IsValid)
             {
-                erUserReview.Id = Guid.NewGuid();
-                _context.Add(erUserReview);
-                await _context.SaveChangesAsync();
+                _uow.ErUserReviews.Add(erUserReview);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", erUserReview.ErUserId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUserReviews.GetAllAsync(), "Id", "FirstName", erUserReview.ErUserId);
             return View(erUserReview);
         }
 
@@ -78,12 +77,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserReview = await _context.ErUserReviews.FindAsync(id);
+            var erUserReview = await _uow.ErUserReviews.FirstOrDefaultAsync(id.Value);
             if (erUserReview == null)
             {
                 return NotFound();
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", erUserReview.ErUserId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUserReviews.GetAllAsync(), "Id", "FirstName", erUserReview.ErUserId);
             return View(erUserReview);
         }
 
@@ -92,7 +91,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Rating,Comment,ErUserId")] ErUserReview erUserReview)
+        public async Task<IActionResult> Edit(Guid id, ErUserReview erUserReview)
         {
             if (id != erUserReview.Id)
             {
@@ -103,12 +102,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(erUserReview);
-                    await _context.SaveChangesAsync();
+                    _uow.ErUserReviews.Update(erUserReview);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ErUserReviewExists(erUserReview.Id))
+                    if (!await ErUserReviewExists(erUserReview.Id))
                     {
                         return NotFound();
                     }
@@ -119,7 +118,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", erUserReview.ErUserId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUserReviews.GetAllAsync(), "Id", "FirstName", erUserReview.ErUserId);
             return View(erUserReview);
         }
 
@@ -131,9 +130,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserReview = await _context.ErUserReviews
-                .Include(e => e.ErUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var erUserReview = await _uow.ErUserReviews.FirstOrDefaultAsync(id.Value);
             if (erUserReview == null)
             {
                 return NotFound();
@@ -147,15 +144,13 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var erUserReview = await _context.ErUserReviews.FindAsync(id);
-            _context.ErUserReviews.Remove(erUserReview);
-            await _context.SaveChangesAsync();
+            await _uow.ErUserReviews.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ErUserReviewExists(Guid id)
+        private async Task<bool> ErUserReviewExists(Guid id)
         {
-            return _context.ErUserReviews.Any(e => e.Id == id);
-        }
+            return await _uow.ErUserReviews.ExistAsync(id);        }
     }
 }

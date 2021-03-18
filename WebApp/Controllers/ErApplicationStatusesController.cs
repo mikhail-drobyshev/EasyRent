@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,17 +13,19 @@ namespace WebApp.Controllers
 {
     public class ErApplicationStatusesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ErApplicationStatusesController(AppDbContext context)
+        public ErApplicationStatusesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: ErApplicationStatuses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ErApplicationStatuses.ToListAsync());
+            var res = await _uow.ErApplicationsStatuses.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: ErApplicationStatuses/Details/5
@@ -33,8 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erApplicationStatus = await _context.ErApplicationStatuses
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var erApplicationStatus = await _uow.ErApplicationsStatuses.FirstOrDefaultAsync(id.Value);
             if (erApplicationStatus == null)
             {
                 return NotFound();
@@ -54,13 +56,12 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ErApplicationStatusValue")] ErApplicationStatus erApplicationStatus)
+        public async Task<IActionResult> Create(ErApplicationStatus erApplicationStatus)
         {
             if (ModelState.IsValid)
             {
-                erApplicationStatus.Id = Guid.NewGuid();
-                _context.Add(erApplicationStatus);
-                await _context.SaveChangesAsync();
+                _uow.ErApplicationsStatuses.Add(erApplicationStatus);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(erApplicationStatus);
@@ -74,7 +75,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erApplicationStatus = await _context.ErApplicationStatuses.FindAsync(id);
+            var erApplicationStatus = await _uow.ErApplicationsStatuses.FirstOrDefaultAsync(id.Value);
             if (erApplicationStatus == null)
             {
                 return NotFound();
@@ -87,7 +88,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,ErApplicationStatusValue")] ErApplicationStatus erApplicationStatus)
+        public async Task<IActionResult> Edit(Guid id, ErApplicationStatus erApplicationStatus)
         {
             if (id != erApplicationStatus.Id)
             {
@@ -98,12 +99,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(erApplicationStatus);
-                    await _context.SaveChangesAsync();
+                    _uow.ErApplicationsStatuses.Update(erApplicationStatus);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ErApplicationStatusExists(erApplicationStatus.Id))
+                    if (!await ErApplicationStatusExists(erApplicationStatus.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +126,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erApplicationStatus = await _context.ErApplicationStatuses
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var erApplicationStatus = await _uow.ErApplicationsStatuses.FirstOrDefaultAsync(id.Value);
             if (erApplicationStatus == null)
             {
                 return NotFound();
@@ -140,15 +140,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var erApplicationStatus = await _context.ErApplicationStatuses.FindAsync(id);
-            _context.ErApplicationStatuses.Remove(erApplicationStatus);
-            await _context.SaveChangesAsync();
+            await _uow.ErApplicationsStatuses.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ErApplicationStatusExists(Guid id)
+        private async Task<bool> ErApplicationStatusExists(Guid id)
         {
-            return _context.ErApplicationStatuses.Any(e => e.Id == id);
+            return await _uow.ErApplicationsStatuses.ExistAsync(id);
         }
     }
 }

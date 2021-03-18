@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,17 +13,19 @@ namespace WebApp.Controllers
 {
     public class DisputeStatusesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public DisputeStatusesController(AppDbContext context)
+        public DisputeStatusesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: DisputeStatuses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.DisputeStatuses.ToListAsync());
+            var res = await _uow.DisputeStatuses.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: DisputeStatuses/Details/5
@@ -33,8 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var disputeStatus = await _context.DisputeStatuses
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var disputeStatus = await _uow.DisputeStatuses.FirstOrDefaultAsync(id.Value);
             if (disputeStatus == null)
             {
                 return NotFound();
@@ -54,13 +56,12 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DisputeStatusValue")] DisputeStatus disputeStatus)
+        public async Task<IActionResult> Create(DisputeStatus disputeStatus)
         {
             if (ModelState.IsValid)
             {
-                disputeStatus.Id = Guid.NewGuid();
-                _context.Add(disputeStatus);
-                await _context.SaveChangesAsync();
+                _uow.DisputeStatuses.Add(disputeStatus);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(disputeStatus);
@@ -74,7 +75,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var disputeStatus = await _context.DisputeStatuses.FindAsync(id);
+            var disputeStatus = await _uow.DisputeStatuses.FirstOrDefaultAsync(id.Value);
             if (disputeStatus == null)
             {
                 return NotFound();
@@ -87,7 +88,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,DisputeStatusValue")] DisputeStatus disputeStatus)
+        public async Task<IActionResult> Edit(Guid id, DisputeStatus disputeStatus)
         {
             if (id != disputeStatus.Id)
             {
@@ -98,12 +99,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(disputeStatus);
-                    await _context.SaveChangesAsync();
+                    _uow.DisputeStatuses.Update(disputeStatus);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DisputeStatusExists(disputeStatus.Id))
+                    if (!await DisputeStatusExists(disputeStatus.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +126,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var disputeStatus = await _context.DisputeStatuses
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var disputeStatus = await _uow.DisputeStatuses.FirstOrDefaultAsync(id.Value);
             if (disputeStatus == null)
             {
                 return NotFound();
@@ -140,15 +140,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var disputeStatus = await _context.DisputeStatuses.FindAsync(id);
-            _context.DisputeStatuses.Remove(disputeStatus);
-            await _context.SaveChangesAsync();
+            await _uow.DisputeStatuses.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DisputeStatusExists(Guid id)
+        private async Task<bool> DisputeStatusExists(Guid id)
         {
-            return _context.DisputeStatuses.Any(e => e.Id == id);
+            return await _uow.DisputeStatuses.ExistAsync(id);
         }
     }
 }

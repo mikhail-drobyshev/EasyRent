@@ -188,7 +188,7 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var dispute = await _uow.Disputes.RemoveAsync(id);
+            await _uow.Disputes.RemoveAsync(id);
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
