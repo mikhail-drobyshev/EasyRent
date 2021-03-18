@@ -47,11 +47,6 @@
                 <select asp-for="PropertyTypeId" class="form-control" asp-items="ViewBag.PropertyTypeId"></select>
                 <span asp-validation-for="PropertyTypeId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="PropertyLocationId" class="control-label"></label>
-                <select asp-for="PropertyLocationId" class="form-control" asp-items="ViewBag.PropertyLocationId"></select>
-                <span asp-validation-for="PropertyLocationId" class="text-danger"></span>
-            </div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

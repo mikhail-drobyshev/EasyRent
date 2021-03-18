@@ -134,9 +134,6 @@ namespace DAL.App.EF.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
-                    b.Property<Guid?>("PropertyLocationId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ErUserPictureId")
@@ -144,8 +141,6 @@ namespace DAL.App.EF.Migrations
                         .HasFilter("[ErUserPictureId] IS NOT NULL");
 
                     b.HasIndex("GenderId");
-
-                    b.HasIndex("PropertyLocationId");
 
                     b.ToTable("ErUsers");
                 });
@@ -222,9 +217,6 @@ namespace DAL.App.EF.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("PropertyLocationId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("PropertyTypeId")
                         .HasColumnType("uniqueidentifier");
 
@@ -238,8 +230,6 @@ namespace DAL.App.EF.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ErUserId");
-
-                    b.HasIndex("PropertyLocationId");
 
                     b.HasIndex("PropertyTypeId");
 
@@ -259,11 +249,17 @@ namespace DAL.App.EF.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Street")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PropertyId")
+                        .IsUnique();
 
                     b.ToTable("PropertyLocations");
                 });
@@ -595,11 +591,6 @@ namespace DAL.App.EF.Migrations
                         .HasForeignKey("GenderId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.App.PropertyLocation", null)
-                        .WithMany("ErUsers")
-                        .HasForeignKey("PropertyLocationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("ErUserPicture");
 
                     b.Navigation("Gender");
@@ -624,12 +615,6 @@ namespace DAL.App.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.App.PropertyLocation", "PropertyLocation")
-                        .WithMany()
-                        .HasForeignKey("PropertyLocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.App.PropertyType", "PropertyType")
                         .WithMany("Properties")
                         .HasForeignKey("PropertyTypeId")
@@ -638,9 +623,18 @@ namespace DAL.App.EF.Migrations
 
                     b.Navigation("ErUser");
 
-                    b.Navigation("PropertyLocation");
-
                     b.Navigation("PropertyType");
+                });
+
+            modelBuilder.Entity("Domain.App.PropertyLocation", b =>
+                {
+                    b.HasOne("Domain.App.Property", "Property")
+                        .WithOne("PropertyLocation")
+                        .HasForeignKey("Domain.App.PropertyLocation", "PropertyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("Domain.App.PropertyPicture", b =>
@@ -757,14 +751,11 @@ namespace DAL.App.EF.Migrations
                 {
                     b.Navigation("ErApplications");
 
+                    b.Navigation("PropertyLocation");
+
                     b.Navigation("PropertyPictures");
 
                     b.Navigation("PropertyReviews");
-                });
-
-            modelBuilder.Entity("Domain.App.PropertyLocation", b =>
-                {
-                    b.Navigation("ErUsers");
                 });
 
             modelBuilder.Entity("Domain.App.PropertyType", b =>

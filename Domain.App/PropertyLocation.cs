@@ -12,6 +12,7 @@ namespace Domain.App
 
         public int Building { get; set; } = default!;
         
-        public ICollection<ErUser>? ErUsers { get; set; }
+        public Guid PropertyId { get; set; }
+        public Property? Property { get; set; }
     }
 }

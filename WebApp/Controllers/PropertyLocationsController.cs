@@ -22,7 +22,8 @@ namespace WebApp.Controllers
         // GET: PropertyLocations
         public async Task<IActionResult> Index()
         {
-            return View(await _context.PropertyLocations.ToListAsync());
+            var appDbContext = _context.PropertyLocations.Include(p => p.Property);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: PropertyLocations/Details/5
@@ -34,6 +35,7 @@ namespace WebApp.Controllers
             }
 
             var propertyLocation = await _context.PropertyLocations
+                .Include(p => p.Property)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (propertyLocation == null)
             {
@@ -46,6 +48,7 @@ namespace WebApp.Controllers
         // GET: PropertyLocations/Create
         public IActionResult Create()
         {
+            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,City,Street,Building")] PropertyLocation propertyLocation)
+        public async Task<IActionResult> Create([Bind("City,Street,Building,PropertyId,Id")] PropertyLocation propertyLocation)
         {
             if (ModelState.IsValid)
             {
@@ -63,6 +66,7 @@ namespace WebApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyLocation.PropertyId);
             return View(propertyLocation);
         }
 
@@ -79,6 +83,7 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyLocation.PropertyId);
             return View(propertyLocation);
         }
 
@@ -87,7 +92,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,City,Street,Building")] PropertyLocation propertyLocation)
+        public async Task<IActionResult> Edit(Guid id, [Bind("City,Street,Building,PropertyId,Id")] PropertyLocation propertyLocation)
         {
             if (id != propertyLocation.Id)
             {
@@ -114,6 +119,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyLocation.PropertyId);
             return View(propertyLocation);
         }
 
@@ -126,6 +132,7 @@ namespace WebApp.Controllers
             }
 
             var propertyLocation = await _context.PropertyLocations
+                .Include(p => p.Property)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (propertyLocation == null)
             {
