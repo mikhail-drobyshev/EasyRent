@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,17 +13,19 @@ namespace WebApp.Controllers
 {
     public class PropertyTypesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PropertyTypesController(AppDbContext context)
+        public PropertyTypesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: PropertyTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.PropertyTypes.ToListAsync());
+            var res = await _uow.PropertyTypes.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: PropertyTypes/Details/5
@@ -33,8 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyType = await _context.PropertyTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var propertyType = await _uow.PropertyTypes.FirstOrDefaultAsync(id.Value);
             if (propertyType == null)
             {
                 return NotFound();
@@ -54,13 +56,12 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PropertyTypeValue")] PropertyType propertyType)
+        public async Task<IActionResult> Create(PropertyType propertyType)
         {
             if (ModelState.IsValid)
             {
-                propertyType.Id = Guid.NewGuid();
-                _context.Add(propertyType);
-                await _context.SaveChangesAsync();
+                _uow.PropertyTypes.Add(propertyType);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(propertyType);
@@ -74,7 +75,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyType = await _context.PropertyTypes.FindAsync(id);
+            var propertyType = await _uow.PropertyTypes.FirstOrDefaultAsync(id.Value);
             if (propertyType == null)
             {
                 return NotFound();
@@ -87,7 +88,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,PropertyTypeValue")] PropertyType propertyType)
+        public async Task<IActionResult> Edit(Guid id, PropertyType propertyType)
         {
             if (id != propertyType.Id)
             {
@@ -98,12 +99,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(propertyType);
-                    await _context.SaveChangesAsync();
+                    _uow.PropertyTypes.Update(propertyType);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PropertyTypeExists(propertyType.Id))
+                    if (!await PropertyTypeExists(propertyType.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +126,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyType = await _context.PropertyTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var propertyType = await _uow.PropertyTypes.FirstOrDefaultAsync(id.Value);
             if (propertyType == null)
             {
                 return NotFound();
@@ -140,15 +140,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var propertyType = await _context.PropertyTypes.FindAsync(id);
-            _context.PropertyTypes.Remove(propertyType);
-            await _context.SaveChangesAsync();
+            await _uow.PropertyTypes.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PropertyTypeExists(Guid id)
+        private async Task<bool> PropertyTypeExists(Guid id)
         {
-            return _context.PropertyTypes.Any(e => e.Id == id);
+            return await _uow.PropertyTypes.ExistAsync(id);
         }
     }
 }

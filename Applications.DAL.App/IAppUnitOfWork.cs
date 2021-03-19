@@ -23,6 +23,8 @@ namespace Applications.DAL.App
         IPropertyRepository Properties { get; }
         IPropertyReviewRepository PropertyReviews { get; }
         IBaseRepository<PropertyType> PropertyTypes { get; }
+        IBaseRepository<Gender> Genders { get; }
+        IBaseRepository<ErUserPicture> ErUserPictures { get; }
 
         
     }

@@ -25,6 +25,8 @@ namespace DAL.App.EF
             Properties = new PropertyRepository(uowDbContext);
             PropertyReviews = new PropertyReviewRepository(uowDbContext);
             PropertyTypes = new BaseRepository<PropertyType, AppDbContext>(uowDbContext);
+            Genders = new BaseRepository<Gender, AppDbContext>(uowDbContext);
+            ErUserPictures = new BaseRepository<ErUserPicture, AppDbContext>(uowDbContext);
         }
 
         public IDisputeRepository Disputes { get; }
@@ -39,5 +41,7 @@ namespace DAL.App.EF
         public IPropertyReviewRepository PropertyReviews { get; }
         
         public IBaseRepository<PropertyType> PropertyTypes { get; }
+        public IBaseRepository<Gender> Genders { get; }
+        public IBaseRepository<ErUserPicture> ErUserPictures { get; }
     }
 }

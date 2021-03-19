@@ -48,7 +48,7 @@ namespace WebApp.Controllers
         // GET: ErUserReviews/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUserReviews.GetAllAsync(), "Id", "FirstName");
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUserReviews.GetAllAsync(), "Id", "FirstName", erUserReview.ErUserId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", erUserReview.Id);
             return View(erUserReview);
         }
 
@@ -82,7 +82,7 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUserReviews.GetAllAsync(), "Id", "FirstName", erUserReview.ErUserId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", erUserReview.Id);
             return View(erUserReview);
         }
 
@@ -118,7 +118,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUserReviews.GetAllAsync(), "Id", "FirstName", erUserReview.ErUserId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", erUserReview.Id);
             return View(erUserReview);
         }
 

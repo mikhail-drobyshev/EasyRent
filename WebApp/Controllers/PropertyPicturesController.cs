@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,18 @@ namespace WebApp.Controllers
 {
     public class PropertyPicturesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PropertyPicturesController(AppDbContext context)
+        public PropertyPicturesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: PropertyPictures
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.PropertyPictures.Include(p => p.Property);
-            return View(await appDbContext.ToListAsync());
+            var res = await _uow.PropertyPictures.GetAllAsync();
+            return View(res);
         }
 
         // GET: PropertyPictures/Details/5
@@ -34,9 +35,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyPicture = await _context.PropertyPictures
-                .Include(p => p.Property)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var propertyPicture = await _uow.PropertyPictures.FirstOrDefaultAsync(id.Value);
             if (propertyPicture == null)
             {
                 return NotFound();
@@ -46,9 +45,9 @@ namespace WebApp.Controllers
         }
 
         // GET: PropertyPictures/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title");
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title");
             return View();
         }
 
@@ -57,16 +56,15 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PictureUrl,Title,PropertyId,Id")] PropertyPicture propertyPicture)
+        public async Task<IActionResult> Create(PropertyPicture propertyPicture)
         {
             if (ModelState.IsValid)
             {
-                propertyPicture.Id = Guid.NewGuid();
-                _context.Add(propertyPicture);
-                await _context.SaveChangesAsync();
+                _uow.PropertyPictures.Add(propertyPicture);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyPicture.PropertyId);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyPicture.PropertyId);
             return View(propertyPicture);
         }
 
@@ -78,12 +76,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyPicture = await _context.PropertyPictures.FindAsync(id);
+            var propertyPicture = await _uow.PropertyPictures.FirstOrDefaultAsync(id.Value);
             if (propertyPicture == null)
             {
                 return NotFound();
             }
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyPicture.PropertyId);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyPicture.PropertyId);
             return View(propertyPicture);
         }
 
@@ -92,7 +90,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("PictureUrl,Title,PropertyId,Id")] PropertyPicture propertyPicture)
+        public async Task<IActionResult> Edit(Guid id, PropertyPicture propertyPicture)
         {
             if (id != propertyPicture.Id)
             {
@@ -103,12 +101,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(propertyPicture);
-                    await _context.SaveChangesAsync();
+                    _uow.PropertyPictures.Update(propertyPicture);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PropertyPictureExists(propertyPicture.Id))
+                    if (!await PropertyPictureExists(propertyPicture.Id))
                     {
                         return NotFound();
                     }
@@ -119,7 +117,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyPicture.PropertyId);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyPicture.PropertyId);
             return View(propertyPicture);
         }
 
@@ -131,9 +129,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyPicture = await _context.PropertyPictures
-                .Include(p => p.Property)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var propertyPicture = await _uow.PropertyPictures.FirstOrDefaultAsync(id.Value);
             if (propertyPicture == null)
             {
                 return NotFound();
@@ -147,15 +143,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var propertyPicture = await _context.PropertyPictures.FindAsync(id);
-            _context.PropertyPictures.Remove(propertyPicture);
-            await _context.SaveChangesAsync();
+            
+            await _uow.PropertyPictures.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PropertyPictureExists(Guid id)
+        private async Task<bool> PropertyPictureExists(Guid id)
         {
-            return _context.PropertyPictures.Any(e => e.Id == id);
+            return await _uow.PropertyPictures.ExistAsync(id);
         }
     }
 }

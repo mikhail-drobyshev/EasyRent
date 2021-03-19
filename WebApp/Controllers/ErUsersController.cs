@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Applications.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,20 +15,18 @@ namespace WebApp.Controllers
 {
     public class ErUsersController : Controller
     {
-        private readonly AppDbContext _context;
-        private readonly IErUserRepository _repository;
+        private readonly IAppUnitOfWork _uow;
 
-        public ErUsersController(AppDbContext context)
+        public ErUsersController(IAppUnitOfWork uow)
         {
-            _context = context;
-            _repository = new ErUserRepository(_context);
-            
+            _uow = uow;
+
         }
 
         // GET: ErUsers
         public async Task<IActionResult> Index()
         {
-            var res = await _repository.GetAllAsync();
+            var res = await _uow.ErUsers.GetAllAsync();
             return View(res);
         }
 
@@ -39,10 +38,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUser = await _context.ErUsers
-                .Include(e => e.ErUserPicture)
-                .Include(e => e.Gender)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value);
             if (erUser == null)
             {
                 return NotFound();
@@ -52,10 +48,10 @@ namespace WebApp.Controllers
         }
 
         // GET: ErUsers/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["ErUserPictureId"] = new SelectList(_context.ErUserPictures, "Id", "PictureUrl");
-            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "GenderValue");
+            ViewData["ErUserPictureId"] = new SelectList(await _uow.ErUserPictures.GetAllAsync(), "Id", "PictureUrl");
+            ViewData["GenderId"] = new SelectList(await _uow.Genders.GetAllAsync(), "Id", "GenderValue");
             return View();
         }
 
@@ -64,17 +60,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,ErUserPictureId,ErUserTypeId,GenderId")] ErUser erUser)
+        public async Task<IActionResult> Create(ErUser erUser)
         {
             if (ModelState.IsValid)
             {
-                erUser.Id = Guid.NewGuid();
-                _context.Add(erUser);
-                await _context.SaveChangesAsync();
+                _uow.ErUsers.Add(erUser);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserPictureId"] = new SelectList(_context.ErUserPictures, "Id", "PictureUrl", erUser.ErUserPictureId);
-            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "GenderValue", erUser.GenderId);
+            ViewData["ErUserPictureId"] = new SelectList(await _uow.ErUserPictures.GetAllAsync(), "Id", "PictureUrl", erUser.Id);
+            ViewData["GenderId"] = new SelectList(await _uow.Genders.GetAllAsync(), "Id", "GenderValue", erUser.Id);
             return View(erUser);
         }
 
@@ -86,13 +81,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUser = await _context.ErUsers.FindAsync(id);
+            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value);
             if (erUser == null)
             {
                 return NotFound();
             }
-            ViewData["ErUserPictureId"] = new SelectList(_context.ErUserPictures, "Id", "PictureUrl", erUser.ErUserPictureId);
-            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "GenderValue", erUser.GenderId);
+            ViewData["ErUserPictureId"] = new SelectList(await _uow.ErUserPictures.GetAllAsync(), "Id", "PictureUrl", erUser.Id);
+            ViewData["GenderId"] = new SelectList(await _uow.Genders.GetAllAsync(), "Id", "GenderValue", erUser.Id);
             return View(erUser);
         }
 
@@ -101,7 +96,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FirstName,LastName,ErUserPictureId,ErUserTypeId,GenderId")] ErUser erUser)
+        public async Task<IActionResult> Edit(Guid id, ErUser erUser)
         {
             if (id != erUser.Id)
             {
@@ -112,12 +107,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(erUser);
-                    await _context.SaveChangesAsync();
+                    _uow.ErUsers.Update(erUser);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ErUserExists(erUser.Id))
+                    if (!await ErUserExists(erUser.Id))
                     {
                         return NotFound();
                     }
@@ -128,8 +123,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserPictureId"] = new SelectList(_context.ErUserPictures, "Id", "PictureUrl", erUser.ErUserPictureId);
-            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "GenderValue", erUser.GenderId);
+            ViewData["ErUserPictureId"] = new SelectList(await _uow.ErUserPictures.GetAllAsync(), "Id", "PictureUrl", erUser.Id);
+            ViewData["GenderId"] = new SelectList(await _uow.Genders.GetAllAsync(), "Id", "GenderValue", erUser.Id);
             return View(erUser);
         }
 
@@ -141,10 +136,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUser = await _context.ErUsers
-                .Include(e => e.ErUserPicture)
-                .Include(e => e.Gender)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value);
             if (erUser == null)
             {
                 return NotFound();
@@ -158,15 +150,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var erUser = await _context.ErUsers.FindAsync(id);
-            _context.ErUsers.Remove(erUser);
-            await _context.SaveChangesAsync();
+            await _uow.ErUsers.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ErUserExists(Guid id)
+        private async Task<bool> ErUserExists(Guid id)
         {
-            return _context.ErUsers.Any(e => e.Id == id);
+            return await _uow.ErUsers.ExistAsync(id);
         }
     }
 }

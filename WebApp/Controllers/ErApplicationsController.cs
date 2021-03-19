@@ -49,9 +49,9 @@ namespace WebApp.Controllers
         // GET: ErApplications/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "ErApplicationStatusValue");
-            ViewData["ErUserId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "FirstName");
-            ViewData["PropertyId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Title");
+            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplicationsStatuses.GetAllAsync(), "Id", "ErApplicationStatusValue");
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName");
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title");
             return View();
         }
 
@@ -68,9 +68,9 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "ErApplicationStatusValue", erApplication.ErApplicationStatusId);
-            ViewData["ErUserId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "FirstName", erApplication.ErUserId);
-            ViewData["PropertyId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Title", erApplication.PropertyId);
+            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplicationsStatuses.GetAllAsync(), "Id", "ErApplicationStatusValue", erApplication.Id);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", erApplication.Id);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", erApplication.Id);
             return View(erApplication);
         }
 
@@ -87,9 +87,9 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "ErApplicationStatusValue", erApplication.ErApplicationStatusId);
-            ViewData["ErUserId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "FirstName", erApplication.ErUserId);
-            ViewData["PropertyId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Title", erApplication.PropertyId);
+            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplicationsStatuses.GetAllAsync(), "Id", "ErApplicationStatusValue", erApplication.Id);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", erApplication.Id);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", erApplication.Id);
             return View(erApplication);
         }
 
@@ -98,7 +98,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,RentFrom,Comment,ErUserId,PropertyId,ErApplicationStatusId,CreatedOn,UpdatedOn")] ErApplication erApplication)
+        public async Task<IActionResult> Edit(Guid id, ErApplication erApplication)
         {
             if (id != erApplication.Id)
             {
@@ -125,9 +125,9 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "ErApplicationStatusValue", erApplication.ErApplicationStatusId);
-            ViewData["ErUserId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "FirstName", erApplication.ErUserId);
-            ViewData["PropertyId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Title", erApplication.PropertyId);
+            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplicationsStatuses.GetAllAsync(), "Id", "ErApplicationStatusValue", erApplication.Id);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", erApplication.Id);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", erApplication.Id);
             return View(erApplication);
         }
 

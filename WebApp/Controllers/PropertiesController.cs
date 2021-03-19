@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,18 @@ namespace WebApp.Controllers
 {
     public class PropertiesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PropertiesController(AppDbContext context)
+        public PropertiesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Properties
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Properties.Include(d => d.ErUser).Include(d => d.PropertyType);
-            return View(await appDbContext.ToListAsync());
+            var res = await _uow.Properties.GetAllAsync();
+            return View(res);
         }
 
         // GET: Properties/Details/5
@@ -34,10 +35,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dproperty = await _context.Properties
-                .Include(d => d.ErUser)
-                .Include(d => d.PropertyType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var dproperty = await _uow.Properties.FirstOrDefaultAsync(id.Value);
             if (dproperty == null)
             {
                 return NotFound();
@@ -47,10 +45,10 @@ namespace WebApp.Controllers
         }
 
         // GET: Properties/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName");
-            ViewData["PropertyTypeId"] = new SelectList(_context.PropertyTypes, "Id", "PropertyTypeValue");
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName");
+            ViewData["PropertyTypeId"] = new SelectList(await _uow.PropertyTypes.GetAllAsync(), "Id", "PropertyTypeValue");
             return View();
         }
 
@@ -59,17 +57,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Price,Description,BedroomCount,TenantsCount,ErUserId,PropertyTypeId,Id")] Property dproperty)
+        public async Task<IActionResult> Create(Property dproperty)
         {
             if (ModelState.IsValid)
             {
-                dproperty.Id = Guid.NewGuid();
-                _context.Add(dproperty);
-                await _context.SaveChangesAsync();
+                _uow.Properties.Add(dproperty);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", dproperty.ErUserId);
-            ViewData["PropertyTypeId"] = new SelectList(_context.PropertyTypes, "Id", "PropertyTypeValue", dproperty.PropertyTypeId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", dproperty.Id);
+            ViewData["PropertyTypeId"] = new SelectList(await _uow.PropertyTypes.GetAllAsync(), "Id", "PropertyTypeValue", dproperty.Id);
             return View(dproperty);
         }
 
@@ -81,13 +78,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dproperty = await _context.Properties.FindAsync(id);
+            var dproperty = await _uow.Properties.FirstOrDefaultAsync(id.Value);
             if (dproperty == null)
             {
                 return NotFound();
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", dproperty.ErUserId);
-            ViewData["PropertyTypeId"] = new SelectList(_context.PropertyTypes, "Id", "PropertyTypeValue", dproperty.PropertyTypeId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", dproperty.Id);
+            ViewData["PropertyTypeId"] = new SelectList(await _uow.PropertyTypes.GetAllAsync(), "Id", "PropertyTypeValue", dproperty.Id);
             return View(dproperty);
         }
 
@@ -96,7 +93,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Title,Price,Description,BedroomCount,TenantsCount,ErUserId,PropertyTypeId,Id")] Property dproperty)
+        public async Task<IActionResult> Edit(Guid id, Property dproperty)
         {
             if (id != dproperty.Id)
             {
@@ -107,12 +104,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(dproperty);
-                    await _context.SaveChangesAsync();
+                    _uow.Properties.Update(dproperty);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PropertyExists(dproperty.Id))
+                    if (!await PropertyExists(dproperty.Id))
                     {
                         return NotFound();
                     }
@@ -123,8 +120,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", dproperty.ErUserId);
-            ViewData["PropertyTypeId"] = new SelectList(_context.PropertyTypes, "Id", "PropertyTypeValue", dproperty.PropertyTypeId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", dproperty.Id);
+            ViewData["PropertyTypeId"] = new SelectList(await _uow.PropertyTypes.GetAllAsync(), "Id", "PropertyTypeValue", dproperty.Id);
             return View(dproperty);
         }
 
@@ -136,10 +133,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dproperty = await _context.Properties
-                .Include(d => d.ErUser)
-                .Include(d => d.PropertyType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var dproperty =  await _uow.Properties.FirstOrDefaultAsync(id.Value);
             if (dproperty == null)
             {
                 return NotFound();
@@ -153,15 +147,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var dproperty = await _context.Properties.FindAsync(id);
-            _context.Properties.Remove(dproperty);
-            await _context.SaveChangesAsync();
+            await _uow.Properties.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PropertyExists(Guid id)
+        private async Task<bool> PropertyExists(Guid id)
         {
-            return _context.Properties.Any(e => e.Id == id);
+            return await _uow.Properties.ExistAsync(id);
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,18 @@ namespace WebApp.Controllers
 {
     public class PropertyLocationsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PropertyLocationsController(AppDbContext context)
+        public PropertyLocationsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: PropertyLocations
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.PropertyLocations.Include(p => p.Property);
-            return View(await appDbContext.ToListAsync());
+            var res = await _uow.PropertyLocations.GetAllAsync();
+            return View(res);
         }
 
         // GET: PropertyLocations/Details/5
@@ -34,9 +35,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyLocation = await _context.PropertyLocations
-                .Include(p => p.Property)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var propertyLocation = await _uow.PropertyLocations.FirstOrDefaultAsync(id.Value);
             if (propertyLocation == null)
             {
                 return NotFound();
@@ -46,9 +45,9 @@ namespace WebApp.Controllers
         }
 
         // GET: PropertyLocations/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title");
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title");
             return View();
         }
 
@@ -57,16 +56,15 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("City,Street,Building,PropertyId,Id")] PropertyLocation propertyLocation)
+        public async Task<IActionResult> Create(PropertyLocation propertyLocation)
         {
             if (ModelState.IsValid)
             {
-                propertyLocation.Id = Guid.NewGuid();
-                _context.Add(propertyLocation);
-                await _context.SaveChangesAsync();
+                _uow.PropertyLocations.Add(propertyLocation);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyLocation.PropertyId);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyLocation.Id);
             return View(propertyLocation);
         }
 
@@ -78,12 +76,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyLocation = await _context.PropertyLocations.FindAsync(id);
+            var propertyLocation = await _uow.PropertyLocations.FirstOrDefaultAsync(id.Value);
             if (propertyLocation == null)
             {
                 return NotFound();
             }
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyLocation.PropertyId);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyLocation.Id);
             return View(propertyLocation);
         }
 
@@ -92,7 +90,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("City,Street,Building,PropertyId,Id")] PropertyLocation propertyLocation)
+        public async Task<IActionResult> Edit(Guid id, PropertyLocation propertyLocation)
         {
             if (id != propertyLocation.Id)
             {
@@ -103,12 +101,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(propertyLocation);
-                    await _context.SaveChangesAsync();
+                    _uow.PropertyLocations.Update(propertyLocation);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PropertyLocationExists(propertyLocation.Id))
+                    if (!await PropertyLocationExists(propertyLocation.Id))
                     {
                         return NotFound();
                     }
@@ -119,7 +117,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyLocation.PropertyId);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyLocation.Id);
             return View(propertyLocation);
         }
 
@@ -131,9 +129,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyLocation = await _context.PropertyLocations
-                .Include(p => p.Property)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var propertyLocation = await _uow.PropertyLocations.FirstOrDefaultAsync(id.Value);
             if (propertyLocation == null)
             {
                 return NotFound();
@@ -147,15 +143,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var propertyLocation = await _context.PropertyLocations.FindAsync(id);
-            _context.PropertyLocations.Remove(propertyLocation);
-            await _context.SaveChangesAsync();
+            await _uow.PropertyLocations.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PropertyLocationExists(Guid id)
+        private async Task<bool> PropertyLocationExists(Guid id)
         {
-            return _context.PropertyLocations.Any(e => e.Id == id);
+            return await _uow.PropertyLocations.ExistAsync(id);
         }
     }
 }

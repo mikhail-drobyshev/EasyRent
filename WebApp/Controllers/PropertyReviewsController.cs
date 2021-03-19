@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,18 @@ namespace WebApp.Controllers
 {
     public class PropertyReviewsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PropertyReviewsController(AppDbContext context)
+        public PropertyReviewsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: PropertyReviews
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.PropertyReviews.Include(p => p.ErUser).Include(p => p.Property);
-            return View(await appDbContext.ToListAsync());
+            var res = await _uow.PropertyReviews.GetAllAsync();
+            return View(res);
         }
 
         // GET: PropertyReviews/Details/5
@@ -34,10 +35,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyReview = await _context.PropertyReviews
-                .Include(p => p.ErUser)
-                .Include(p => p.Property)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var propertyReview = await _uow.PropertyReviews.FirstOrDefaultAsync(id.Value);
             if (propertyReview == null)
             {
                 return NotFound();
@@ -47,10 +45,10 @@ namespace WebApp.Controllers
         }
 
         // GET: PropertyReviews/Create
-        public IActionResult Create()
+        public async Task <IActionResult> Create()
         {
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName");
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title");
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName");
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title");
             return View();
         }
 
@@ -59,17 +57,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Rating,Comment,PropertyId,ErUserId")] PropertyReview propertyReview)
+        public async Task<IActionResult> Create(PropertyReview propertyReview)
         {
             if (ModelState.IsValid)
             {
-                propertyReview.Id = Guid.NewGuid();
-                _context.Add(propertyReview);
-                await _context.SaveChangesAsync();
+                _uow.PropertyReviews.Add(propertyReview);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", propertyReview.ErUserId);
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyReview.PropertyId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", propertyReview.ErUserId);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyReview.PropertyId);
             return View(propertyReview);
         }
 
@@ -81,13 +78,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyReview = await _context.PropertyReviews.FindAsync(id);
+            var propertyReview = await _uow.PropertyReviews.FirstOrDefaultAsync(id.Value);
             if (propertyReview == null)
             {
                 return NotFound();
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", propertyReview.ErUserId);
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyReview.PropertyId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", propertyReview.ErUserId);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyReview.PropertyId);
             return View(propertyReview);
         }
 
@@ -96,7 +93,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Rating,Comment,PropertyId,ErUserId")] PropertyReview propertyReview)
+        public async Task<IActionResult> Edit(Guid id, PropertyReview propertyReview)
         {
             if (id != propertyReview.Id)
             {
@@ -107,12 +104,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(propertyReview);
-                    await _context.SaveChangesAsync();
+                    _uow.PropertyReviews.Update(propertyReview);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PropertyReviewExists(propertyReview.Id))
+                    if (!await PropertyReviewExists(propertyReview.Id))
                     {
                         return NotFound();
                     }
@@ -123,8 +120,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(_context.ErUsers, "Id", "FirstName", propertyReview.ErUserId);
-            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Title", propertyReview.PropertyId);
+            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", propertyReview.ErUserId);
+            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyReview.PropertyId);
             return View(propertyReview);
         }
 
@@ -136,10 +133,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyReview = await _context.PropertyReviews
-                .Include(p => p.ErUser)
-                .Include(p => p.Property)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var propertyReview = await _uow.PropertyReviews.FirstOrDefaultAsync(id.Value);
             if (propertyReview == null)
             {
                 return NotFound();
@@ -153,15 +147,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var propertyReview = await _context.PropertyReviews.FindAsync(id);
-            _context.PropertyReviews.Remove(propertyReview);
-            await _context.SaveChangesAsync();
+            await _uow.PropertyReviews.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PropertyReviewExists(Guid id)
+        private async Task<bool> PropertyReviewExists(Guid id)
         {
-            return _context.PropertyReviews.Any(e => e.Id == id);
+            return await _uow.PropertyReviews.ExistAsync(id);
         }
     }
 }
