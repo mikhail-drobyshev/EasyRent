@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using Extensions.Base;
 
 namespace WebApp.Controllers
 {
@@ -93,36 +94,21 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Property dproperty)
+        public async Task<IActionResult> Edit(Guid id, Property property)
         {
-            if (id != dproperty.Id)
+            if (id != property.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.Properties.Update(dproperty);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await PropertyExists(dproperty.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", dproperty.Id);
-            ViewData["PropertyTypeId"] = new SelectList(await _uow.PropertyTypes.GetAllAsync(), "Id", "PropertyTypeValue", dproperty.Id);
-            return View(dproperty);
+            if (!ModelState.IsValid || !await _uow.Properties.ExistsAsync(property.Id, User.GetUserId()!.Value))
+                return View(property);
+
+            property.AppUserId = User.GetUserId()!.Value;
+            _uow.Properties.Update(property);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Properties/Delete/5
@@ -151,10 +137,6 @@ namespace WebApp.Controllers
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private async Task<bool> PropertyExists(Guid id)
-        {
-            return await _uow.Properties.ExistAsync(id);
-        }
+        
     }
 }

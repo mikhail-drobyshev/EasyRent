@@ -8,9 +8,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using Extensions.Base;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     public class ErUserReviewsController : Controller
     {
         private readonly IAppUnitOfWork _uow;
@@ -21,6 +24,7 @@ namespace WebApp.Controllers
         }
 
         // GET: ErUserReviews
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var res = await _uow.ErUserReviews.GetAllAsync();
@@ -44,7 +48,7 @@ namespace WebApp.Controllers
 
             return View(erUserReview);
         }
-
+        
         // GET: ErUserReviews/Create
         public async Task<IActionResult> Create()
         {
@@ -98,31 +102,18 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.ErUserReviews.Update(erUserReview);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await ErUserReviewExists(erUserReview.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", erUserReview.Id);
-            return View(erUserReview);
+            if (!ModelState.IsValid || !await _uow.ErUserReviews.ExistsAsync(erUserReview.Id, User.GetUserId()!.Value))
+                return View(erUserReview);
+
+            erUserReview.AppUserId = User.GetUserId()!.Value;
+            _uow.ErUserReviews.Update(erUserReview);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: ErUserReviews/Delete/5
+        [AllowAnonymous]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -148,9 +139,6 @@ namespace WebApp.Controllers
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private async Task<bool> ErUserReviewExists(Guid id)
-        {
-            return await _uow.ErUserReviews.ExistAsync(id);        }
+        
     }
 }

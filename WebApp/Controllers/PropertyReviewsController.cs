@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using Extensions.Base;
 
 namespace WebApp.Controllers
 {
@@ -100,29 +101,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.PropertyReviews.Update(propertyReview);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await PropertyReviewExists(propertyReview.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", propertyReview.ErUserId);
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyReview.PropertyId);
-            return View(propertyReview);
+            if (!ModelState.IsValid || !await _uow.PropertyReviews.ExistsAsync(propertyReview.Id, User.GetUserId()!.Value))
+                return View(propertyReview);
+
+            propertyReview.AppUserId = User.GetUserId()!.Value;
+            _uow.PropertyReviews.Update(propertyReview);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: PropertyReviews/Delete/5
@@ -151,10 +137,6 @@ namespace WebApp.Controllers
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private async Task<bool> PropertyReviewExists(Guid id)
-        {
-            return await _uow.PropertyReviews.ExistAsync(id);
-        }
+        
     }
 }

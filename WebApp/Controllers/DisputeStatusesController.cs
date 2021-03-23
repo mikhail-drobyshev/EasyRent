@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using Extensions.Base;
 
 namespace WebApp.Controllers
 {
@@ -24,7 +25,6 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var res = await _uow.DisputeStatuses.GetAllAsync();
-            await _uow.SaveChangesAsync();
             return View(res);
         }
 
@@ -95,27 +95,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.DisputeStatuses.Update(disputeStatus);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await DisputeStatusExists(disputeStatus.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(disputeStatus);
+            if (!ModelState.IsValid) return View(disputeStatus);
+            
+            _uow.DisputeStatuses.Update(disputeStatus);
+            await _uow.SaveChangesAsync();
+            
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: DisputeStatuses/Delete/5
@@ -144,10 +130,6 @@ namespace WebApp.Controllers
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private async Task<bool> DisputeStatusExists(Guid id)
-        {
-            return await _uow.DisputeStatuses.ExistAsync(id);
-        }
+        
     }
 }

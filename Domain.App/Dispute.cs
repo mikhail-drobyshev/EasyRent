@@ -1,9 +1,11 @@
 using System;
+using Applications.Domain.Base;
+using Domain.App.Identity;
 using Domain.Base;
 
 namespace Domain.App
 {
-    public class Dispute : DomainEntityId
+    public class Dispute : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
     {
 
         public string Title { get; set; } = default!;
@@ -15,5 +17,7 @@ namespace Domain.App
         
         public Guid ErApplicationId { get; set; }
         public ErApplication? ErApplication { get; set; }
+        public Guid AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
     }
 }

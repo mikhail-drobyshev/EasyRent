@@ -7,6 +7,7 @@ using Applications.DAL.App.Repositories;
 using DAL.App.EF;
 using DAL.App.EF.AppDataInit;
 using DAL.App.EF.Repositories;
+using Domain.App.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -56,7 +57,7 @@ namespace WebApp
             services.AddDatabaseDeveloperPageExceptionFilter();
             
             
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<AppDbContext>();
             services.AddControllersWithViews();
         }
@@ -80,9 +81,10 @@ namespace WebApp
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            
             app.UseAuthentication();
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {

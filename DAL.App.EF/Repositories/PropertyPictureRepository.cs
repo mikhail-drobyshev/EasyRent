@@ -15,7 +15,7 @@ namespace DAL.App.EF.Repositories
         {
             
         }
-        public override async Task<IEnumerable<PropertyPicture>> GetAllAsync(bool noTracking = true)
+        public override async Task<IEnumerable<PropertyPicture>> GetAllAsync(Guid userId = default, bool noTracking = true)
         {
             var query = RepoDbSet.AsQueryable();
             if (noTracking)
@@ -33,7 +33,7 @@ namespace DAL.App.EF.Repositories
             // }
             return res;
         }
-        public override async Task<PropertyPicture?> FirstOrDefaultAsync(Guid id, bool noTracking = true)
+        public override async Task<PropertyPicture?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
             var query = RepoDbSet.AsQueryable();
 

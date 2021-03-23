@@ -14,34 +14,35 @@ namespace DAL.App.EF
     {
         public AppUnitOfWork(AppDbContext uowDbContext) : base(uowDbContext)
         {
-            Disputes = new DisputeRepository(uowDbContext);
-            DisputeStatuses = new BaseRepository<DisputeStatus, AppDbContext>(uowDbContext);
-            ErApplications = new ErApplicationRepository(uowDbContext);
-            ErApplicationsStatuses = new BaseRepository<ErApplicationStatus, AppDbContext>(uowDbContext);
-            ErUsers = new ErUserRepository(uowDbContext);
-            ErUserReviews = new ErUserReviewRepository(uowDbContext);
-            PropertyLocations = new PropertyLocationRepository(uowDbContext);
-            PropertyPictures = new PropertyPictureRepository(uowDbContext);
-            Properties = new PropertyRepository(uowDbContext);
-            PropertyReviews = new PropertyReviewRepository(uowDbContext);
-            PropertyTypes = new BaseRepository<PropertyType, AppDbContext>(uowDbContext);
-            Genders = new BaseRepository<Gender, AppDbContext>(uowDbContext);
-            ErUserPictures = new BaseRepository<ErUserPicture, AppDbContext>(uowDbContext);
+                
         }
 
-        public IDisputeRepository Disputes { get; }
-        public IBaseRepository<DisputeStatus> DisputeStatuses { get; }
-        public IErApplicationRepository ErApplications { get; }
-        public IBaseRepository<ErApplicationStatus> ErApplicationsStatuses { get; }
-        public IErUserRepository ErUsers { get; }
-        public IErUserReviewRepository ErUserReviews { get; }
-        public IPropertyLocationRepository PropertyLocations { get; }
-        public IPropertyPictureRepository PropertyPictures { get; }
-        public IPropertyRepository Properties { get; }
-        public IPropertyReviewRepository PropertyReviews { get; }
-        
-        public IBaseRepository<PropertyType> PropertyTypes { get; }
-        public IBaseRepository<Gender> Genders { get; }
-        public IBaseRepository<ErUserPicture> ErUserPictures { get; }
+        public IDisputeRepository Disputes =>
+                GetRepository(() => new DisputeRepository(UowDbContext));
+        public IBaseRepository<DisputeStatus> DisputeStatuses =>
+                GetRepository(() => new BaseRepository<DisputeStatus, AppDbContext>(UowDbContext));
+        public IErApplicationRepository ErApplications =>
+                GetRepository(() => new ErApplicationRepository(UowDbContext));
+        public IBaseRepository<ErApplicationStatus> ErApplicationStatuses =>
+                GetRepository(() => new BaseRepository<ErApplicationStatus, AppDbContext>(UowDbContext));
+        public IErUserRepository ErUsers =>
+                GetRepository(() => new ErUserRepository(UowDbContext));
+        public IErUserReviewRepository ErUserReviews =>
+                GetRepository(() => new ErUserReviewRepository(UowDbContext));
+        public IPropertyLocationRepository PropertyLocations =>
+                GetRepository(() => new PropertyLocationRepository(UowDbContext));
+        public IPropertyPictureRepository PropertyPictures =>
+                GetRepository(() => new PropertyPictureRepository(UowDbContext));
+        public IPropertyRepository Properties =>
+                GetRepository(() => new PropertyRepository(UowDbContext));
+        public IPropertyReviewRepository PropertyReviews =>
+                GetRepository(() => new PropertyReviewRepository(UowDbContext));
+        public IBaseRepository<PropertyType> PropertyTypes =>
+                GetRepository(() => new BaseRepository<PropertyType, AppDbContext>(UowDbContext));
+        public IBaseRepository<Gender> Genders =>
+                GetRepository(() => new BaseRepository<Gender, AppDbContext>(UowDbContext));
+        public IBaseRepository<ErUserPicture> ErUserPictures =>
+                GetRepository(() => new BaseRepository<ErUserPicture, AppDbContext>(UowDbContext));
+
     }
 }

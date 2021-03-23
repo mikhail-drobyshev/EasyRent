@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Applications.DAL.App.Repositories;
 using Applications.DAL.Base.Repositories;
@@ -16,9 +17,9 @@ namespace DAL.App.EF.Repositories
         {
             
         }
-        public override async Task<IEnumerable<ErUser>> GetAllAsync(bool noTracking = true)
+        public override async Task<IEnumerable<ErUser>> GetAllAsync(Guid userId = default, bool noTracking = true)
         {
-            var query = RepoDbSet.AsQueryable();
+            var query = CreateQuery(userId, noTracking);
             if (noTracking)
             {
                 query = query.AsNoTracking();
@@ -27,6 +28,12 @@ namespace DAL.App.EF.Repositories
             query = query
                 .Include(e => e.ErUserPicture)
                 .Include(e => e.Gender);
+            if (userId != default)
+            {
+                query = query
+                    .Where(c => c.AppUserId == userId);
+            }
+            
             var res = await query.ToListAsync();
             // if (res.Count > 0)
             // {
@@ -35,7 +42,7 @@ namespace DAL.App.EF.Repositories
             // }
             return res;
         }
-        public override async Task<ErUser?> FirstOrDefaultAsync(Guid id, bool noTracking = true)
+        public override async Task<ErUser?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
             var query = RepoDbSet.AsQueryable();
 
@@ -48,7 +55,7 @@ namespace DAL.App.EF.Repositories
                 .Include(e => e.ErUserPicture)
                 .Include(e => e.Gender);
 
-            var res = await query.FirstOrDefaultAsync(m => m.Id == id);
+            var res = await query.FirstOrDefaultAsync(m => m.Id == id && m.AppUserId == userId);
 
             return res;
         }

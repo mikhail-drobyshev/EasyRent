@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using Extensions.Base;
 
 namespace WebApp.Controllers
 {
@@ -95,27 +96,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.PropertyTypes.Update(propertyType);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await PropertyTypeExists(propertyType.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(propertyType);
+            if (!ModelState.IsValid || !await _uow.PropertyTypes.ExistsAsync(propertyType.Id, User.GetUserId()!.Value))
+                return View(propertyType);
+
+            propertyType.AppUserId = User.GetUserId()!.Value;
+            _uow.PropertyTypes.Update(propertyType);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: PropertyTypes/Delete/5
@@ -144,10 +132,6 @@ namespace WebApp.Controllers
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private async Task<bool> PropertyTypeExists(Guid id)
-        {
-            return await _uow.PropertyTypes.ExistAsync(id);
-        }
+        
     }
 }

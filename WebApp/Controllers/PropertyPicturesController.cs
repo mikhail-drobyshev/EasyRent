@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using Extensions.Base;
 
 namespace WebApp.Controllers
 {
@@ -97,28 +98,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.PropertyPictures.Update(propertyPicture);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await PropertyPictureExists(propertyPicture.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyPicture.PropertyId);
-            return View(propertyPicture);
+            if (!ModelState.IsValid || !await _uow.PropertyPictures.ExistsAsync(propertyPicture.Id, User.GetUserId()!.Value))
+                return View(propertyPicture);
+
+            propertyPicture.AppUserId = User.GetUserId()!.Value;
+            _uow.PropertyPictures.Update(propertyPicture);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: PropertyPictures/Delete/5
@@ -148,10 +135,6 @@ namespace WebApp.Controllers
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private async Task<bool> PropertyPictureExists(Guid id)
-        {
-            return await _uow.PropertyPictures.ExistAsync(id);
-        }
+        
     }
 }

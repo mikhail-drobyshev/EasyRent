@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using Extensions.Base;
 
 namespace WebApp.Controllers
 {
@@ -23,7 +24,7 @@ namespace WebApp.Controllers
         // GET: ErApplicationStatuses
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.ErApplicationsStatuses.GetAllAsync();
+            var res = await _uow.ErApplicationStatuses.GetAllAsync();
             await _uow.SaveChangesAsync();
             return View(res);
         }
@@ -36,7 +37,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erApplicationStatus = await _uow.ErApplicationsStatuses.FirstOrDefaultAsync(id.Value);
+            var erApplicationStatus = await _uow.ErApplicationStatuses.FirstOrDefaultAsync(id.Value);
             if (erApplicationStatus == null)
             {
                 return NotFound();
@@ -60,7 +61,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _uow.ErApplicationsStatuses.Add(erApplicationStatus);
+                _uow.ErApplicationStatuses.Add(erApplicationStatus);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -75,7 +76,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erApplicationStatus = await _uow.ErApplicationsStatuses.FirstOrDefaultAsync(id.Value);
+            var erApplicationStatus = await _uow.ErApplicationStatuses.FirstOrDefaultAsync(id.Value);
             if (erApplicationStatus == null)
             {
                 return NotFound();
@@ -95,27 +96,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.ErApplicationsStatuses.Update(erApplicationStatus);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await ErApplicationStatusExists(erApplicationStatus.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(erApplicationStatus);
+            if (!ModelState.IsValid || !await _uow.ErApplicationStatuses.ExistsAsync(erApplicationStatus.Id, User.GetUserId()!.Value))
+                return View(erApplicationStatus);
+
+            erApplicationStatus.AppUserId = User.GetUserId()!.Value;
+            _uow.ErApplicationStatuses.Update(erApplicationStatus);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: ErApplicationStatuses/Delete/5
@@ -126,7 +114,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erApplicationStatus = await _uow.ErApplicationsStatuses.FirstOrDefaultAsync(id.Value);
+            var erApplicationStatus = await _uow.ErApplicationStatuses.FirstOrDefaultAsync(id.Value);
             if (erApplicationStatus == null)
             {
                 return NotFound();
@@ -140,14 +128,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.ErApplicationsStatuses.RemoveAsync(id);
+            await _uow.ErApplicationStatuses.RemoveAsync(id);
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private async Task<bool> ErApplicationStatusExists(Guid id)
-        {
-            return await _uow.ErApplicationsStatuses.ExistAsync(id);
-        }
+        
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using Extensions.Base;
 
 namespace WebApp.Controllers
 {
@@ -97,28 +98,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.PropertyLocations.Update(propertyLocation);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await PropertyLocationExists(propertyLocation.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyLocation.Id);
-            return View(propertyLocation);
+            if (!ModelState.IsValid || !await _uow.PropertyLocations.ExistsAsync(propertyLocation.Id, User.GetUserId()!.Value))
+                return View(propertyLocation);
+
+            propertyLocation.AppUserId = User.GetUserId()!.Value;
+            _uow.PropertyLocations.Update(propertyLocation);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: PropertyLocations/Delete/5
@@ -147,10 +134,6 @@ namespace WebApp.Controllers
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private async Task<bool> PropertyLocationExists(Guid id)
-        {
-            return await _uow.PropertyLocations.ExistAsync(id);
-        }
+        
     }
 }

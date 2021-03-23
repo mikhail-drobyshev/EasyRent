@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using DAL.App.EF.Repositories;
 using Domain.App;
+using Extensions.Base;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.ObjectPool;
 using WebApp.Helpers;
@@ -100,7 +101,7 @@ namespace WebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(false), "Id", "DisputeStatusValue",
+            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), "Id", "DisputeStatusValue",
                 dispute.DisputeStatusId);
             ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Id", dispute.ErApplicationId);
             return View(dispute);
@@ -138,32 +139,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.Disputes.Update(dispute);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await DisputeExists(dispute.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+            if (!ModelState.IsValid || !await _uow.Disputes.ExistsAsync(dispute.Id, User.GetUserId()!.Value))
+                return View(dispute);
 
-                return RedirectToAction(nameof(Index));
-            }
+            dispute.AppUserId = User.GetUserId()!.Value;
+            _uow.Disputes.Update(dispute);
+            await _uow.SaveChangesAsync();
 
-            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), "Id", "DisputeStatusValue",
-                dispute.DisputeStatusId);
-            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Id", dispute.ErApplicationId);
-            return View(dispute);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Disputes/Delete/5
@@ -192,11 +175,7 @@ namespace WebApp.Controllers
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private async Task<bool> DisputeExists(Guid id)
-        {
-            return await _uow.Disputes.ExistAsync(id);
-        }
+        
         
     }
 }

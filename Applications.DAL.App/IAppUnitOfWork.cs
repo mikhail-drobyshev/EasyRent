@@ -15,7 +15,7 @@ namespace Applications.DAL.App
         IBaseRepository<DisputeStatus> DisputeStatuses { get; }
         IErApplicationRepository ErApplications { get; }
 
-        IBaseRepository<ErApplicationStatus> ErApplicationsStatuses { get; }
+        IBaseRepository<ErApplicationStatus> ErApplicationStatuses { get; }
         IErUserRepository ErUsers { get; }
         IErUserReviewRepository ErUserReviews { get; }
         IPropertyLocationRepository PropertyLocations { get; }
