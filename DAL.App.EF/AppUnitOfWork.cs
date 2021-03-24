@@ -8,6 +8,7 @@ using DAL.Base.EF;
 using DAL.Base.EF.Repositories;
 using Domain.App;
 
+
 namespace DAL.App.EF
 {
     public class AppUnitOfWork : BaseUnitOfWork<AppDbContext>, IAppUnitOfWork
@@ -19,12 +20,12 @@ namespace DAL.App.EF
 
         public IDisputeRepository Disputes =>
                 GetRepository(() => new DisputeRepository(UowDbContext));
-        public IBaseRepository<DisputeStatus> DisputeStatuses =>
-                GetRepository(() => new BaseRepository<DisputeStatus, AppDbContext>(UowDbContext));
+        public IDisputeStatusRepository DisputeStatuses =>
+                GetRepository(() => new DisputeStatusRepository(UowDbContext));
+        public IErApplicationStatusRepository ErApplicationStatuses =>
+                GetRepository(() => new ErApplicationStatusRepository(UowDbContext));
         public IErApplicationRepository ErApplications =>
                 GetRepository(() => new ErApplicationRepository(UowDbContext));
-        public IBaseRepository<ErApplicationStatus> ErApplicationStatuses =>
-                GetRepository(() => new BaseRepository<ErApplicationStatus, AppDbContext>(UowDbContext));
         public IErUserRepository ErUsers =>
                 GetRepository(() => new ErUserRepository(UowDbContext));
         public IErUserReviewRepository ErUserReviews =>
@@ -37,10 +38,10 @@ namespace DAL.App.EF
                 GetRepository(() => new PropertyRepository(UowDbContext));
         public IPropertyReviewRepository PropertyReviews =>
                 GetRepository(() => new PropertyReviewRepository(UowDbContext));
-        public IBaseRepository<PropertyType> PropertyTypes =>
-                GetRepository(() => new BaseRepository<PropertyType, AppDbContext>(UowDbContext));
-        public IBaseRepository<Gender> Genders =>
-                GetRepository(() => new BaseRepository<Gender, AppDbContext>(UowDbContext));
+        public IPropertyTypeRepository PropertyTypes =>
+                GetRepository(() => new PropertyTypeRepository(UowDbContext));
+        public IGenderRepository Genders =>
+                GetRepository(() => new GenderRepository(UowDbContext));
         public IBaseRepository<ErUserPicture> ErUserPictures =>
                 GetRepository(() => new BaseRepository<ErUserPicture, AppDbContext>(UowDbContext));
 

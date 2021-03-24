@@ -22,7 +22,6 @@ namespace DAL.Base
             _repoCache.Add(typeof(TRepository), repoInstance);
             return repoInstance;
         }
-        
-
     }
+
 }

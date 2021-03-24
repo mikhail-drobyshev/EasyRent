@@ -1,0 +1,41 @@
+@model WebApp.ViewModels.Properties.PropertiesCreatEditViewModel
+<div class="form-group">
+    <label asp-for="Property.Title" class="control-label"></label>
+    <input asp-for="Property.Title" class="form-control"/>
+    <span asp-validation-for="Property.Title" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Property.Price" class="control-label"></label>
+    <input asp-for="Property.Price" class="form-control"/>
+    <span asp-validation-for="Property.Price" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Property.Description" class="control-label"></label>
+    <input asp-for="Property.Description" class="form-control"/>
+    <span asp-validation-for="Property.Description" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Property.BedroomCount" class="control-label"></label>
+    <input asp-for="Property.BedroomCount" class="form-control"/>
+    <span asp-validation-for="Property.BedroomCount" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Property.TenantsCount" class="control-label"></label>
+    <input asp-for="Property.TenantsCount" class="form-control"/>
+    <span asp-validation-for="Property.TenantsCount" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Property.ErUserId" class="control-label"></label>
+    <select asp-for="Property.ErUserId" class="form-control" asp-items="Model.ErUserSelectList">
+        <option>User</option>
+    </select>
+    <span asp-validation-for="Property.ErUserId" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Property.PropertyTypeId" class="control-label"></label>
+    <select asp-for="Property.PropertyTypeId" class="form-control" asp-items="Model.PropertyTypeSelectList">
+        <option>Property type</option>
+    </select>
+    <span asp-validation-for="Property.PropertyTypeId" class="text-danger"></span>
+
+</div>

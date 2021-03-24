@@ -12,18 +12,18 @@ namespace Applications.DAL.App
         // IDisputeStatusRepository DisputeStatuses { get; }
         // IErApplicationRepository ErApplications { get; }
         
-        IBaseRepository<DisputeStatus> DisputeStatuses { get; }
+        IDisputeStatusRepository DisputeStatuses { get; }
         IErApplicationRepository ErApplications { get; }
 
-        IBaseRepository<ErApplicationStatus> ErApplicationStatuses { get; }
+        IErApplicationStatusRepository ErApplicationStatuses { get; }
         IErUserRepository ErUsers { get; }
         IErUserReviewRepository ErUserReviews { get; }
         IPropertyLocationRepository PropertyLocations { get; }
         IPropertyPictureRepository PropertyPictures { get; }
         IPropertyRepository Properties { get; }
         IPropertyReviewRepository PropertyReviews { get; }
-        IBaseRepository<PropertyType> PropertyTypes { get; }
-        IBaseRepository<Gender> Genders { get; }
+        IPropertyTypeRepository PropertyTypes { get; }
+        IGenderRepository Genders { get; }
         IBaseRepository<ErUserPicture> ErUserPictures { get; }
 
         

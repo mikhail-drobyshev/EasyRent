@@ -38,4 +38,8 @@
       <_ContentIncludedByDefault Remove="Views\Properties\Index.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Areas\Admin\Views\Shared" />
+    </ItemGroup>
+
 </Project>

@@ -20,20 +20,12 @@ namespace DAL.App.EF.Repositories
         public override async Task<IEnumerable<ErUser>> GetAllAsync(Guid userId = default, bool noTracking = true)
         {
             var query = CreateQuery(userId, noTracking);
-            if (noTracking)
-            {
-                query = query.AsNoTracking();
-            }
 
             query = query
                 .Include(e => e.ErUserPicture)
-                .Include(e => e.Gender);
-            if (userId != default)
-            {
-                query = query
-                    .Where(c => c.AppUserId == userId);
-            }
-            
+                .Include(e => e.Gender)
+                .Where(c => c.AppUserId == userId);
+
             var res = await query.ToListAsync();
             // if (res.Count > 0)
             // {

@@ -57,7 +57,11 @@ namespace WebApp
             services.AddDatabaseDeveloperPageExceptionFilter();
             
             
-            services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            services
+                .AddIdentity<AppUser,AppRole>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddDefaultUI()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<AppDbContext>();
             services.AddControllersWithViews();
         }
@@ -65,6 +69,7 @@ namespace WebApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            SetupAppData(app, Configuration);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -89,6 +94,10 @@ namespace WebApp
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
+                    name: "areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
@@ -99,7 +108,7 @@ namespace WebApp
             using var serviceScope =
                 app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
             using var ctx = serviceScope.ServiceProvider.GetService<AppDbContext>();
-
+                
             if (ctx == null) return;
             
             if (configuration.GetValue<bool>("AppData:DropDatabase"))
@@ -114,7 +123,16 @@ namespace WebApp
 
             if (configuration.GetValue<bool>("AppData:SeedIdentity"))
             {
-                // TODO
+                using var userManager = serviceScope.ServiceProvider.GetService<UserManager<AppUser>>();
+                using var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<AppRole>>();
+                if (userManager != null || roleManager != null)
+                {
+                    DataInit.SeedIdentity(userManager!, roleManager!);
+                }
+                else
+                {
+                    Console.WriteLine("No manager");
+                }
             }
 
             //C# will dispose all the usings here

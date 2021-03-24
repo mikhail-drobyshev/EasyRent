@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
 using Extensions.Base;
+using WebApp.ViewModels.Properties;
 
 namespace WebApp.Controllers
 {
@@ -48,9 +49,10 @@ namespace WebApp.Controllers
         // GET: Properties/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName");
-            ViewData["PropertyTypeId"] = new SelectList(await _uow.PropertyTypes.GetAllAsync(), "Id", "PropertyTypeValue");
-            return View();
+            var viewModel = new PropertiesCreatEditViewModel();
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue));
+            return View(viewModel);
         }
 
         // POST: Properties/Create
@@ -58,17 +60,17 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Property dproperty)
+        public async Task<IActionResult> Create(PropertiesCreatEditViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                _uow.Properties.Add(dproperty);
+                _uow.Properties.Add(viewModel.Property);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", dproperty.Id);
-            ViewData["PropertyTypeId"] = new SelectList(await _uow.PropertyTypes.GetAllAsync(), "Id", "PropertyTypeValue", dproperty.Id);
-            return View(dproperty);
+            } 
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.Property.ErUserId);
+            viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue), viewModel.Property.Id);
+            return View(viewModel);
         }
 
         // GET: Properties/Edit/5
@@ -79,14 +81,16 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dproperty = await _uow.Properties.FirstOrDefaultAsync(id.Value);
-            if (dproperty == null)
+            var property = await _uow.Properties.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            if (property == null)
             {
                 return NotFound();
             }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", dproperty.Id);
-            ViewData["PropertyTypeId"] = new SelectList(await _uow.PropertyTypes.GetAllAsync(), "Id", "PropertyTypeValue", dproperty.Id);
-            return View(dproperty);
+            var viewModel = new PropertiesCreatEditViewModel();
+            viewModel.Property = property;
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue));
+            return View(viewModel);
         }
 
         // POST: Properties/Edit/5
@@ -94,21 +98,22 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Property property)
+        public async Task<IActionResult> Edit(Guid id, PropertiesCreatEditViewModel viewModel)
         {
-            if (id != property.Id)
+            if (id != viewModel.Property.Id)
             {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid || !await _uow.Properties.ExistsAsync(property.Id, User.GetUserId()!.Value))
-                return View(property);
-
-            property.AppUserId = User.GetUserId()!.Value;
-            _uow.Properties.Update(property);
-            await _uow.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                _uow.Properties.Update(viewModel.Property);
+                await _uow.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.Property.ErUserId);
+            viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue), viewModel.Property.Id);
+            return View(viewModel);
         }
 
         // GET: Properties/Delete/5
