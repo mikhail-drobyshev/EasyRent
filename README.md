@@ -17,3 +17,6 @@ dotnet aspnet-codegenerator controller -name ErUsersController -actions -m ErUse
 dotnet aspnet-codegenerator controller -name ErUsersController -m ErUser -actions -dc AppDbContext -outDir ApiControllers -api --useAsyncActions -f
 
 ##Technical documentation and user workflow is in documentation.pdf file
+
+## Scaffold the identity pages
+dotnet aspnet-codegenerator identity -dc DAL.App.EF.AppDbContext -f
