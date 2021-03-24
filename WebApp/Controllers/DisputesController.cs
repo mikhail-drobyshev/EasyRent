@@ -10,6 +10,7 @@ using DAL.App.EF.Repositories;
 using Domain.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.ObjectPool;
 using WebApp.Helpers;
 
@@ -43,7 +44,7 @@ namespace WebApp.Controllers
         // GET: Disputes
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.Disputes.GetAllAsync();
+            var res = await _uow.Disputes.GetAllAsync(User.GetUserId()!.Value);
             await _uow.SaveChangesAsync();
 
             return View(res);
@@ -69,7 +70,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id.Value);
+            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             
             if (dispute == null)
             {
@@ -82,8 +83,8 @@ namespace WebApp.Controllers
         // GET: Disputes/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), "Id", "DisputeStatusValue");
-            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Id");
+            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), nameof(DisputeStatus.Id), nameof(DisputeStatus.DisputeStatusValue));
+            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(User.GetUserId()!.Value), nameof(ErApplication.Id), nameof(ErApplication.Comment));
             return View();
         }
 
@@ -100,10 +101,10 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), nameof(DisputeStatus.Id), nameof(DisputeStatus.DisputeStatusValue));
+            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(User.GetUserId()!.Value), nameof(ErApplication.Id), nameof(ErApplication.Comment));
 
-            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), "Id", "DisputeStatusValue",
-                dispute.DisputeStatusId);
-            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Id", dispute.ErApplicationId);
+
             return View(dispute);
         }
 
@@ -115,15 +116,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id.Value);
+            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (dispute == null)
             {
                 return NotFound();
             }
 
-            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), "Id", "DisputeStatusValue",
-                dispute.DisputeStatusId);
-            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(), "Id", "Id", dispute.ErApplicationId);
+            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), nameof(DisputeStatus.Id), nameof(DisputeStatus.DisputeStatusValue));
+            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(User.GetUserId()!.Value), nameof(ErApplication.Id), nameof(ErApplication.Comment));
             return View(dispute);
         }
 
@@ -139,14 +139,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (!ModelState.IsValid || !await _uow.Disputes.ExistsAsync(dispute.Id, User.GetUserId()!.Value))
-                return View(dispute);
+            if (ModelState.IsValid)
+            {
+                _uow.Disputes.Update(dispute);
+                await _uow.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
 
-            dispute.AppUserId = User.GetUserId()!.Value;
-            _uow.Disputes.Update(dispute);
-            await _uow.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            return View(dispute);
         }
 
         // GET: Disputes/Delete/5
@@ -157,7 +157,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id.Value);
+            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (dispute == null)
             {
                 return NotFound();
@@ -171,7 +171,7 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Disputes.RemoveAsync(id);
+            await _uow.Disputes.RemoveAsync(id, User.GetUserId()!.Value);
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

@@ -19,11 +19,9 @@ namespace WebApp.Controllers
     public class ErUsersController : Controller
     {
         private readonly IAppUnitOfWork _uow;
-        private readonly AppDbContext _context;
 
-        public ErUsersController(IAppUnitOfWork uow, AppDbContext context)
+        public ErUsersController(IAppUnitOfWork uow)
         {
-            _context = context;
             _uow = uow;
 
         }
@@ -31,7 +29,7 @@ namespace WebApp.Controllers
         // GET: ErUsers
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.ErUsers.GetAllAsync();
+            var res = await _uow.ErUsers.GetAllAsync(User.GetUserId()!.Value);
             return View(res);
         }
 
@@ -43,7 +41,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value);
+            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (erUser == null)
             {
                 return NotFound();
@@ -55,7 +53,6 @@ namespace WebApp.Controllers
         // GET: ErUsers/Create
         public IActionResult Create()
         {
-            ViewData["AppUserId"] = new SelectList(_context.Users, "id", "Email");
             return View();
         }
 
@@ -66,7 +63,6 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ErUser erUser)
         {
-            ViewData["AppUserId"] = new SelectList(_context.Users, "id", "Email");
             if (ModelState.IsValid)
             {
                 erUser.AppUserId = User.GetUserId()!.Value;
@@ -85,13 +81,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value);
+            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (erUser == null)
             {
                 return NotFound();
-            }
-            ViewData["ErUserPictureId"] = new SelectList(await _uow.ErUserPictures.GetAllAsync(), "Id", "PictureUrl", erUser.Id);
-            ViewData["GenderId"] = new SelectList(await _uow.Genders.GetAllAsync(), "Id", "GenderValue", erUser.Id);
+            } 
             return View(erUser);
         }
 
@@ -125,7 +119,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value);
+            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (erUser == null)
             {
                 return NotFound();
@@ -139,7 +133,7 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.ErUsers.RemoveAsync(id);
+            await _uow.ErUsers.RemoveAsync(id, User.GetUserId()!.Value);
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
