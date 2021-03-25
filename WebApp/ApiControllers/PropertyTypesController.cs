@@ -15,7 +15,7 @@ namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes =  JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = "Admin", AuthenticationSchemes =  JwtBearerDefaults.AuthenticationScheme)]
 
     public class PropertyTypesController : ControllerBase
     {
@@ -28,6 +28,7 @@ namespace WebApp.ApiControllers
 
         // GET: api/PropertyTypes
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<PropertyType>>> GetPropertyTypes()
         {
             return Ok(await _uow.PropertyTypes.GetAllAsync());
@@ -35,6 +36,7 @@ namespace WebApp.ApiControllers
 
         // GET: api/PropertyTypes/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<PropertyType>> GetPropertyType(Guid id)
         {
             var propertyType = await _uow.PropertyTypes.FirstOrDefaultAsync(id);

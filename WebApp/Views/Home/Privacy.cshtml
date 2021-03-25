@@ -32,3 +32,5 @@
     }
     </tbody>
 </table>
+<h5>JWT</h5>
+@Html.Raw(Extensions.Base.IdentityExtensions.JwtGenerator(User.Claims, "asjdsfdsjnfjksa.dn fjksa-nfsk,dnfask", "easyrent.com","easyrent.com",DateTime.Now.AddDays(30)))

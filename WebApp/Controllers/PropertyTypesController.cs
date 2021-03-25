@@ -9,9 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
 using Extensions.Base;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class PropertyTypesController : Controller
     {
         private readonly IAppUnitOfWork _uow;
