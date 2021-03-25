@@ -2,37 +2,41 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize(AuthenticationSchemes =  JwtBearerDefaults.AuthenticationScheme)]
     public class ErUsersController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ErUsersController(AppDbContext context)
+        public ErUsersController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/ErUsers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ErUser>>> GetErUsers()
         {
-            return await _context.ErUsers.ToListAsync();
+            return Ok(await _uow.ErUsers.GetAllAsync());
         }
 
         // GET: api/ErUsers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ErUser>> GetErUser(Guid id)
         {
-            var erUser = await _context.ErUsers.FindAsync(id);
+            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id);
 
             if (erUser == null)
             {
@@ -52,24 +56,8 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            _context.Entry(erUser).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ErUserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            _uow.ErUsers.Update(erUser);
+            await _uow.SaveChangesAsync();
             return NoContent();
         }
 
@@ -78,8 +66,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<ErUser>> PostErUser(ErUser erUser)
         {
-            _context.ErUsers.Add(erUser);
-            await _context.SaveChangesAsync();
+            _uow.ErUsers.Add(erUser);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetErUser", new { id = erUser.Id }, erUser);
         }
@@ -88,21 +76,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteErUser(Guid id)
         {
-            var erUser = await _context.ErUsers.FindAsync(id);
+            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id);
             if (erUser == null)
             {
                 return NotFound();
             }
 
-            _context.ErUsers.Remove(erUser);
-            await _context.SaveChangesAsync();
+            _uow.ErUsers.Remove(erUser);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool ErUserExists(Guid id)
-        {
-            return _context.ErUsers.Any(e => e.Id == id);
         }
     }
 }

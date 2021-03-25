@@ -44,7 +44,7 @@ namespace DAL.Base.EF.Repositories
         {
             var query = RepoDbSet.AsQueryable();
 
-            if (userId != null && !userId.Equals(default) &&
+            if (userId != null && !userId.Equals(default) && !userId.Equals(default) &&
                 typeof(IDomainAppUserId<TKey>).IsAssignableFrom(typeof(TEntity)))
             {
                 // ReSharper disable once SuspiciousTypeConversion.Global

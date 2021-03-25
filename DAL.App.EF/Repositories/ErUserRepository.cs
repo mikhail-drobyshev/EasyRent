@@ -23,7 +23,8 @@ namespace DAL.App.EF.Repositories
 
             query = query
                 .Include(e => e.ErUserPicture)
-                .Include(e => e.Gender);
+                .Include(e => e.Gender)
+                .Include(e => e.Properties);
             if (userId != default)
             {
                 query = query
