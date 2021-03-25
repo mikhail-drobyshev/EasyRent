@@ -279,18 +279,11 @@ namespace DAL.App.EF.Migrations
                     BedroomCount = table.Column<int>(type: "int", nullable: false),
                     TenantsCount = table.Column<int>(type: "int", nullable: true),
                     ErUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PropertyTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    PropertyTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Properties", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Properties_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Properties_ErUsers_ErUserId",
                         column: x => x.ErUserId,
@@ -531,11 +524,6 @@ namespace DAL.App.EF.Migrations
                 name: "IX_ErUsers_GenderId",
                 table: "ErUsers",
                 column: "GenderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Properties_AppUserId",
-                table: "Properties",
-                column: "AppUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Properties_ErUserId",

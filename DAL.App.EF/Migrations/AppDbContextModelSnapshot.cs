@@ -319,9 +319,6 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AppUserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("BedroomCount")
                         .HasColumnType("int");
 
@@ -345,8 +342,6 @@ namespace DAL.App.EF.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
 
                     b.HasIndex("ErUserId");
 
@@ -645,12 +640,6 @@ namespace DAL.App.EF.Migrations
 
             modelBuilder.Entity("Domain.App.Property", b =>
                 {
-                    b.HasOne("Domain.App.Identity.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.App.ErUser", "ErUser")
                         .WithMany("Properties")
                         .HasForeignKey("ErUserId")
@@ -662,8 +651,6 @@ namespace DAL.App.EF.Migrations
                         .HasForeignKey("PropertyTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("AppUser");
 
                     b.Navigation("ErUser");
 

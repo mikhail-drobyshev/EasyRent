@@ -6,7 +6,7 @@ using Domain.Base;
 
 namespace Domain.App
 {
-    public class Property : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
+    public class Property : DomainEntityId
     {
         public string Title { get; set; } = default!;
         
@@ -29,8 +29,6 @@ namespace Domain.App
 
         public Guid PropertyTypeId { get; set; }
         public PropertyType? PropertyType { get; set; }
-
-        public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
+        
     }
 }
