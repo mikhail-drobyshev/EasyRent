@@ -5,7 +5,7 @@ using Domain.Base;
 
 namespace Domain.App
 {
-    public class ErApplication : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
+    public class ErApplication : DomainEntityId
     {
         public DateTime? RentFrom { get; set; }
         
@@ -19,7 +19,5 @@ namespace Domain.App
         
         public Guid ErApplicationStatusId { get; set; }
         public ErApplicationStatus? ErApplicationStatus { get; set; }
-        public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
     }
 }

@@ -6,13 +6,11 @@ using Domain.Base;
 
 namespace Domain.App
 {
-    public class ErUserPicture : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
+    public class ErUserPicture : DomainEntityId
     {
         [MaxLength(255)] 
         public string PictureUrl { get; set; } = default!;
 
         public ErUser? ErUser { get; set; }
-        public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
     }
 }

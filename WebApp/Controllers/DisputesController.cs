@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.ObjectPool;
 using WebApp.Helpers;
+using WebApp.ViewModels.Disputes;
 
 namespace WebApp.Controllers
 {
@@ -83,9 +84,10 @@ namespace WebApp.Controllers
         // GET: Disputes/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), nameof(DisputeStatus.Id), nameof(DisputeStatus.DisputeStatusValue));
-            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(User.GetUserId()!.Value), nameof(ErApplication.Id), nameof(ErApplication.Comment));
-            return View();
+            var viewModel = new DisputesCreatEditViewModel();
+            viewModel.DisputeStatusSelectList = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), nameof(DisputeStatus.Id), nameof(DisputeStatus.DisputeStatusValue), viewModel.Dispute.DisputeStatusId);
+            viewModel.ErApplicationSelectList  = new SelectList(await _uow.ErApplications.GetAllAsync(), nameof(ErApplication.Id), nameof(ErApplication.Comment), viewModel.Dispute.ErApplicationId);
+            return View(viewModel);
         }
 
         // POST: Disputes/Create
@@ -93,19 +95,17 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Dispute dispute)
+        public async Task<IActionResult> Create(DisputesCreatEditViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                _uow.Disputes.Add(dispute);
+                _uow.Disputes.Add(viewModel.Dispute);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), nameof(DisputeStatus.Id), nameof(DisputeStatus.DisputeStatusValue));
-            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(User.GetUserId()!.Value), nameof(ErApplication.Id), nameof(ErApplication.Comment));
-
-
-            return View(dispute);
+            viewModel.DisputeStatusSelectList = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), nameof(DisputeStatus.Id), nameof(DisputeStatus.DisputeStatusValue), viewModel.Dispute.DisputeStatusId);
+            viewModel.ErApplicationSelectList  = new SelectList(await _uow.ErApplications.GetAllAsync(), nameof(ErApplication.Id), nameof(ErApplication.Comment), viewModel.Dispute.ErApplicationId);
+            return View(viewModel);
         }
 
         // GET: Disputes/Edit/5
@@ -122,9 +122,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            ViewData["DisputeStatusId"] = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), nameof(DisputeStatus.Id), nameof(DisputeStatus.DisputeStatusValue));
-            ViewData["ErApplicationId"] = new SelectList(await _uow.ErApplications.GetAllAsync(User.GetUserId()!.Value), nameof(ErApplication.Id), nameof(ErApplication.Comment));
-            return View(dispute);
+            var viewModel = new DisputesCreatEditViewModel();
+            viewModel.Dispute = dispute;
+            viewModel.DisputeStatusSelectList = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), nameof(DisputeStatus.Id), nameof(DisputeStatus.DisputeStatusValue));
+            viewModel.ErApplicationSelectList  = new SelectList(await _uow.ErApplications.GetAllAsync(), nameof(ErApplication.Id), nameof(ErApplication.Comment));
+            return View(viewModel);
         }
 
         // POST: Disputes/Edit/5
@@ -132,21 +134,23 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Dispute dispute)
+        public async Task<IActionResult> Edit(Guid id, DisputesCreatEditViewModel viewModel)
         {
-            if (id != dispute.Id)
+            if (id != viewModel.Dispute.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                _uow.Disputes.Update(dispute);
+                _uow.Disputes.Update(viewModel.Dispute);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(dispute);
+            viewModel.DisputeStatusSelectList = new SelectList(await _uow.DisputeStatuses.GetAllAsync(), nameof(DisputeStatus.Id), nameof(DisputeStatus.DisputeStatusValue), viewModel.Dispute.DisputeStatusId);
+            viewModel.ErApplicationSelectList  = new SelectList(await _uow.ErApplications.GetAllAsync(), nameof(ErApplication.Id), nameof(ErApplication.Comment), viewModel.Dispute.ErApplicationId);
+            return View(viewModel);
         }
 
         // GET: Disputes/Delete/5

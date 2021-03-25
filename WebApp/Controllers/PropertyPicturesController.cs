@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
 using Extensions.Base;
+using WebApp.ViewModels.PropertyPictures;
 
 namespace WebApp.Controllers
 {
@@ -48,8 +49,9 @@ namespace WebApp.Controllers
         // GET: PropertyPictures/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title");
-            return View();
+            var viewModel = new PropertyPicturesCreatEditViewModel();
+            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title));
+            return View(viewModel);
         }
 
         // POST: PropertyPictures/Create
@@ -57,16 +59,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(PropertyPicture propertyPicture)
+        public async Task<IActionResult> Create(PropertyPicturesCreatEditViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                _uow.PropertyPictures.Add(propertyPicture);
+                _uow.PropertyPictures.Add(viewModel.PropertyPicture);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyPicture.PropertyId);
-            return View(propertyPicture);
+            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title), viewModel.PropertyPicture.PropertyId);
+            return View(viewModel);
         }
 
         // GET: PropertyPictures/Edit/5
@@ -82,8 +84,10 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyPicture.PropertyId);
-            return View(propertyPicture);
+            var viewModel = new PropertyPicturesCreatEditViewModel();
+            viewModel.PropertyPicture = propertyPicture;
+            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title));
+            return View(viewModel);
         }
 
         // POST: PropertyPictures/Edit/5
@@ -91,21 +95,22 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, PropertyPicture propertyPicture)
+        public async Task<IActionResult> Edit(Guid id, PropertyPicturesCreatEditViewModel viewModel)
         {
-            if (id != propertyPicture.Id)
+            if (id != viewModel.PropertyPicture.Id)
             {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid || !await _uow.PropertyPictures.ExistsAsync(propertyPicture.Id, User.GetUserId()!.Value))
-                return View(propertyPicture);
+            if (ModelState.IsValid)
+            {
+                _uow.PropertyPictures.Update(viewModel.PropertyPicture);
+                await _uow.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
 
-            propertyPicture.AppUserId = User.GetUserId()!.Value;
-            _uow.PropertyPictures.Update(propertyPicture);
-            await _uow.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title), viewModel.PropertyPicture.PropertyId);
+            return View(viewModel);
         }
 
         // GET: PropertyPictures/Delete/5

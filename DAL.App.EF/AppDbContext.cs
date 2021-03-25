@@ -76,15 +76,6 @@ namespace DAL.App.EF
                 return base.SaveChanges(acceptAllChangesOnSuccess);
             }
 
-            public override async Task<int> SaveChangesAsync(
-                bool acceptAllChangesOnSuccess, 
-                CancellationToken cancellationToken = default(CancellationToken)
-            )
-            {
-                return (await base.SaveChangesAsync(acceptAllChangesOnSuccess,
-                    cancellationToken));
-            }
 
-           
-            }
+    }
         }

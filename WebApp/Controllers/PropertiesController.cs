@@ -25,7 +25,7 @@ namespace WebApp.Controllers
         // GET: Properties
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.Properties.GetAllAsync();
+            var res = await _uow.Properties.GetAllAsync(User.GetUserId()!.Value);
             return View(res);
         }
 
@@ -50,7 +50,7 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Create()
         {
             var viewModel = new PropertiesCreatEditViewModel();
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName));
             viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue));
             return View(viewModel);
         }
@@ -68,7 +68,7 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             } 
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.Property.ErUserId);
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.Property.ErUserId);
             viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue), viewModel.Property.Id);
             return View(viewModel);
         }
@@ -88,7 +88,7 @@ namespace WebApp.Controllers
             }
             var viewModel = new PropertiesCreatEditViewModel();
             viewModel.Property = property;
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName));
             viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue));
             return View(viewModel);
         }
@@ -111,7 +111,7 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.Property.ErUserId);
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.Property.ErUserId);
             viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue), viewModel.Property.Id);
             return View(viewModel);
         }

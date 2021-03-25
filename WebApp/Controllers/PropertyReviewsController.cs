@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
 using Extensions.Base;
+using WebApp.ViewModels.PropertyReviews;
 
 namespace WebApp.Controllers
 {
@@ -48,9 +49,10 @@ namespace WebApp.Controllers
         // GET: PropertyReviews/Create
         public async Task <IActionResult> Create()
         {
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName");
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title");
-            return View();
+            var viewModel = new PropertyReviewsCreatEditViewModel();
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.PropertySelectList  = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title));
+            return View(viewModel);
         }
 
         // POST: PropertyReviews/Create
@@ -58,17 +60,17 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(PropertyReview propertyReview)
+        public async Task<IActionResult> Create(PropertyReviewsCreatEditViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                _uow.PropertyReviews.Add(propertyReview);
+                _uow.PropertyReviews.Add(viewModel.PropertyReview);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", propertyReview.ErUserId);
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyReview.PropertyId);
-            return View(propertyReview);
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.PropertyReview.ErUserId);
+            viewModel.PropertySelectList  = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title), viewModel.PropertyReview.PropertyId);
+            return View(viewModel);
         }
 
         // GET: PropertyReviews/Edit/5
@@ -84,9 +86,10 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", propertyReview.ErUserId);
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyReview.PropertyId);
-            return View(propertyReview);
+            var viewModel = new PropertyReviewsCreatEditViewModel();
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.PropertySelectList  = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title));
+            return View(viewModel);
         }
 
         // POST: PropertyReviews/Edit/5
@@ -94,21 +97,22 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, PropertyReview propertyReview)
+        public async Task<IActionResult> Edit(Guid id, PropertyReviewsCreatEditViewModel viewModel)
         {
-            if (id != propertyReview.Id)
+            if (id != viewModel.PropertyReview.Id)
             {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid || !await _uow.PropertyReviews.ExistsAsync(propertyReview.Id, User.GetUserId()!.Value))
-                return View(propertyReview);
-
-            propertyReview.AppUserId = User.GetUserId()!.Value;
-            _uow.PropertyReviews.Update(propertyReview);
-            await _uow.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                _uow.PropertyReviews.Update(viewModel.PropertyReview);
+                await _uow.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.PropertyReview.ErUserId);
+            viewModel.PropertySelectList  = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title), viewModel.PropertyReview.PropertyId);
+            return View(viewModel);
         }
 
         // GET: PropertyReviews/Delete/5

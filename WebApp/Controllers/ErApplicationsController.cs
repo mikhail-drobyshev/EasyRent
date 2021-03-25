@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
 using Extensions.Base;
+using WebApp.ViewModels.ErApplications;
 
 namespace WebApp.Controllers
 {
@@ -50,9 +51,9 @@ namespace WebApp.Controllers
         // GET: ErApplications/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplicationStatuses.GetAllAsync(), "Id", "ErApplicationStatusValue");
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName");
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title");
+            var viewModel = new ErApplicationsCreatEditViewModel();
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.PropertySelectList  = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title));
             return View();
         }
 
@@ -61,18 +62,17 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ErApplication erApplication)
+        public async Task<IActionResult> Create(ErApplicationsCreatEditViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                _uow.ErApplications.Add(erApplication);
+                _uow.ErApplications.Add(viewModel.ErApplication);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplicationStatuses.GetAllAsync(), "Id", "ErApplicationStatusValue", erApplication.Id);
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", erApplication.Id);
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", erApplication.Id);
-            return View(erApplication);
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.ErApplication.ErUserId);
+            viewModel.PropertySelectList  = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title), viewModel.ErApplication.PropertyId);
+            return View(viewModel);
         }
 
         // GET: ErApplications/Edit/5
@@ -83,15 +83,16 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erApplication = await _uow.ErApplications.FirstOrDefaultAsync(id.Value);
+            var erApplication = await _uow.ErApplications.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (erApplication == null)
             {
                 return NotFound();
             }
-            ViewData["ErApplicationStatusId"] = new SelectList(await _uow.ErApplicationStatuses.GetAllAsync(), "Id", "ErApplicationStatusValue", erApplication.Id);
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", erApplication.Id);
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", erApplication.Id);
-            return View(erApplication);
+            var viewModel = new ErApplicationsCreatEditViewModel();
+            viewModel.ErApplication = erApplication;
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.PropertySelectList  = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title));
+            return View(viewModel);
         }
 
         // POST: ErApplications/Edit/5
@@ -99,21 +100,23 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, ErApplication erApplication)
+        public async Task<IActionResult> Edit(Guid id, ErApplicationsCreatEditViewModel viewModel)
         {
-            if (id != erApplication.Id)
+            if (id != viewModel.ErApplication.Id)
             {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid || !await _uow.ErApplications.ExistsAsync(erApplication.Id, User.GetUserId()!.Value))
-                return View(erApplication);
+            if (ModelState.IsValid)
+            {
+                _uow.ErApplications.Update(viewModel.ErApplication);
+                await _uow.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.ErApplication.ErUserId);
+            viewModel.PropertySelectList  = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title), viewModel.ErApplication.PropertyId);
+            return View(viewModel);
 
-            erApplication.AppUserId = User.GetUserId()!.Value;
-            _uow.ErApplications.Update(erApplication);
-            await _uow.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
         }
 
         // GET: ErApplications/Delete/5

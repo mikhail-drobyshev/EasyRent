@@ -1,4 +1,4 @@
-@model Domain.App.Dispute
+@model WebApp.ViewModels.Disputes.DisputesCreatEditViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -13,22 +13,22 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+                <label asp-for="Dispute.Title" class="control-label"></label>
+                <input asp-for="Dispute.Title" class="form-control" />
+                <span asp-validation-for="Dispute.Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Comment" class="control-label"></label>
-                <input asp-for="Comment" class="form-control" />
-                <span asp-validation-for="Comment" class="text-danger"></span>
+                <label asp-for="Dispute.Comment" class="control-label"></label>
+                <input asp-for="Dispute.Comment" class="form-control" />
+                <span asp-validation-for="Dispute.Comment" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DisputeStatusId" class="control-label"></label>
-                <select asp-for="DisputeStatusId" class ="form-control" asp-items="ViewBag.DisputeStatusId"></select>
+                <label asp-for="Dispute.DisputeStatusId" class="control-label"></label>
+                <select asp-for="Dispute.DisputeStatusId" class ="form-control" asp-items="ViewBag.DisputeStatusId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="ErApplicationId" class="control-label"></label>
-                <select asp-for="ErApplicationId" class ="form-control" asp-items="ViewBag.ErApplicationId"></select>
+                <label asp-for="Dispute.ErApplicationId" class="control-label"></label>
+                <select asp-for="Dispute.ErApplicationId" class ="form-control" asp-items="ViewBag.ErApplicationId"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

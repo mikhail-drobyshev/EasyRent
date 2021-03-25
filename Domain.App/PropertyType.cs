@@ -7,12 +7,10 @@ using Domain.Base;
 
 namespace Domain.App
 {
-    public class PropertyType : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
+    public class PropertyType : DomainEntityId
     {
         [MaxLength(32)] public string PropertyTypeValue { get; set; } = default!;
         
         public ICollection<Property>? Properties { get; set; }
-        public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using Domain.Base;
 
 namespace Domain.App
 {
-    public class PropertyReview : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
+    public class PropertyReview : DomainEntityId
     {
         public int Rating { get; set; } = default!;
 
@@ -16,7 +16,5 @@ namespace Domain.App
         
         public Guid ErUserId { get; set; }
         public ErUser? ErUser { get; set; }
-        public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
     }
 }

@@ -96,13 +96,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (!ModelState.IsValid || !await _uow.ErApplicationStatuses.ExistsAsync(erApplicationStatus.Id, User.GetUserId()!.Value))
-                return View(erApplicationStatus);
-
-            erApplicationStatus.AppUserId = User.GetUserId()!.Value;
+            if (!ModelState.IsValid) return View(erApplicationStatus);
+            
             _uow.ErApplicationStatuses.Update(erApplicationStatus);
             await _uow.SaveChangesAsync();
-
+            
             return RedirectToAction(nameof(Index));
         }
 

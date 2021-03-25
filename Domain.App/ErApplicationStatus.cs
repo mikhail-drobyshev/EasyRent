@@ -7,14 +7,12 @@ using Domain.Base;
 
 namespace Domain.App
 {
-    public class ErApplicationStatus : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
+    public class ErApplicationStatus : DomainEntityId
     {
 
         [MaxLength(32)] 
         public string ErApplicationStatusValue { get; set; } = default!;
         
         public ICollection<ErApplication>? ErApplications { get; set; }
-        public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
     }
 }

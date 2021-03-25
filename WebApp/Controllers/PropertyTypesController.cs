@@ -96,13 +96,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (!ModelState.IsValid || !await _uow.PropertyTypes.ExistsAsync(propertyType.Id, User.GetUserId()!.Value))
-                return View(propertyType);
-
-            propertyType.AppUserId = User.GetUserId()!.Value;
+            if (!ModelState.IsValid) return View(propertyType);
+            
             _uow.PropertyTypes.Update(propertyType);
             await _uow.SaveChangesAsync();
-
+            
             return RedirectToAction(nameof(Index));
         }
 

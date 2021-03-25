@@ -7,13 +7,11 @@ using Domain.Base;
 
 namespace Domain.App
 {
-    public class Gender : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
+    public class Gender : DomainEntityId
     {
 
         [MaxLength(32)] public string GenderValue { get; set; } = default!;
         
         public ICollection<ErUser>? ErUsers { get; set; }
-        public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
     }
 }

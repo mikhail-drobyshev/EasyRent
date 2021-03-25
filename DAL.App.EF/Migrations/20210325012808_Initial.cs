@@ -61,6 +61,54 @@ namespace DAL.App.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ErApplicationStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ErApplicationStatusValue = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ErApplicationStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ErUserPictures",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ErUserPictures", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Genders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GenderValue = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Genders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PropertyTypes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PropertyTypeValue = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PropertyTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -106,8 +154,8 @@ namespace DAL.App.EF.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -151,8 +199,8 @@ namespace DAL.App.EF.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -161,82 +209,6 @@ namespace DAL.App.EF.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ErApplicationStatuses",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ErApplicationStatusValue = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ErApplicationStatuses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ErApplicationStatuses_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ErUserPictures",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PictureUrl = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ErUserPictures", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ErUserPictures_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Genders",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GenderValue = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Genders", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Genders_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PropertyTypes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PropertyTypeValue = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PropertyTypes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PropertyTypes_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -283,18 +255,11 @@ namespace DAL.App.EF.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ErUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ErUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ErUserReviews", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ErUserReviews_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ErUserReviews_ErUsers_ErUserId",
                         column: x => x.ErUserId,
@@ -349,18 +314,11 @@ namespace DAL.App.EF.Migrations
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ErUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ErApplicationStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ErApplicationStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ErApplications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ErApplications_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ErApplications_ErApplicationStatuses_ErApplicationStatusId",
                         column: x => x.ErApplicationStatusId,
@@ -389,18 +347,11 @@ namespace DAL.App.EF.Migrations
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Building = table.Column<int>(type: "int", nullable: false),
-                    PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PropertyLocations", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PropertyLocations_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PropertyLocations_Properties_PropertyId",
                         column: x => x.PropertyId,
@@ -416,18 +367,11 @@ namespace DAL.App.EF.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PropertyPictures", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PropertyPictures_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PropertyPictures_Properties_PropertyId",
                         column: x => x.PropertyId,
@@ -444,18 +388,11 @@ namespace DAL.App.EF.Migrations
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ErUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ErUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PropertyReviews", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PropertyReviews_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PropertyReviews_ErUsers_ErUserId",
                         column: x => x.ErUserId,
@@ -559,11 +496,6 @@ namespace DAL.App.EF.Migrations
                 column: "ErApplicationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ErApplications_AppUserId",
-                table: "ErApplications",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ErApplications_ErApplicationStatusId",
                 table: "ErApplications",
                 column: "ErApplicationStatusId");
@@ -577,21 +509,6 @@ namespace DAL.App.EF.Migrations
                 name: "IX_ErApplications_PropertyId",
                 table: "ErApplications",
                 column: "PropertyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ErApplicationStatuses_AppUserId",
-                table: "ErApplicationStatuses",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ErUserPictures_AppUserId",
-                table: "ErUserPictures",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ErUserReviews_AppUserId",
-                table: "ErUserReviews",
-                column: "AppUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ErUserReviews_ErUserId",
@@ -616,11 +533,6 @@ namespace DAL.App.EF.Migrations
                 column: "GenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Genders_AppUserId",
-                table: "Genders",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Properties_AppUserId",
                 table: "Properties",
                 column: "AppUserId");
@@ -636,30 +548,15 @@ namespace DAL.App.EF.Migrations
                 column: "PropertyTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PropertyLocations_AppUserId",
-                table: "PropertyLocations",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PropertyLocations_PropertyId",
                 table: "PropertyLocations",
                 column: "PropertyId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PropertyPictures_AppUserId",
-                table: "PropertyPictures",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PropertyPictures_PropertyId",
                 table: "PropertyPictures",
                 column: "PropertyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PropertyReviews_AppUserId",
-                table: "PropertyReviews",
-                column: "AppUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PropertyReviews_ErUserId",
@@ -670,11 +567,6 @@ namespace DAL.App.EF.Migrations
                 name: "IX_PropertyReviews_PropertyId",
                 table: "PropertyReviews",
                 column: "PropertyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PropertyTypes_AppUserId",
-                table: "PropertyTypes",
-                column: "AppUserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -731,13 +623,13 @@ namespace DAL.App.EF.Migrations
                 name: "PropertyTypes");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "ErUserPictures");
 
             migrationBuilder.DropTable(
                 name: "Genders");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }

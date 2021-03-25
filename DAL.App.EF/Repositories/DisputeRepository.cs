@@ -27,15 +27,16 @@ namespace DAL.App.EF.Repositories
 
         public override async Task<IEnumerable<Dispute>> GetAllAsync(Guid userId = default, bool noTracking = true)
         {
-            var query = RepoDbSet.AsQueryable();
-            if (noTracking)
-            {
-                query = query.AsNoTracking();
-            }
+            var query = CreateQuery(userId, noTracking);
 
             query = query
                 .Include(d => d.DisputeStatus)
                 .Include(d => d.ErApplication);
+            if (userId != default)
+            {
+                query = query
+                    .Where(c => c.AppUserId == userId);
+            }
             var res = await query.ToListAsync();
             // if (res.Count > 0)
             // {

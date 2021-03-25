@@ -10,6 +10,7 @@ using DAL.App.EF;
 using Domain.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
+using WebApp.ViewModels.ErUserReviews;
 
 namespace WebApp.Controllers
 {
@@ -52,8 +53,9 @@ namespace WebApp.Controllers
         // GET: ErUserReviews/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName");
-            return View();
+            var viewModel = new ErUserReviewsCreatEditViewModel();
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            return View(viewModel);
         }
 
         // POST: ErUserReviews/Create
@@ -61,16 +63,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ErUserReview erUserReview)
+        public async Task<IActionResult> Create(ErUserReviewsCreatEditViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                _uow.ErUserReviews.Add(erUserReview);
+                _uow.ErUserReviews.Add(viewModel.ErUserReview);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", erUserReview.Id);
-            return View(erUserReview);
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.ErUserReview.ErUserId);
+            return View(viewModel);
         }
 
         // GET: ErUserReviews/Edit/5
@@ -81,13 +83,16 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserReview = await _uow.ErUserReviews.FirstOrDefaultAsync(id.Value);
+            var erUserReview = await _uow.ErUserReviews.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (erUserReview == null)
             {
                 return NotFound();
             }
-            ViewData["ErUserId"] = new SelectList(await _uow.ErUsers.GetAllAsync(), "Id", "FirstName", erUserReview.Id);
-            return View(erUserReview);
+            var viewModel = new ErUserReviewsCreatEditViewModel();
+            viewModel.ErUserReview = erUserReview;
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+
+            return View(viewModel);
         }
 
         // POST: ErUserReviews/Edit/5
@@ -95,21 +100,21 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, ErUserReview erUserReview)
+        public async Task<IActionResult> Edit(Guid id, ErUserReviewsCreatEditViewModel viewModel)
         {
-            if (id != erUserReview.Id)
+            if (id != viewModel.ErUserReview.Id)
             {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid || !await _uow.ErUserReviews.ExistsAsync(erUserReview.Id, User.GetUserId()!.Value))
-                return View(erUserReview);
-
-            erUserReview.AppUserId = User.GetUserId()!.Value;
-            _uow.ErUserReviews.Update(erUserReview);
-            await _uow.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                _uow.ErUserReviews.Update(viewModel.ErUserReview);
+                await _uow.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.ErUserReview.ErUserId);
+            return View(viewModel);
         }
 
         // GET: ErUserReviews/Delete/5

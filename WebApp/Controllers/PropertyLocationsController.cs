@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
 using Extensions.Base;
+using WebApp.ViewModels.PropertyLocations;
 
 namespace WebApp.Controllers
 {
@@ -48,8 +49,9 @@ namespace WebApp.Controllers
         // GET: PropertyLocations/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title");
-            return View();
+            var viewModel = new PropertyLocationsCreatEditViewModel();
+            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title));
+            return View(viewModel);
         }
 
         // POST: PropertyLocations/Create
@@ -57,16 +59,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(PropertyLocation propertyLocation)
+        public async Task<IActionResult> Create(PropertyLocationsCreatEditViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                _uow.PropertyLocations.Add(propertyLocation);
+                _uow.PropertyLocations.Add(viewModel.PropertyLocation);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyLocation.Id);
-            return View(propertyLocation);
+            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title), viewModel.PropertyLocation.PropertyId);
+            return View(viewModel);
         }
 
         // GET: PropertyLocations/Edit/5
@@ -82,8 +84,9 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["PropertyId"] = new SelectList(await _uow.Properties.GetAllAsync(), "Id", "Title", propertyLocation.Id);
-            return View(propertyLocation);
+            var viewModel = new PropertyLocationsCreatEditViewModel();
+            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title));
+            return View(viewModel);
         }
 
         // POST: PropertyLocations/Edit/5
@@ -91,21 +94,22 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, PropertyLocation propertyLocation)
+        public async Task<IActionResult> Edit(Guid id, PropertyLocationsCreatEditViewModel viewModel)
         {
-            if (id != propertyLocation.Id)
+            if (id != viewModel.PropertyLocation.Id)
             {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid || !await _uow.PropertyLocations.ExistsAsync(propertyLocation.Id, User.GetUserId()!.Value))
-                return View(propertyLocation);
+            if (ModelState.IsValid)
+            {
+                _uow.PropertyLocations.Update(viewModel.PropertyLocation);
+                await _uow.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title), viewModel.PropertyLocation.PropertyId);
 
-            propertyLocation.AppUserId = User.GetUserId()!.Value;
-            _uow.PropertyLocations.Update(propertyLocation);
-            await _uow.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            return View(viewModel);
         }
 
         // GET: PropertyLocations/Delete/5

@@ -17,11 +17,7 @@ namespace DAL.App.EF.Repositories
         }
         public override async Task<IEnumerable<PropertyPicture>> GetAllAsync(Guid userId = default, bool noTracking = true)
         {
-            var query = RepoDbSet.AsQueryable();
-            if (noTracking)
-            {
-                query = query.AsNoTracking();
-            }
+            var query = CreateQuery(userId, noTracking);
 
             query = query
                 .Include(p => p.Property);

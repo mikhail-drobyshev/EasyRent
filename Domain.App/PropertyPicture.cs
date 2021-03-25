@@ -6,7 +6,7 @@ using Domain.Base;
 
 namespace Domain.App
 {
-    public class PropertyPicture : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
+    public class PropertyPicture : DomainEntityId
     {
         [MaxLength(255)] 
         public string PictureUrl { get; set; } = default!;
@@ -16,7 +16,5 @@ namespace Domain.App
         
         public Guid PropertyId { get; set; }
         public Property? Property { get; set; }
-        public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
     }
 }

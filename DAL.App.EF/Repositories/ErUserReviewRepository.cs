@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Applications.DAL.App.Repositories;
 using DAL.Base.EF.Repositories;
@@ -17,14 +18,12 @@ namespace DAL.App.EF.Repositories
         }
         public override async Task<IEnumerable<ErUserReview>> GetAllAsync(Guid userId = default, bool noTracking = true)
         {
-            var query = RepoDbSet.AsQueryable();
-            if (noTracking)
-            {
-                query = query.AsNoTracking();
-            }
+            var query = CreateQuery(userId, noTracking);
 
             query = query
-                .Include(e => e.ErUser);
+                .Include(e => e.ErUser)
+                .Where(c => c.ErUser!.AppUserId == userId);
+
             var res = await query.ToListAsync();
             // if (res.Count > 0)
             // {

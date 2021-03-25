@@ -1,4 +1,4 @@
-@model Domain.App.PropertyLocation
+@model WebApp.ViewModels.PropertyLocations.PropertyLocationsCreatEditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -13,26 +13,26 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
+                <label asp-for="PropertyLocation.City" class="control-label"></label>
+                <input asp-for="PropertyLocation.City" class="form-control" />
+                <span asp-validation-for="PropertyLocation.City" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Street" class="control-label"></label>
-                <input asp-for="Street" class="form-control" />
-                <span asp-validation-for="Street" class="text-danger"></span>
+                <label asp-for="PropertyLocation.Street" class="control-label"></label>
+                <input asp-for="PropertyLocation.Street" class="form-control" />
+                <span asp-validation-for="PropertyLocation.Street" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Building" class="control-label"></label>
-                <input asp-for="Building" class="form-control" />
-                <span asp-validation-for="Building" class="text-danger"></span>
+                <label asp-for="PropertyLocation.Building" class="control-label"></label>
+                <input asp-for="PropertyLocation.Building" class="form-control" />
+                <span asp-validation-for="PropertyLocation.Building" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PropertyId" class="control-label"></label>
-                <select asp-for="PropertyId" class="form-control" asp-items="ViewBag.PropertyId"></select>
-                <span asp-validation-for="PropertyId" class="text-danger"></span>
+                <label asp-for="PropertyLocation.PropertyId" class="control-label"></label>
+                <select asp-for="PropertyLocation.PropertyId" class="form-control" asp-items="ViewBag.PropertyId"></select>
+                <span asp-validation-for="PropertyLocation.PropertyId" class="text-danger"></span>
             </div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="PropertyLocation.Id" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

@@ -23,8 +23,12 @@ namespace DAL.App.EF.Repositories
 
             query = query
                 .Include(e => e.ErUserPicture)
-                .Include(e => e.Gender)
-                .Where(c => c.AppUserId == userId);
+                .Include(e => e.Gender);
+            if (userId != default)
+            {
+                query = query
+                    .Where(c => c.AppUserId == userId);
+            }
 
             var res = await query.ToListAsync();
             // if (res.Count > 0)
