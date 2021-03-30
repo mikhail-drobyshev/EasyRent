@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,25 +15,25 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class PropertyReviewsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PropertyReviewsController(AppDbContext context)
+        public PropertyReviewsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/PropertyReviews
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PropertyReview>>> GetPropertyReviews()
         {
-            return await _context.PropertyReviews.ToListAsync();
+            return Ok(await _uow.PropertyReviews.GetAllAsync());
         }
 
         // GET: api/PropertyReviews/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PropertyReview>> GetPropertyReview(Guid id)
         {
-            var propertyReview = await _context.PropertyReviews.FindAsync(id);
+            var propertyReview = await _uow.PropertyReviews.FirstOrDefaultAsync(id);
 
             if (propertyReview == null)
             {
@@ -52,24 +53,8 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            _context.Entry(propertyReview).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PropertyReviewExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            _uow.PropertyReviews.Update(propertyReview);
+            await _uow.SaveChangesAsync();
             return NoContent();
         }
 
@@ -78,8 +63,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<PropertyReview>> PostPropertyReview(PropertyReview propertyReview)
         {
-            _context.PropertyReviews.Add(propertyReview);
-            await _context.SaveChangesAsync();
+            _uow.PropertyReviews.Add(propertyReview);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetPropertyReview", new { id = propertyReview.Id }, propertyReview);
         }
@@ -88,21 +73,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePropertyReview(Guid id)
         {
-            var propertyReview = await _context.PropertyReviews.FindAsync(id);
+            var propertyReview = await _uow.PropertyReviews.FirstOrDefaultAsync(id);
             if (propertyReview == null)
             {
                 return NotFound();
             }
 
-            _context.PropertyReviews.Remove(propertyReview);
-            await _context.SaveChangesAsync();
+            _uow.PropertyReviews.Remove(propertyReview);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool PropertyReviewExists(Guid id)
-        {
-            return _context.PropertyReviews.Any(e => e.Id == id);
         }
     }
 }

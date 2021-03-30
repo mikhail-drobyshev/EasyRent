@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,25 +15,27 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class ErApplicationStatusesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ErApplicationStatusesController(AppDbContext context)
+
+        public ErApplicationStatusesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/ErApplicationStatuses
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ErApplicationStatus>>> GetErApplicationStatuses()
         {
-            return await _context.ErApplicationStatuses.ToListAsync();
+            return Ok(await _uow.ErApplicationStatuses.GetAllAsync());
+
         }
 
         // GET: api/ErApplicationStatuses/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ErApplicationStatus>> GetErApplicationStatus(Guid id)
         {
-            var erApplicationStatus = await _context.ErApplicationStatuses.FindAsync(id);
+            var erApplicationStatus = await _uow.ErApplicationStatuses.FirstOrDefaultAsync(id);
 
             if (erApplicationStatus == null)
             {
@@ -52,24 +55,8 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            _context.Entry(erApplicationStatus).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ErApplicationStatusExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            _uow.ErApplicationStatuses.Update(erApplicationStatus);
+            await _uow.SaveChangesAsync();
             return NoContent();
         }
 
@@ -78,8 +65,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<ErApplicationStatus>> PostErApplicationStatus(ErApplicationStatus erApplicationStatus)
         {
-            _context.ErApplicationStatuses.Add(erApplicationStatus);
-            await _context.SaveChangesAsync();
+            _uow.ErApplicationStatuses.Add(erApplicationStatus);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetErApplicationStatus", new { id = erApplicationStatus.Id }, erApplicationStatus);
         }
@@ -88,21 +75,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteErApplicationStatus(Guid id)
         {
-            var erApplicationStatus = await _context.ErApplicationStatuses.FindAsync(id);
+            var erApplicationStatus = await _uow.ErApplicationStatuses.FirstOrDefaultAsync(id);
             if (erApplicationStatus == null)
             {
                 return NotFound();
             }
 
-            _context.ErApplicationStatuses.Remove(erApplicationStatus);
-            await _context.SaveChangesAsync();
+            _uow.ErApplicationStatuses.Remove(erApplicationStatus);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool ErApplicationStatusExists(Guid id)
-        {
-            return _context.ErApplicationStatuses.Any(e => e.Id == id);
         }
     }
 }

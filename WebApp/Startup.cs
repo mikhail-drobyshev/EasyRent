@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
@@ -86,6 +87,15 @@ namespace WebApp
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<AppDbContext>();
             services.AddControllersWithViews();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsAllowAll", builder=>
+                {
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyOrigin();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -106,6 +116,8 @@ namespace WebApp
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseCors("CorsAllowAll");
 
             app.UseRouting();
             

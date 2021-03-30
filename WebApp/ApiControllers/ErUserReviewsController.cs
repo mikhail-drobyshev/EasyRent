@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,25 +15,26 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class ErUserReviewsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ErUserReviewsController(AppDbContext context)
+
+        public ErUserReviewsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/ErUserReviews
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ErUserReview>>> GetErUserReviews()
         {
-            return await _context.ErUserReviews.ToListAsync();
+            return Ok(await _uow.ErUserReviews.GetAllAsync());
         }
 
         // GET: api/ErUserReviews/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ErUserReview>> GetErUserReview(Guid id)
         {
-            var erUserReview = await _context.ErUserReviews.FindAsync(id);
+            var erUserReview = await _uow.ErUserReviews.FirstOrDefaultAsync(id);
 
             if (erUserReview == null)
             {
@@ -52,24 +54,8 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            _context.Entry(erUserReview).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ErUserReviewExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            _uow.ErUserReviews.Update(erUserReview);
+            await _uow.SaveChangesAsync();
             return NoContent();
         }
 
@@ -78,8 +64,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<ErUserReview>> PostErUserReview(ErUserReview erUserReview)
         {
-            _context.ErUserReviews.Add(erUserReview);
-            await _context.SaveChangesAsync();
+            _uow.ErUserReviews.Add(erUserReview);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetErUserReview", new { id = erUserReview.Id }, erUserReview);
         }
@@ -88,21 +74,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteErUserReview(Guid id)
         {
-            var erUserReview = await _context.ErUserReviews.FindAsync(id);
+            var erUserReview = await _uow.ErUserReviews.FirstOrDefaultAsync(id);
             if (erUserReview == null)
             {
                 return NotFound();
             }
 
-            _context.ErUserReviews.Remove(erUserReview);
-            await _context.SaveChangesAsync();
+            _uow.ErUserReviews.Remove(erUserReview);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool ErUserReviewExists(Guid id)
-        {
-            return _context.ErUserReviews.Any(e => e.Id == id);
         }
     }
 }

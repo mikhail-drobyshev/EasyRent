@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,25 +15,26 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class DisputesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public DisputesController(AppDbContext context)
+
+        public DisputesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Disputes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Dispute>>> GetDisputes()
         {
-            return await _context.Disputes.ToListAsync();
+            return Ok(await _uow.DisputeStatuses.GetAllAsync());
         }
 
         // GET: api/Disputes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Dispute>> GetDispute(Guid id)
         {
-            var dispute = await _context.Disputes.FindAsync(id);
+            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id);
 
             if (dispute == null)
             {
@@ -52,24 +54,8 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            _context.Entry(dispute).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DisputeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            _uow.Disputes.Update(dispute);
+            await _uow.SaveChangesAsync();
             return NoContent();
         }
 
@@ -78,8 +64,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<Dispute>> PostDispute(Dispute dispute)
         {
-            _context.Disputes.Add(dispute);
-            await _context.SaveChangesAsync();
+            _uow.Disputes.Add(dispute);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetDispute", new { id = dispute.Id }, dispute);
         }
@@ -88,21 +74,17 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDispute(Guid id)
         {
-            var dispute = await _context.Disputes.FindAsync(id);
+            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id);
             if (dispute == null)
             {
                 return NotFound();
             }
 
-            _context.Disputes.Remove(dispute);
-            await _context.SaveChangesAsync();
+            _uow.Disputes.Remove(dispute);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
         }
-
-        private bool DisputeExists(Guid id)
-        {
-            return _context.Disputes.Any(e => e.Id == id);
-        }
+        
     }
 }

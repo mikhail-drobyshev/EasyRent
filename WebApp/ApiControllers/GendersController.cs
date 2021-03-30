@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,25 +15,26 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class GendersController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public GendersController(AppDbContext context)
+
+        public GendersController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Genders
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Gender>>> GetGenders()
         {
-            return await _context.Genders.ToListAsync();
+            return Ok(await _uow.Genders.GetAllAsync());
         }
 
         // GET: api/Genders/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Gender>> GetGender(Guid id)
         {
-            var gender = await _context.Genders.FindAsync(id);
+            var gender = await _uow.Genders.FirstOrDefaultAsync(id);
 
             if (gender == null)
             {
@@ -52,24 +54,8 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            _context.Entry(gender).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!GenderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            _uow.Genders.Update(gender);
+            await _uow.SaveChangesAsync();
             return NoContent();
         }
 
@@ -78,8 +64,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<Gender>> PostGender(Gender gender)
         {
-            _context.Genders.Add(gender);
-            await _context.SaveChangesAsync();
+            _uow.Genders.Add(gender);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetGender", new { id = gender.Id }, gender);
         }
@@ -88,21 +74,17 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGender(Guid id)
         {
-            var gender = await _context.Genders.FindAsync(id);
+            var gender = await _uow.Genders.FirstOrDefaultAsync(id);
             if (gender == null)
             {
                 return NotFound();
             }
 
-            _context.Genders.Remove(gender);
-            await _context.SaveChangesAsync();
+            _uow.Genders.Remove(gender);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
         }
-
-        private bool GenderExists(Guid id)
-        {
-            return _context.Genders.Any(e => e.Id == id);
-        }
+        
     }
 }
