@@ -12,6 +12,7 @@ using DAL.App.EF.Repositories;
 using Domain.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
+using WebApp.ViewModels.ErUsers;
 
 namespace WebApp.Controllers
 {
@@ -29,7 +30,7 @@ namespace WebApp.Controllers
         // GET: ErUsers
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.ErUsers.GetAllAsync(User.GetUserId()!.Value);
+            var res = await _uow.ErUsers.GetAllWithPropertyTypeCountAsync(User.GetUserId()!.Value);
             return View(res);
         }
 
@@ -51,9 +52,12 @@ namespace WebApp.Controllers
         }
 
         // GET: ErUsers/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var viewModel = new ErUsersCreatEditViewModel();
+            viewModel.GenderSelectList = new SelectList(await _uow.Genders.GetAllAsync(), nameof(Gender.Id), nameof(Gender.GenderValue));
+            viewModel.ErUserPictureSelectList  = new SelectList(await _uow.ErUserPictures.GetAllAsync(), nameof(ErUserPicture.Id), nameof(ErUserPicture.PictureUrl));
+            return View(viewModel);
         }
 
         // POST: ErUsers/Create
@@ -61,7 +65,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ErUser erUser)
+        public async Task<IActionResult> Create(ErUser erUser, ErUsersCreatEditViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -70,7 +74,9 @@ namespace WebApp.Controllers
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(erUser);
+            viewModel.GenderSelectList = new SelectList(await _uow.Genders.GetAllAsync(), nameof(Gender.Id), nameof(Gender.GenderValue));
+            viewModel.ErUserPictureSelectList  = new SelectList(await _uow.ErUserPictures.GetAllAsync(), nameof(ErUserPicture.Id), nameof(ErUserPicture.PictureUrl));
+            return View(viewModel);
         }
 
         // GET: ErUsers/Edit/5

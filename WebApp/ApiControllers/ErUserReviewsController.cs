@@ -27,8 +27,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ErUserReview>>> GetErUserReviews()
         {
-            return Ok(await _uow.ErUserReviews.GetAllAsync());
-        }
+            return Ok(await _uow.ErUserReviews.GetAllAsync());        }
 
         // GET: api/ErUserReviews/5
         [HttpGet("{id}")]

@@ -18,13 +18,13 @@ namespace Applications.DAL.App
         IErApplicationStatusRepository ErApplicationStatuses { get; }
         IErUserRepository ErUsers { get; }
         IErUserReviewRepository ErUserReviews { get; }
+        IErUserPictureRepository ErUserPictures { get; }
         IPropertyLocationRepository PropertyLocations { get; }
         IPropertyPictureRepository PropertyPictures { get; }
         IPropertyRepository Properties { get; }
         IPropertyReviewRepository PropertyReviews { get; }
         IPropertyTypeRepository PropertyTypes { get; }
         IGenderRepository Genders { get; }
-        IBaseRepository<ErUserPicture> ErUserPictures { get; }
 
         
     }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using DTO.App;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
@@ -31,7 +32,15 @@ namespace WebApp.ApiControllers
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<PropertyType>>> GetPropertyTypes()
         {
-            return Ok(await _uow.PropertyTypes.GetAllAsync());
+            // var data = await _uow.PropertyTypes.GetAllAsync();
+            // var result = data.Select(propertyType => new PropertyTypeDTO()
+            // {
+            //     PropertyTypeValue = propertyType.PropertyTypeValue,
+            //     PropertyCount = propertyType.Properties!.Count
+            // });
+
+            var result = await _uow.PropertyTypes.GetAllWithPropertyTypeCountAsync();
+            return Ok(result);
         }
 
         // GET: api/PropertyTypes/5

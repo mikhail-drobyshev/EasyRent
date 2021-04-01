@@ -88,5 +88,6 @@ namespace DAL.App.EF.AppDataInit
                 }
             }
         }
+        
     }
 }

@@ -42,8 +42,8 @@ namespace DAL.App.EF
                 GetRepository(() => new PropertyTypeRepository(UowDbContext));
         public IGenderRepository Genders =>
                 GetRepository(() => new GenderRepository(UowDbContext));
-        public IBaseRepository<ErUserPicture> ErUserPictures =>
-                GetRepository(() => new BaseRepository<ErUserPicture, AppDbContext>(UowDbContext));
+        public IErUserPictureRepository ErUserPictures =>
+                GetRepository(() => new ErUserPictureRepository(UowDbContext));
 
     }
 }

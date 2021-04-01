@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using DTO.App;
+using Extensions.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
@@ -15,7 +17,8 @@ namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes =  JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes =  JwtBearerDefaults.AuthenticationScheme)]
+
     public class ErUsersController : ControllerBase
     {
         private readonly IAppUnitOfWork _uow;
@@ -27,9 +30,9 @@ namespace WebApp.ApiControllers
 
         // GET: api/ErUsers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ErUser>>> GetErUsers()
+        public async Task<ActionResult<IEnumerable<ErUserDTO>>> GetErUsers()
         {
-            return Ok(await _uow.ErUsers.GetAllAsync());
+            return Ok(await _uow.ErUsers.GetAllWithPropertyTypeCountAsync(User.GetUserId()!.Value));
         }
 
         // GET: api/ErUsers/5

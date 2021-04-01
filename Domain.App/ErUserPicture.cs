@@ -11,6 +11,7 @@ namespace Domain.App
         [MaxLength(255)] 
         public string PictureUrl { get; set; } = default!;
 
+        public Guid ErUserId { get; set; }
         public ErUser? ErUser { get; set; }
     }
 }

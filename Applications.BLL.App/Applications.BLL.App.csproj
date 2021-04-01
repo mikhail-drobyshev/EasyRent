@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Applications.BLL.Base\Applications.BLL.Base.csproj" />
+      <ProjectReference Include="..\Applications.DAL.App\Applications.DAL.App.csproj" />
+      <ProjectReference Include="..\Domain.App\Domain.App.csproj" />
+    </ItemGroup>
+
+</Project>

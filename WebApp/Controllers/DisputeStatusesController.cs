@@ -25,6 +25,7 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var res = await _uow.DisputeStatuses.GetAllAsync();
+            await _uow.SaveChangesAsync();
             return View(res);
         }
 

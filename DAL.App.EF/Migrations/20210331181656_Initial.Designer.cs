@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.App.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210325015940_Initial")]
+    [Migration("20210331181656_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,9 +128,6 @@ namespace DAL.App.EF.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ErUserPictureId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -148,10 +145,6 @@ namespace DAL.App.EF.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.HasIndex("ErUserPictureId")
-                        .IsUnique()
-                        .HasFilter("[ErUserPictureId] IS NOT NULL");
-
                     b.HasIndex("GenderId");
 
                     b.ToTable("ErUsers");
@@ -163,12 +156,17 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("ErUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("PictureUrl")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ErUserId");
 
                     b.ToTable("ErUserPictures");
                 });
@@ -612,11 +610,6 @@ namespace DAL.App.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.App.ErUserPicture", "ErUserPicture")
-                        .WithOne("ErUser")
-                        .HasForeignKey("Domain.App.ErUser", "ErUserPictureId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.App.Gender", "Gender")
                         .WithMany("ErUsers")
                         .HasForeignKey("GenderId")
@@ -624,9 +617,18 @@ namespace DAL.App.EF.Migrations
 
                     b.Navigation("AppUser");
 
-                    b.Navigation("ErUserPicture");
-
                     b.Navigation("Gender");
+                });
+
+            modelBuilder.Entity("Domain.App.ErUserPicture", b =>
+                {
+                    b.HasOne("Domain.App.ErUser", "ErUser")
+                        .WithMany("ErUserPictures")
+                        .HasForeignKey("ErUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ErUser");
                 });
 
             modelBuilder.Entity("Domain.App.ErUserReview", b =>
@@ -765,14 +767,11 @@ namespace DAL.App.EF.Migrations
                 {
                     b.Navigation("ErApplications");
 
+                    b.Navigation("ErUserPictures");
+
                     b.Navigation("ErUserReviews");
 
                     b.Navigation("Properties");
-                });
-
-            modelBuilder.Entity("Domain.App.ErUserPicture", b =>
-                {
-                    b.Navigation("ErUser");
                 });
 
             modelBuilder.Entity("Domain.App.Gender", b =>
