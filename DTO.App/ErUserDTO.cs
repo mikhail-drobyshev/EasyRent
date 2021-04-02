@@ -10,8 +10,7 @@ namespace DTO.App
         [MaxLength(64)] public string FirstName { get; set; } = default!;
         [MaxLength(64)] public string LastName { get; set; } = default!;
 
-        public Guid? GenderId { get; set; }
-        public Gender? Gender { get; set; }
+        public string Gender { get; set; } = default!;
 
         public int PropertiesCount { get; set; }
 

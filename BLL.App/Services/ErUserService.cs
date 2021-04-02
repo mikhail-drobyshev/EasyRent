@@ -24,7 +24,12 @@ namespace BLL.App.Services
 
         public async Task<IEnumerable<ErUserDTO>> GetAllWithPropertyTypeCountAsync(Guid userId, bool noTracking)
         {
-            return await ServiceRepository.GetAllWithPropertyTypeCountAsync(userId);
+            return await ServiceRepository.GetAllWithPropertyTypeCountAsync(userId, noTracking);
+        }
+
+        public Task<IEnumerable<ErUserDTO>> GetAllErUsersWithInfo(Guid userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

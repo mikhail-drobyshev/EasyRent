@@ -10,7 +10,7 @@ namespace Applications.BLL.App.Services
 {
     public interface IErUserService : IBaseEntityService<ErUser>, IErUserRepository
     {
-        Task<IEnumerable<ErUserDTO>> GetAllWithPropertyTypeCountAsync(Guid userId);
+        Task<IEnumerable<ErUserDTO>> GetAllErUsersWithInfo(Guid userId);
 
     }
 }

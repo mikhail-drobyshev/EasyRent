@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.BLL.App;
 using Applications.DAL.App;
 using Applications.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -19,18 +20,17 @@ namespace WebApp.Controllers
     [Authorize]
     public class ErUsersController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public ErUsersController(IAppUnitOfWork uow)
+        public ErUsersController(IAppBLL bll)
         {
-            _uow = uow;
-
+            _bll = bll;
         }
 
         // GET: ErUsers
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.ErUsers.GetAllWithPropertyTypeCountAsync(User.GetUserId()!.Value);
+            var res = await _bll.ErUsers.GetAllWithPropertyTypeCountAsync(User.GetUserId()!.Value);
             return View(res);
         }
 
@@ -42,7 +42,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var erUser = await _bll.ErUsers.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (erUser == null)
             {
                 return NotFound();
@@ -55,8 +55,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Create()
         {
             var viewModel = new ErUsersCreatEditViewModel();
-            viewModel.GenderSelectList = new SelectList(await _uow.Genders.GetAllAsync(), nameof(Gender.Id), nameof(Gender.GenderValue));
-            viewModel.ErUserPictureSelectList  = new SelectList(await _uow.ErUserPictures.GetAllAsync(), nameof(ErUserPicture.Id), nameof(ErUserPicture.PictureUrl));
+            viewModel.GenderSelectList = new SelectList(await _bll.Genders.GetAllAsync(), nameof(Gender.Id), nameof(Gender.GenderValue));
+            viewModel.ErUserPictureSelectList  = new SelectList(await _bll.ErUserPictures.GetAllAsync(), nameof(ErUserPicture.Id), nameof(ErUserPicture.PictureUrl));
             return View(viewModel);
         }
 
@@ -70,12 +70,12 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 erUser.AppUserId = User.GetUserId()!.Value;
-                _uow.ErUsers.Add(erUser);
-                await _uow.SaveChangesAsync();
+                _bll.ErUsers.Add(erUser);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            viewModel.GenderSelectList = new SelectList(await _uow.Genders.GetAllAsync(), nameof(Gender.Id), nameof(Gender.GenderValue));
-            viewModel.ErUserPictureSelectList  = new SelectList(await _uow.ErUserPictures.GetAllAsync(), nameof(ErUserPicture.Id), nameof(ErUserPicture.PictureUrl));
+            viewModel.GenderSelectList = new SelectList(await _bll.Genders.GetAllAsync(), nameof(Gender.Id), nameof(Gender.GenderValue));
+            viewModel.ErUserPictureSelectList  = new SelectList(await _bll.ErUserPictures.GetAllAsync(), nameof(ErUserPicture.Id), nameof(ErUserPicture.PictureUrl));
             return View(viewModel);
         }
 
@@ -87,7 +87,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var erUser = await _bll.ErUsers.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (erUser == null)
             {
                 return NotFound();
@@ -107,12 +107,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (!ModelState.IsValid || !await _uow.ErUsers.ExistsAsync(erUser.Id, User.GetUserId()!.Value))
+            if (!ModelState.IsValid || !await _bll.ErUsers.ExistsAsync(erUser.Id, User.GetUserId()!.Value))
                 return View(erUser);
 
             erUser.AppUserId = User.GetUserId()!.Value;
-            _uow.ErUsers.Update(erUser);
-            await _uow.SaveChangesAsync();
+            _bll.ErUsers.Update(erUser);
+            await _bll.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
@@ -125,7 +125,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var erUser = await _bll.ErUsers.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (erUser == null)
             {
                 return NotFound();
@@ -139,8 +139,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.ErUsers.RemoveAsync(id, User.GetUserId()!.Value);
-            await _uow.SaveChangesAsync();
+            await _bll.ErUsers.RemoveAsync(id, User.GetUserId()!.Value);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

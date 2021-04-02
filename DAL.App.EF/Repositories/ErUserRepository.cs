@@ -64,7 +64,7 @@ namespace DAL.App.EF.Repositories
                     FirstName = e.FirstName,
                     LastName = e.LastName,
                     PropertiesCount = e.Properties!.Count,
-                    Gender = e.Gender,
+                    Gender = e.Gender!.GenderValue,
                 }).OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
                 
             return await resultQuery.ToListAsync();

@@ -5,8 +5,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Applications.BLL.App;
 using Applications.DAL.App;
 using Applications.DAL.App.Repositories;
+using BLL.App;
 using DAL.App.EF;
 using DAL.App.EF.AppDataInit;
 using DAL.App.EF.Repositories;
@@ -46,6 +48,7 @@ namespace WebApp
             );
             
             services.AddScoped<IAppUnitOfWork, AppUnitOfWork>();
+            services.AddScoped<IAppBLL, AppBLL>();
             
             
             services.AddSingleton<Singleton>();
