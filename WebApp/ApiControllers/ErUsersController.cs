@@ -6,8 +6,7 @@ using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
+
 using DTO.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -37,7 +36,7 @@ namespace WebApp.ApiControllers
 
         // GET: api/ErUsers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ErUser>> GetErUser(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.ErUser>> GetErUser(Guid id)
         {
             var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id);
 
@@ -52,7 +51,7 @@ namespace WebApp.ApiControllers
         // PUT: api/ErUsers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutErUser(Guid id, ErUser erUser)
+        public async Task<IActionResult> PutErUser(Guid id, DAL.App.DTO.ErUser erUser)
         {
             if (id != erUser.Id)
             {
@@ -67,7 +66,7 @@ namespace WebApp.ApiControllers
         // POST: api/ErUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ErUser>> PostErUser(ErUser erUser)
+        public async Task<ActionResult<DAL.App.DTO.ErUser>> PostErUser(DAL.App.DTO.ErUser erUser)
         {
             _uow.ErUsers.Add(erUser);
             await _uow.SaveChangesAsync();

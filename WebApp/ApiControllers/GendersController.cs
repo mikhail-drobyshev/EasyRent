@@ -6,8 +6,6 @@ using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
 
 namespace WebApp.ApiControllers
 {
@@ -25,14 +23,14 @@ namespace WebApp.ApiControllers
 
         // GET: api/Genders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Gender>>> GetGenders()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.Gender>>> GetGenders()
         {
             return Ok(await _uow.Genders.GetAllAsync());
         }
 
         // GET: api/Genders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Gender>> GetGender(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.Gender>> GetGender(Guid id)
         {
             var gender = await _uow.Genders.FirstOrDefaultAsync(id);
 
@@ -47,7 +45,7 @@ namespace WebApp.ApiControllers
         // PUT: api/Genders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGender(Guid id, Gender gender)
+        public async Task<IActionResult> PutGender(Guid id, DAL.App.DTO.Gender gender)
         {
             if (id != gender.Id)
             {
@@ -62,7 +60,7 @@ namespace WebApp.ApiControllers
         // POST: api/Genders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Gender>> PostGender(Gender gender)
+        public async Task<ActionResult<DAL.App.DTO.Gender>> PostGender(DAL.App.DTO.Gender gender)
         {
             _uow.Genders.Add(gender);
             await _uow.SaveChangesAsync();

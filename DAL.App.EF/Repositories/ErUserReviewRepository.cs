@@ -3,36 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Applications.DAL.App.Repositories;
+using AutoMapper;
+using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
 using Domain.App;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class ErUserReviewRepository : BaseRepository<ErUserReview, AppDbContext>, IErUserReviewRepository
+    public class ErUserReviewRepository : BaseRepository<DAL.App.DTO.ErUserReview, Domain.App.ErUserReview, AppDbContext>, IErUserReviewRepository
     {
 
-        public ErUserReviewRepository(AppDbContext dbContext) : base(dbContext)
+        public ErUserReviewRepository(AppDbContext dbContext, IMapper mapper
+        ) : base(dbContext, new ErUserReviewMapper(mapper))
         {
             
         }
-        public override async Task<IEnumerable<ErUserReview>> GetAllAsync(Guid userId = default, bool noTracking = true)
+        public override async Task<IEnumerable<DAL.App.DTO.ErUserReview>> GetAllAsync(Guid userId = default, bool noTracking = true)
         {
             var query = CreateQuery(userId, noTracking);
 
-            query = query
+            var resultQuery = query
                 .Include(e => e.ErUser)
-                .Where(c => c.ErUser!.AppUserId == userId);
+                .Where(c => c.ErUser!.AppUserId == userId)
+                .Select(x => Mapper.Map(x));
 
-            var res = await query.ToListAsync();
+            var res = await resultQuery.ToListAsync();
             // if (res.Count > 0)
             // {
             //     await RepoDbContext.Entry(res.First())
             //         .Reference(x=>)
             // }
-            return res;
+            return res!;
         }
-        public override async Task<ErUserReview?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
+        public override async Task<DAL.App.DTO.ErUserReview?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
             var query = RepoDbSet.AsQueryable();
 
@@ -44,7 +48,7 @@ namespace DAL.App.EF.Repositories
             query = query
                 .Include(e => e.ErUser);
 
-            var res = await query.FirstOrDefaultAsync(m => m.Id == id);
+            var res = Mapper.Map(await query.FirstOrDefaultAsync(m => m.Id == id));
 
             return res;
         }

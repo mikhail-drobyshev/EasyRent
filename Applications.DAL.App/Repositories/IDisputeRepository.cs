@@ -1,11 +1,16 @@
 using System.Threading.Tasks;
 using Applications.DAL.Base.Repositories;
-using Domain.App;
+using DALAppDTO = DAL.App.DTO;
 
 namespace Applications.DAL.App.Repositories
 {
-    public interface IDisputeRepository : IBaseRepository<Dispute>
+    public interface IDisputeRepository : IBaseRepository<DALAppDTO.Dispute>, IDisputeRepositoryCustom<DALAppDTO.Dispute>
     {
-        Task DeleteAllByStatusCancelled(DisputeStatus status);
+    }
+    
+    
+    public interface IDisputeRepositoryCustom<in TEntity>
+    {
+        
     }
 }

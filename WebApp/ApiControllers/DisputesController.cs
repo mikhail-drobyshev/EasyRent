@@ -6,8 +6,7 @@ using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
+
 
 namespace WebApp.ApiControllers
 {
@@ -25,14 +24,14 @@ namespace WebApp.ApiControllers
 
         // GET: api/Disputes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Dispute>>> GetDisputes()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.Dispute>>> GetDisputes()
         {
             return Ok(await _uow.DisputeStatuses.GetAllAsync());
         }
 
         // GET: api/Disputes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Dispute>> GetDispute(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.Dispute>> GetDispute(Guid id)
         {
             var dispute = await _uow.Disputes.FirstOrDefaultAsync(id);
 
@@ -47,7 +46,7 @@ namespace WebApp.ApiControllers
         // PUT: api/Disputes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDispute(Guid id, Dispute dispute)
+        public async Task<IActionResult> PutDispute(Guid id, DAL.App.DTO.Dispute dispute)
         {
             if (id != dispute.Id)
             {
@@ -62,7 +61,7 @@ namespace WebApp.ApiControllers
         // POST: api/Disputes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Dispute>> PostDispute(Dispute dispute)
+        public async Task<ActionResult<DAL.App.DTO.Dispute>> PostDispute(DAL.App.DTO.Dispute dispute)
         {
             _uow.Disputes.Add(dispute);
             await _uow.SaveChangesAsync();

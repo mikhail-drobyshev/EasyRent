@@ -6,8 +6,6 @@ using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
 
 namespace WebApp.ApiControllers
 {
@@ -24,7 +22,7 @@ namespace WebApp.ApiControllers
 
         // GET: api/PropertyLocations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PropertyLocation>>> GetPropertyLocations()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.PropertyLocation>>> GetPropertyLocations()
         {
             return Ok(await _uow.PropertyLocations.GetAllAsync());
 
@@ -32,7 +30,7 @@ namespace WebApp.ApiControllers
 
         // GET: api/PropertyLocations/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PropertyLocation>> GetPropertyLocation(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.PropertyLocation>> GetPropertyLocation(Guid id)
         {
             var propertyLocation = await _uow.PropertyLocations.FirstOrDefaultAsync(id);
 
@@ -47,7 +45,7 @@ namespace WebApp.ApiControllers
         // PUT: api/PropertyLocations/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPropertyLocation(Guid id, PropertyLocation propertyLocation)
+        public async Task<IActionResult> PutPropertyLocation(Guid id, DAL.App.DTO.PropertyLocation propertyLocation)
         {
             if (id != propertyLocation.Id)
             {
@@ -62,7 +60,7 @@ namespace WebApp.ApiControllers
         // POST: api/PropertyLocations
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<PropertyLocation>> PostPropertyLocation(PropertyLocation propertyLocation)
+        public async Task<ActionResult<DAL.App.DTO.PropertyLocation>> PostPropertyLocation(DAL.App.DTO.PropertyLocation propertyLocation)
         {
             _uow.PropertyLocations.Add(propertyLocation);
             await _uow.SaveChangesAsync();

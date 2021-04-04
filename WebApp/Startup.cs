@@ -58,9 +58,9 @@ namespace WebApp
             services.AddTransient<IDiTransient, Transient>();
             services.AddSingleton<IDiSingleton, Singleton>();
             services.AddScoped<IDiScoped, Scoped>();
-            
-            
-            
+
+
+
             services.AddDatabaseDeveloperPageExceptionFilter();
             
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -99,6 +99,11 @@ namespace WebApp
                     builder.AllowAnyOrigin();
                 });
             });
+            services.AddAutoMapper(
+                typeof(DAL.App.DTO.MappingProfiles.MapperProfile),
+                typeof(BLL.App.DTO.MappingProfiles.MapperProfile)
+                );
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

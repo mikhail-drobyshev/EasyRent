@@ -3,47 +3,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Applications.DAL.App.Repositories;
+using AutoMapper;
+using DAL.App.DTO;
+using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain.App;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
 namespace DAL.App.EF.Repositories
 {
-    public class DisputeRepository : BaseRepository<Dispute, AppDbContext>, IDisputeRepository
+    public class DisputeRepository : BaseRepository<DAL.App.DTO.Dispute, Domain.App.Dispute, AppDbContext>, IDisputeRepository
     {
-        public DisputeRepository(AppDbContext dbContext) : base(dbContext)
+        public DisputeRepository(AppDbContext dbContext, IMapper mapper
+        ) : base(dbContext, new DisputeMapper(mapper))
         {
         }
 
-        public async Task DeleteAllByStatusCancelled(DisputeStatus status)
-        {
-            
-            foreach (var dispute in await RepoDbSet.Where(x=>x.DisputeStatus == status).ToListAsync())
-            {
-                Remove(dispute);
-            }
-        }
+        // public async Task DeleteAllByStatusCancelled(DisputeStatus statuss)
+        // {
+        //     var status = Mapper.Map(statuss);
+        //
+        //     foreach (var dispute in await RepoDbSet.Where(x=>x.DisputeStatus == status).ToListAsync())
+        //     {
+        //         Remove(Mapper.Map(dispute)!);
+        //     }
+        // }
 
-        public override async Task<IEnumerable<Dispute>> GetAllAsync(Guid userId = default, bool noTracking = true)
+        public override async Task<IEnumerable<DAL.App.DTO.Dispute>> GetAllAsync(Guid userId = default, bool noTracking = true)
         {
             var query = CreateQuery(userId, noTracking);
 
-            query = query
+            var resultQuery = query
                 .Include(d => d.DisputeStatus)
-                .Include(d => d.ErApplication);
-            if (userId != default)
-            {
-                query = query
-                    .Where(c => c.AppUserId == userId);
-            }
-            var res = await query.ToListAsync();
+                .Include(d => d.ErApplication)
+                .Where(c => c.AppUserId == userId)
+                .Select(x => Mapper.Map(x));
+            var res = await resultQuery.ToListAsync();
             // if (res.Count > 0)
             // {
             //     await RepoDbContext.Entry(res.First())
             //         .Reference(x=>)
             // }
-            return res;
+            return res!;
         }
         public override async Task<Dispute?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
@@ -58,12 +59,9 @@ namespace DAL.App.EF.Repositories
                 .Include(d => d.DisputeStatus)
                 .Include(d => d.ErApplication);
 
-            var res = await query.FirstOrDefaultAsync(m => m.Id == id);
+            var res = Mapper.Map(await query.FirstOrDefaultAsync(m => m.Id == id));
 
             return res;
         }
-
-
-
     }
 }

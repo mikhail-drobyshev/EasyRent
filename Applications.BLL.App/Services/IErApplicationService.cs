@@ -1,10 +1,11 @@
 using Applications.BLL.Base.Services;
 using Applications.DAL.App.Repositories;
-using Domain.App;
+using BLLAppDTO = BLL.App.DTO;
+using DALAppDTO = DAL.App.DTO;
 
 namespace Applications.BLL.App.Services
 {
-    public interface IErApplicationService : IBaseEntityService<ErApplication>, IErApplicationRepository
+    public interface IErApplicationService : IBaseEntityService<BLLAppDTO.ErApplication, DALAppDTO.ErApplication>, IErApplicationRepositoryCustom<BLLAppDTO.ErApplication>
     {
         
     }

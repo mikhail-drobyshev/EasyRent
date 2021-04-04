@@ -6,8 +6,6 @@ using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
 
 namespace WebApp.ApiControllers
 {
@@ -24,14 +22,14 @@ namespace WebApp.ApiControllers
 
         // GET: api/Properties
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Property>>> GetProperties()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.Property>>> GetProperties()
         {
             return Ok(await _uow.Properties.GetAllAsync());
         }
 
         // GET: api/Properties/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Property>> GetProperty(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.Property>> GetProperty(Guid id)
         {
             var @property = await _uow.Properties.FirstOrDefaultAsync(id);
 
@@ -46,7 +44,7 @@ namespace WebApp.ApiControllers
         // PUT: api/Properties/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProperty(Guid id, Property @property)
+        public async Task<IActionResult> PutProperty(Guid id, DAL.App.DTO.Property @property)
         {
             if (id != property.Id)
             {
@@ -61,7 +59,7 @@ namespace WebApp.ApiControllers
         // POST: api/Properties
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Property>> PostProperty(Property @property)
+        public async Task<ActionResult<DAL.App.DTO.Property>> PostProperty(DAL.App.DTO.Property @property)
         {
             _uow.Properties.Add(@property);
             await _uow.SaveChangesAsync();

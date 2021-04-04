@@ -31,7 +31,7 @@ namespace WebApp.ApiControllers
 
         // GET: api/DisputeStatuses/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DisputeStatus>> GetDisputeStatus(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.DisputeStatus>> GetDisputeStatus(Guid id)
         {
             var disputeStatus = await _uow.DisputeStatuses.FirstOrDefaultAsync(id);
 
@@ -46,7 +46,7 @@ namespace WebApp.ApiControllers
         // PUT: api/DisputeStatuses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDisputeStatus(Guid id, DisputeStatus disputeStatus)
+        public async Task<IActionResult> PutDisputeStatus(Guid id, DAL.App.DTO.DisputeStatus disputeStatus)
         {
             if (id != disputeStatus.Id)
             {
@@ -61,7 +61,7 @@ namespace WebApp.ApiControllers
         // POST: api/DisputeStatuses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DisputeStatus>> PostDisputeStatus(DisputeStatus disputeStatus)
+        public async Task<ActionResult<DisputeStatus>> PostDisputeStatus(DAL.App.DTO.DisputeStatus disputeStatus)
         {
             _uow.DisputeStatuses.Add(disputeStatus);
             await _uow.SaveChangesAsync();

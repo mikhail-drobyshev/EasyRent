@@ -6,8 +6,6 @@ using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
 
 namespace WebApp.ApiControllers
 {
@@ -24,14 +22,14 @@ namespace WebApp.ApiControllers
 
         // GET: api/PropertyReviews
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PropertyReview>>> GetPropertyReviews()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.PropertyReview>>> GetPropertyReviews()
         {
             return Ok(await _uow.PropertyReviews.GetAllAsync());
         }
 
         // GET: api/PropertyReviews/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PropertyReview>> GetPropertyReview(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.PropertyReview>> GetPropertyReview(Guid id)
         {
             var propertyReview = await _uow.PropertyReviews.FirstOrDefaultAsync(id);
 
@@ -46,7 +44,7 @@ namespace WebApp.ApiControllers
         // PUT: api/PropertyReviews/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPropertyReview(Guid id, PropertyReview propertyReview)
+        public async Task<IActionResult> PutPropertyReview(Guid id, DAL.App.DTO.PropertyReview propertyReview)
         {
             if (id != propertyReview.Id)
             {
@@ -61,7 +59,7 @@ namespace WebApp.ApiControllers
         // POST: api/PropertyReviews
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<PropertyReview>> PostPropertyReview(PropertyReview propertyReview)
+        public async Task<ActionResult<DAL.App.DTO.PropertyReview>> PostPropertyReview(DAL.App.DTO.PropertyReview propertyReview)
         {
             _uow.PropertyReviews.Add(propertyReview);
             await _uow.SaveChangesAsync();

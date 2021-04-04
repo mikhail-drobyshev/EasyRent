@@ -6,8 +6,7 @@ using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
+
 
 namespace WebApp.ApiControllers
 {
@@ -24,14 +23,14 @@ namespace WebApp.ApiControllers
 
         // GET: api/ErUserPictures
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ErUserPicture>>> GetErUserPictures()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.ErUserPicture>>> GetErUserPictures()
         {
             return Ok(await _uow.ErUserPictures.GetAllAsync());
         }
 
         // GET: api/ErUserPictures/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ErUserPicture>> GetErUserPicture(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.ErUserPicture>> GetErUserPicture(Guid id)
         {
             var erUserPicture = await _uow.ErUserPictures.FirstOrDefaultAsync(id);
 
@@ -46,7 +45,7 @@ namespace WebApp.ApiControllers
         // PUT: api/ErUserPictures/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutErUserPicture(Guid id, ErUserPicture erUserPicture)
+        public async Task<IActionResult> PutErUserPicture(Guid id, DAL.App.DTO.ErUserPicture erUserPicture)
         {
             if (id != erUserPicture.Id)
             {
@@ -61,7 +60,7 @@ namespace WebApp.ApiControllers
         // POST: api/ErUserPictures
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ErUserPicture>> PostErUserPicture(ErUserPicture erUserPicture)
+        public async Task<ActionResult<DAL.App.DTO.ErUserPicture>> PostErUserPicture(DAL.App.DTO.ErUserPicture erUserPicture)
         {
             _uow.ErUserPictures.Add(erUserPicture);
             await _uow.SaveChangesAsync();

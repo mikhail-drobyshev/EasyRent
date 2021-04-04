@@ -1,9 +1,14 @@
 using Applications.DAL.Base.Repositories;
-using Domain.App;
+using DAL.App.DTO;
 
 namespace Applications.DAL.App.Repositories
 {
-    public interface IGenderRepository : IBaseRepository<Gender>
+    public interface IGenderRepository : IBaseRepository<Gender>, IGenderRepositoryCustom<Gender>
+    {
+        
+    }
+    
+    public interface IGenderRepositoryCustom<TEntity>
     {
         
     }

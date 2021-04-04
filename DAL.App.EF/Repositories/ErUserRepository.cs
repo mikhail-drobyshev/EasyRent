@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Applications.DAL.App.Repositories;
 using Applications.DAL.Base.Repositories;
+using AutoMapper;
+using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain.App;
 using DTO.App;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -13,14 +14,14 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace DAL.App.EF.Repositories
 {
-    public class ErUserRepository : BaseRepository<ErUser, AppDbContext>, IErUserRepository
+    public class ErUserRepository : BaseRepository<DAL.App.DTO.ErUser, Domain.App.ErUser, AppDbContext>, IErUserRepository
     {
 
-        public ErUserRepository(AppDbContext dbContext) : base(dbContext)
+        public ErUserRepository(AppDbContext dbContext, IMapper mapper) : base(dbContext, new ErUserMapper(mapper))
         {
             
         }
-        public override async Task<IEnumerable<ErUser>> GetAllAsync(Guid userId = default, bool noTracking = true)
+        public override async Task<IEnumerable<DAL.App.DTO.ErUser>> GetAllAsync(Guid userId = default, bool noTracking = true)
         {
             var query = CreateQuery(userId, noTracking);
 
@@ -33,15 +34,10 @@ namespace DAL.App.EF.Repositories
                     .Where(c => c.AppUserId == userId);
             }
 
-            var res = await query.ToListAsync();
-            // if (res.Count > 0)
-            // {
-            //     await RepoDbContext.Entry(res.First())
-            //         .Reference(x=>)
-            // }
-            return res;
+            var res = await query.Select(x=>Mapper.Map(x)).ToListAsync();
+            return res!;
         }
-        public override async Task<ErUser?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
+        public override async Task<DAL.App.DTO.ErUser?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
             var query = CreateQuery(default, noTracking);
             
@@ -51,20 +47,20 @@ namespace DAL.App.EF.Repositories
 
             var res = await query.FirstOrDefaultAsync(m => m.Id == id && m.AppUserId == userId);
 
-            return res;
+            return Mapper.Map(res);
         }
 
-        public async Task<IEnumerable<ErUserDTO>> GetAllWithPropertyTypeCountAsync(Guid userId ,bool noTracking = true)
+        public async Task<IEnumerable<DAL.App.DTO.ErUser>> GetAllWithPropertyTypeCountAsync(Guid userId ,bool noTracking = true)
         {
             var query = CreateQuery(userId, noTracking);
             var resultQuery = query
-                .Select(e => new ErUserDTO()
+                .Select(e => new DAL.App.DTO.ErUser()
                 {
                     Id = e.Id,
                     FirstName = e.FirstName,
                     LastName = e.LastName,
                     PropertiesCount = e.Properties!.Count,
-                    Gender = e.Gender!.GenderValue,
+                    Gendervalue = e.Gender!.GenderValue,
                 }).OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
                 
             return await resultQuery.ToListAsync();

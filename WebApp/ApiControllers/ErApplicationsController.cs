@@ -6,8 +6,6 @@ using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
 
 namespace WebApp.ApiControllers
 {
@@ -24,14 +22,14 @@ namespace WebApp.ApiControllers
 
         // GET: api/ErApplications
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ErApplication>>> GetErApplications()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.ErApplication>>> GetErApplications()
         {
             return Ok(await _uow.ErApplications.GetAllAsync());
         }
 
         // GET: api/ErApplications/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ErApplication>> GetErApplication(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.ErApplication>> GetErApplication(Guid id)
         {
             var erApplication = await _uow.ErApplications.FirstOrDefaultAsync(id);
 
@@ -46,7 +44,7 @@ namespace WebApp.ApiControllers
         // PUT: api/ErApplications/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutErApplication(Guid id, ErApplication erApplication)
+        public async Task<IActionResult> PutErApplication(Guid id, DAL.App.DTO.ErApplication erApplication)
         {
             if (id != erApplication.Id)
             {
@@ -61,7 +59,7 @@ namespace WebApp.ApiControllers
         // POST: api/ErApplications
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ErApplication>> PostErApplication(ErApplication erApplication)
+        public async Task<ActionResult<DAL.App.DTO.ErApplication>> PostErApplication(DAL.App.DTO.ErApplication erApplication)
         {
             _uow.ErApplications.Add(erApplication);
             await _uow.SaveChangesAsync();

@@ -6,8 +6,7 @@ using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
+
 
 namespace WebApp.ApiControllers
 {
@@ -25,13 +24,13 @@ namespace WebApp.ApiControllers
 
         // GET: api/ErUserReviews
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ErUserReview>>> GetErUserReviews()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.ErUserReview>>> GetErUserReviews()
         {
             return Ok(await _uow.ErUserReviews.GetAllAsync());        }
 
         // GET: api/ErUserReviews/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ErUserReview>> GetErUserReview(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.ErUserReview>> GetErUserReview(Guid id)
         {
             var erUserReview = await _uow.ErUserReviews.FirstOrDefaultAsync(id);
 
@@ -46,7 +45,7 @@ namespace WebApp.ApiControllers
         // PUT: api/ErUserReviews/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutErUserReview(Guid id, ErUserReview erUserReview)
+        public async Task<IActionResult> PutErUserReview(Guid id, DAL.App.DTO.ErUserReview erUserReview)
         {
             if (id != erUserReview.Id)
             {
@@ -61,7 +60,7 @@ namespace WebApp.ApiControllers
         // POST: api/ErUserReviews
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ErUserReview>> PostErUserReview(ErUserReview erUserReview)
+        public async Task<ActionResult<DAL.App.DTO.ErUserReview>> PostErUserReview(DAL.App.DTO.ErUserReview erUserReview)
         {
             _uow.ErUserReviews.Add(erUserReview);
             await _uow.SaveChangesAsync();

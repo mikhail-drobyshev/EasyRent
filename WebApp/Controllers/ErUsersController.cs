@@ -8,9 +8,7 @@ using Applications.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using DAL.App.EF.Repositories;
-using Domain.App;
+using BLL.App.DTO;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels.ErUsers;
@@ -30,6 +28,7 @@ namespace WebApp.Controllers
         // GET: ErUsers
         public async Task<IActionResult> Index()
         {
+            //TODO figure out why gender is empty
             var res = await _bll.ErUsers.GetAllWithPropertyTypeCountAsync(User.GetUserId()!.Value);
             return View(res);
         }

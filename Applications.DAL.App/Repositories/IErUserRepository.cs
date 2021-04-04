@@ -2,14 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Applications.DAL.Base.Repositories;
-using Domain.App;
-using DTO.App;
+using DAL.App.DTO;
+
 
 namespace Applications.DAL.App.Repositories
 {
-    public interface IErUserRepository : IBaseRepository<ErUser>
+    public interface IErUserRepository : IBaseRepository<ErUser>, IErUserRepositoryCustom<ErUser>
     {
-        Task<IEnumerable<ErUserDTO>> GetAllWithPropertyTypeCountAsync(Guid userId,bool noTracking = true);
+
+    }
+    
+    public interface IErUserRepositoryCustom<TEntity>
+    {
+        Task<IEnumerable<TEntity>> GetAllWithPropertyTypeCountAsync(Guid userId,bool noTracking = true);
 
     }
 }

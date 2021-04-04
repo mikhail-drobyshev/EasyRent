@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
+
 
 namespace WebApp.ApiControllers
 {
@@ -24,14 +22,14 @@ namespace WebApp.ApiControllers
 
         // GET: api/PropertyPictures
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PropertyPicture>>> GetPropertyPictures()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.PropertyPicture>>> GetPropertyPictures()
         {
             return Ok(await _uow.PropertyPictures.GetAllAsync());
         }
 
         // GET: api/PropertyPictures/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PropertyPicture>> GetPropertyPicture(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.PropertyPicture>> GetPropertyPicture(Guid id)
         {
             var propertyPicture = await _uow.PropertyPictures.FirstOrDefaultAsync(id);
 
@@ -46,7 +44,7 @@ namespace WebApp.ApiControllers
         // PUT: api/PropertyPictures/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPropertyPicture(Guid id, PropertyPicture propertyPicture)
+        public async Task<IActionResult> PutPropertyPicture(Guid id, DAL.App.DTO.PropertyPicture propertyPicture)
         {
             if (id != propertyPicture.Id)
             {
@@ -61,7 +59,7 @@ namespace WebApp.ApiControllers
         // POST: api/PropertyPictures
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<PropertyPicture>> PostPropertyPicture(PropertyPicture propertyPicture)
+        public async Task<ActionResult<DAL.App.DTO.PropertyPicture>> PostPropertyPicture(DAL.App.DTO.PropertyPicture propertyPicture)
         {
             _uow.PropertyPictures.Add(propertyPicture);
             await _uow.SaveChangesAsync();

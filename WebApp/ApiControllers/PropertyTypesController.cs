@@ -6,9 +6,6 @@ using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
-using DTO.App;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
@@ -30,7 +27,7 @@ namespace WebApp.ApiControllers
         // GET: api/PropertyTypes
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<PropertyType>>> GetPropertyTypes()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.PropertyType>>> GetPropertyTypes()
         {
             // var data = await _uow.PropertyTypes.GetAllAsync();
             // var result = data.Select(propertyType => new PropertyTypeDTO()
@@ -46,7 +43,7 @@ namespace WebApp.ApiControllers
         // GET: api/PropertyTypes/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<PropertyType>> GetPropertyType(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.PropertyType>> GetPropertyType(Guid id)
         {
             var propertyType = await _uow.PropertyTypes.FirstOrDefaultAsync(id);
 
@@ -61,7 +58,7 @@ namespace WebApp.ApiControllers
         // PUT: api/PropertyTypes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPropertyType(Guid id, PropertyType propertyType)
+        public async Task<IActionResult> PutPropertyType(Guid id, DAL.App.DTO.PropertyType propertyType)
         {
             if (id != propertyType.Id)
             {
@@ -78,7 +75,7 @@ namespace WebApp.ApiControllers
         // POST: api/PropertyTypes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<PropertyType>> PostPropertyType(PropertyType propertyType)
+        public async Task<ActionResult<DAL.App.DTO.PropertyType>> PostPropertyType(DAL.App.DTO.PropertyType propertyType)
         {
             _uow.PropertyTypes.Add(propertyType);
             await _uow.SaveChangesAsync();

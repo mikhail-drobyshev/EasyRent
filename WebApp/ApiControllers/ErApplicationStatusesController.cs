@@ -6,8 +6,7 @@ using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
+
 
 namespace WebApp.ApiControllers
 {
@@ -25,7 +24,7 @@ namespace WebApp.ApiControllers
 
         // GET: api/ErApplicationStatuses
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ErApplicationStatus>>> GetErApplicationStatuses()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.ErApplicationStatus>>> GetErApplicationStatuses()
         {
             return Ok(await _uow.ErApplicationStatuses.GetAllAsync());
 
@@ -33,7 +32,7 @@ namespace WebApp.ApiControllers
 
         // GET: api/ErApplicationStatuses/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ErApplicationStatus>> GetErApplicationStatus(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.ErApplicationStatus>> GetErApplicationStatus(Guid id)
         {
             var erApplicationStatus = await _uow.ErApplicationStatuses.FirstOrDefaultAsync(id);
 
@@ -48,7 +47,7 @@ namespace WebApp.ApiControllers
         // PUT: api/ErApplicationStatuses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutErApplicationStatus(Guid id, ErApplicationStatus erApplicationStatus)
+        public async Task<IActionResult> PutErApplicationStatus(Guid id, DAL.App.DTO.ErApplicationStatus erApplicationStatus)
         {
             if (id != erApplicationStatus.Id)
             {
@@ -63,7 +62,7 @@ namespace WebApp.ApiControllers
         // POST: api/ErApplicationStatuses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ErApplicationStatus>> PostErApplicationStatus(ErApplicationStatus erApplicationStatus)
+        public async Task<ActionResult<DAL.App.DTO.ErApplicationStatus>> PostErApplicationStatus(DAL.App.DTO.ErApplicationStatus erApplicationStatus)
         {
             _uow.ErApplicationStatuses.Add(erApplicationStatus);
             await _uow.SaveChangesAsync();
