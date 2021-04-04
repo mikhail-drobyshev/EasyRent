@@ -29,7 +29,7 @@ namespace WebApp.ApiControllers
 
         // GET: api/ErUsers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ErUserDTO>>> GetErUsers()
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.ErUser>>> GetErUsers()
         {
             return Ok(await _uow.ErUsers.GetAllWithPropertyTypeCountAsync(User.GetUserId()!.Value));
         }

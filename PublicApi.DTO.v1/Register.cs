@@ -1,4 +1,4 @@
-namespace DTO.App
+namespace PublicApi.DTO.v1
 {
     public class Register
     {

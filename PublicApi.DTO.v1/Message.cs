@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace DTO.App
+namespace PublicApi.DTO.v1
 {
     public class Message
     {
