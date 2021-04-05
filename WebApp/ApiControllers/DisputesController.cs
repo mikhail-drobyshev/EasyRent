@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.BLL.App;
 using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,26 +15,26 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class DisputesController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
 
-        public DisputesController(IAppUnitOfWork uow)
+        public DisputesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/Disputes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DAL.App.DTO.Dispute>>> GetDisputes()
+        public async Task<ActionResult<IEnumerable<BLL.App.DTO.Dispute>>> GetDisputes()
         {
-            return Ok(await _uow.DisputeStatuses.GetAllAsync());
+            return Ok(await _bll.DisputeStatuses.GetAllAsync());
         }
 
         // GET: api/Disputes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DAL.App.DTO.Dispute>> GetDispute(Guid id)
+        public async Task<ActionResult<BLL.App.DTO.Dispute>> GetDispute(Guid id)
         {
-            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id);
+            var dispute = await _bll.Disputes.FirstOrDefaultAsync(id);
 
             if (dispute == null)
             {
@@ -46,25 +47,25 @@ namespace WebApp.ApiControllers
         // PUT: api/Disputes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDispute(Guid id, DAL.App.DTO.Dispute dispute)
+        public async Task<IActionResult> PutDispute(Guid id, BLL.App.DTO.Dispute dispute)
         {
             if (id != dispute.Id)
             {
                 return BadRequest();
             }
 
-            _uow.Disputes.Update(dispute);
-            await _uow.SaveChangesAsync();
+            _bll.Disputes.Update(dispute);
+            await _bll.SaveChangesAsync();
             return NoContent();
         }
 
         // POST: api/Disputes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DAL.App.DTO.Dispute>> PostDispute(DAL.App.DTO.Dispute dispute)
+        public async Task<ActionResult<DAL.App.DTO.Dispute>> PostDispute(BLL.App.DTO.Dispute dispute)
         {
-            _uow.Disputes.Add(dispute);
-            await _uow.SaveChangesAsync();
+            _bll.Disputes.Add(dispute);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetDispute", new { id = dispute.Id }, dispute);
         }
@@ -73,14 +74,14 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDispute(Guid id)
         {
-            var dispute = await _uow.Disputes.FirstOrDefaultAsync(id);
+            var dispute = await _bll.Disputes.FirstOrDefaultAsync(id);
             if (dispute == null)
             {
                 return NotFound();
             }
 
-            _uow.Disputes.Remove(dispute);
-            await _uow.SaveChangesAsync();
+            _bll.Disputes.Remove(dispute);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
