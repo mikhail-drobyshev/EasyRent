@@ -41,17 +41,27 @@ namespace DAL.App.EF.AppDataInit
 
         public static void SeedIdentity(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
         {
-            var role = new AppRole();
-            role.Name = "Admin";
-            var res = roleManager.CreateAsync(role).Result;
-            if (!res.Succeeded)
+            var roles = new List<AppRole>();
+            var role = new AppRole {Name = "Admin"};
+            roles.Add(role);
+            role = new AppRole {Name = "Host"};
+            roles.Add(role);
+            role = new AppRole {Name = "Tenant"};
+            roles.Add(role);
+            IdentityResult res;
+            foreach (var userRole in roles)
             {
-                foreach (var error in res.Errors)
+                res = roleManager.CreateAsync(userRole).Result;
+                if (!res.Succeeded)
                 {
-                    Console.WriteLine($"Role is not created {error.Description}");
-
+                    foreach (var error in res.Errors)
+                    {
+                        Console.WriteLine($"Role is not created {error.Description}");
+            
+                    }
                 }
             }
+            
 
             var user = new AppUser();
             user.Email = "admin@midrob.com";
