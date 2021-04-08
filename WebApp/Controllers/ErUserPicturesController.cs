@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.BLL.App;
 using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.DTO;
+using BLL.App.DTO;
 using Extensions.Base;
 using WebApp.ViewModels.ErUserPictures;
 
@@ -14,17 +15,17 @@ namespace WebApp.Controllers
 {
     public class ErUserPicturesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public ErUserPicturesController(IAppUnitOfWork uow)
+        public ErUserPicturesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: ErUserPictures
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.ErUserPictures.GetAllAsync(User.GetUserId()!.Value);
+            var res = await _bll.ErUserPictures.GetAllAsync(User.GetUserId()!.Value);
             return View(res);
         }
 
@@ -36,7 +37,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserPicture = await _uow.ErUserPictures.FirstOrDefaultAsync(id.Value);
+            var erUserPicture = await _bll.ErUserPictures.FirstOrDefaultAsync(id.Value);
             if (erUserPicture == null)
             {
                 return NotFound();
@@ -49,7 +50,7 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Create()
         {
             var viewModel = new ErUserPicturesCreatEditViewModel();
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.ErUserSelectList = new SelectList(await _bll.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName));
             return View(viewModel);
         }
 
@@ -62,11 +63,11 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _uow.ErUserPictures.Add(viewModel.ErUserPicture);
-                await _uow.SaveChangesAsync();
+                _bll.ErUserPictures.Add(viewModel.ErUserPicture);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.ErUserPicture.ErUserId);
+            viewModel.ErUserSelectList = new SelectList(await _bll.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.ErUserPicture.ErUserId);
             return View(viewModel);
         }
 
@@ -78,14 +79,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserPicture = await _uow.ErUserPictures.FirstOrDefaultAsync(id.Value);
+            var erUserPicture = await _bll.ErUserPictures.FirstOrDefaultAsync(id.Value);
             if (erUserPicture == null)
             {
                 return NotFound();
             }
             var viewModel = new ErUserPicturesCreatEditViewModel();
             viewModel.ErUserPicture = erUserPicture;
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.ErUserSelectList = new SelectList(await _bll.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName));
 
             return View(viewModel);
         }
@@ -104,11 +105,11 @@ namespace WebApp.Controllers
             
             if (ModelState.IsValid)
             {
-                _uow.ErUserPictures.Update(viewModel.ErUserPicture);
-                await _uow.SaveChangesAsync();
+                _bll.ErUserPictures.Update(viewModel.ErUserPicture);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.ErUserPicture.ErUserId);
+            viewModel.ErUserSelectList = new SelectList(await _bll.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.ErUserPicture.ErUserId);
             return View(viewModel);
         }
 
@@ -120,7 +121,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserPicture= await _uow.ErUserPictures.FirstOrDefaultAsync(id.Value);
+            var erUserPicture = await _bll.ErUserPictures.FirstOrDefaultAsync(id.Value);
             if (erUserPicture == null)
             {
                 return NotFound();
@@ -134,8 +135,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.ErUserPictures.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.ErUserPictures.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
     }

@@ -29,14 +29,14 @@ namespace WebApp.ApiControllers.Identity
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] DTO.App.Login dto)
+        public async Task<IActionResult> Login([FromBody] PublicApi.DTO.v1.Login dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
             // TODO protections against timing attack
             if (user == null)
             {
                 _logger.LogWarning("login. user {User} not found", dto.Email);
-                return NotFound(new DTO.App.Message("Email/Password not found"));
+                return NotFound(new PublicApi.DTO.v1.Message("Email/Password not found"));
             }
 
             var res = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
@@ -51,7 +51,7 @@ namespace WebApp.ApiControllers.Identity
                     DateTime.Now.AddDays(_configuration.GetValue<int>("JWT:ExpireDays"))
                 );
                 _logger.LogInformation("Login. User {User}", dto.Email);
-                return Ok(new DTO.App.JwtResponse()
+                return Ok(new PublicApi.DTO.v1.JwtResponse()
                 {
                     Token = jwt,
                     Firstname = user.Firstname,
@@ -60,16 +60,16 @@ namespace WebApp.ApiControllers.Identity
             }
             
             _logger.LogWarning("login. user {User} bad password", dto.Email);
-            return NotFound(new DTO.App.Message("Email/Password not found"));
+            return NotFound(new PublicApi.DTO.v1.Message("Email/Password not found"));
         }
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] DTO.App.Register dto)
+        public async Task<IActionResult> Register([FromBody] PublicApi.DTO.v1.Register dto)
         {
             var appUser = await _userManager.FindByEmailAsync(dto.Email);
             if (appUser != null)
             {
                 _logger.LogWarning(" User {User} already registered", dto.Email);
-                return BadRequest(new DTO.App.Message("User already registered"));
+                return BadRequest(new PublicApi.DTO.v1.Message("User already registered"));
             }
 
             appUser = new Domain.App.Identity.AppUser()
@@ -97,7 +97,7 @@ namespace WebApp.ApiControllers.Identity
                         DateTime.Now.AddDays(_configuration.GetValue<int>("JWT:ExpireDays"))
                     );
                     _logger.LogInformation("WebApi login. User {User}", dto.Email);
-                    return Ok(new DTO.App.JwtResponse()
+                    return Ok(new PublicApi.DTO.v1.JwtResponse()
                     {
                         Token = jwt,
                         Firstname = appUser.Firstname,
@@ -108,12 +108,12 @@ namespace WebApp.ApiControllers.Identity
                 else
                 {
                     _logger.LogInformation("User {Email} not found after creation", appUser.Email);
-                    return BadRequest(new DTO.App.Message("User not found after creation!"));
+                    return BadRequest(new PublicApi.DTO.v1.Message("User not found after creation!"));
                 }
             }
             
             var errors = result.Errors.Select(error => error.Description).ToList();
-            return BadRequest(new DTO.App.Message() {Messages = errors});
+            return BadRequest(new PublicApi.DTO.v1.Message() {Messages = errors});
         }
         
 }

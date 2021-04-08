@@ -176,6 +176,13 @@ namespace WebApp
                     Console.WriteLine("No manager");
                 }
             }
+            if (configuration.GetValue<bool>("AppData:SeedData"))
+            {
+                Console.Write("Seed database");
+                DataInit.SeedAppData(ctx);
+                Console.WriteLine(" - done");
+            }
+
 
             //C# will dispose all the usings here
         }

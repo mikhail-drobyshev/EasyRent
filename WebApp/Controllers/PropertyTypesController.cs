@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.BLL.App;
 using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.DTO;
+using BLL.App.DTO;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 
@@ -16,18 +17,18 @@ namespace WebApp.Controllers
     [Authorize(Roles = "Admin")]
     public class PropertyTypesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public PropertyTypesController(IAppUnitOfWork uow)
+        public PropertyTypesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: PropertyTypes
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.PropertyTypes.GetAllAsync();
-            await _uow.SaveChangesAsync();
+            var res = await _bll.PropertyTypes.GetAllAsync();
+            await _bll.SaveChangesAsync();
             return View(res);
         }
 
@@ -39,7 +40,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyType = await _uow.PropertyTypes.FirstOrDefaultAsync(id.Value);
+            var propertyType = await _bll.PropertyTypes.FirstOrDefaultAsync(id.Value);
             if (propertyType == null)
             {
                 return NotFound();
@@ -63,8 +64,8 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _uow.PropertyTypes.Add(propertyType);
-                await _uow.SaveChangesAsync();
+                _bll.PropertyTypes.Add(propertyType);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(propertyType);
@@ -78,7 +79,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyType = await _uow.PropertyTypes.FirstOrDefaultAsync(id.Value);
+            var propertyType = await _bll.PropertyTypes.FirstOrDefaultAsync(id.Value);
             if (propertyType == null)
             {
                 return NotFound();
@@ -100,8 +101,8 @@ namespace WebApp.Controllers
 
             if (!ModelState.IsValid) return View(propertyType);
             
-            _uow.PropertyTypes.Update(propertyType);
-            await _uow.SaveChangesAsync();
+            _bll.PropertyTypes.Update(propertyType);
+            await _bll.SaveChangesAsync();
             
             return RedirectToAction(nameof(Index));
         }
@@ -114,7 +115,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyType = await _uow.PropertyTypes.FirstOrDefaultAsync(id.Value);
+            var propertyType = await _bll.PropertyTypes.FirstOrDefaultAsync(id.Value);
             if (propertyType == null)
             {
                 return NotFound();
@@ -128,8 +129,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.PropertyTypes.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.PropertyTypes.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         

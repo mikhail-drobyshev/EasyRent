@@ -9,7 +9,6 @@ using BLL.App.Mappers;
 using BLL.Base.Services;
 using BLLAppDTO = BLL.App.DTO;
 using DALAppDTO = DAL.App.DTO;
-using DTO.App;
 
 namespace BLL.App.Services
 {

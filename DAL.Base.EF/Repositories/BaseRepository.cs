@@ -45,7 +45,7 @@ namespace DAL.Base.EF.Repositories
             var query = CreateQuery(userId, noTracking);
             var resultQuery = query.Select(domainEntity => Mapper.Map(domainEntity));
             var result = await resultQuery.ToListAsync();
-            return result;
+            return result!;
         }
         
         protected IQueryable<TDomainEntity> CreateQuery(TKey? userId = default, bool noTracking = true)
@@ -64,7 +64,7 @@ namespace DAL.Base.EF.Repositories
             {
                 query = query.AsNoTracking();
             }
-
+            
             return query;
         }
         
@@ -72,14 +72,20 @@ namespace DAL.Base.EF.Repositories
         {
             var query = CreateQuery(userId, noTracking);
 
-            return await query.Select(d=>Mapper.Map(d)).FirstOrDefaultAsync(e => e!.Id.Equals(id));
-        }
-        // public IEnumerable<TDalEntity> GetAll(bool noTracking = true)
-        // {
-        //     return RepoDbSet.ToList();
-        // }
+            
+            //     var query = RepoDbSet.AsQueryable();
+            //
+            //     if (noTracking)
+            //     {
+            //         query = query.AsNoTracking();
+            //     }
+            //     var res = Mapper.Map(await query.FirstOrDefaultAsync(m => m.id.Equals(id));
 
-       
+            var res = Mapper.Map(await query.FirstOrDefaultAsync(e => e!.Id.Equals(id)));
+            return res;
+        }
+
+
 
         public virtual TDalEntity Add(TDalEntity entity)
         {

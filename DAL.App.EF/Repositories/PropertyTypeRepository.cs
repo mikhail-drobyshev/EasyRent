@@ -8,7 +8,6 @@ using AutoMapper;
 using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
 using Domain.App;
-using DTO.App;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
@@ -41,5 +40,17 @@ namespace DAL.App.EF.Repositories
             var result = await resultQuery.ToListAsync();
             return result;
         }
+        // public override async Task<DAL.App.DTO.PropertyType?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
+        // {
+        //     var query = RepoDbSet.AsQueryable();
+        //
+        //     if (noTracking)
+        //     {
+        //         query = query.AsNoTracking();
+        //     }
+        //     var res = Mapper.Map(await query.FirstOrDefaultAsync(m => m.Id == id));
+        //
+        //     return res;
+        // }
     }
 }

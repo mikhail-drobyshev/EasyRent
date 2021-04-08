@@ -1,4 +1,4 @@
-@model DAL.App.DTO.Property
+@model BLL.App.DTO.Property
 
 @{
     ViewData["Title"] = "Delete";
@@ -11,7 +11,6 @@
     <h4>Property</h4>
     <hr />
     <partial name="_DetailsDelete"></partial>
-    
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |

@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.BLL.App;
 using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using DAL.App.DTO;
+using BLL.App.DTO;
 using Extensions.Base;
 using WebApp.ViewModels.Properties;
 
@@ -13,17 +14,17 @@ namespace WebApp.Controllers
 {
     public class PropertiesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public PropertiesController(IAppUnitOfWork uow)
+        public PropertiesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: Properties
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.Properties.GetAllAsync(User.GetUserId()!.Value);
+            var res = await _bll.Properties.GetAllAsync(User.GetUserId()!.Value);
             return View(res);
         }
 
@@ -35,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dproperty = await _uow.Properties.FirstOrDefaultAsync(id.Value);
+            var dproperty = await _bll.Properties.FirstOrDefaultAsync(id.Value);
             if (dproperty == null)
             {
                 return NotFound();
@@ -48,8 +49,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Create()
         {
             var viewModel = new PropertiesCreatEditViewModel();
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName));
-            viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue));
+            viewModel.ErUserSelectList = new SelectList(await _bll.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.PropertyTypeSelectList  = new SelectList(await _bll.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue));
             return View(viewModel);
         }
 
@@ -62,12 +63,12 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _uow.Properties.Add(viewModel.Property);
-                await _uow.SaveChangesAsync();
+                _bll.Properties.Add(viewModel.Property);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             } 
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.Property.ErUserId);
-            viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue), viewModel.Property.Id);
+            viewModel.ErUserSelectList = new SelectList(await _bll.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.Property.ErUserId);
+            viewModel.PropertyTypeSelectList  = new SelectList(await _bll.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue), viewModel.Property.Id);
             return View(viewModel);
         }
 
@@ -79,15 +80,15 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var property = await _uow.Properties.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var property = await _bll.Properties.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (property == null)
             {
                 return NotFound();
             }
             var viewModel = new PropertiesCreatEditViewModel();
             viewModel.Property = property;
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName));
-            viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue));
+            viewModel.ErUserSelectList = new SelectList(await _bll.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName));
+            viewModel.PropertyTypeSelectList  = new SelectList(await _bll.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue));
             return View(viewModel);
         }
 
@@ -105,12 +106,12 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Properties.Update(viewModel.Property);
-                await _uow.SaveChangesAsync();
+                _bll.Properties.Update(viewModel.Property);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            viewModel.ErUserSelectList = new SelectList(await _uow.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.Property.ErUserId);
-            viewModel.PropertyTypeSelectList  = new SelectList(await _uow.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue), viewModel.Property.Id);
+            viewModel.ErUserSelectList = new SelectList(await _bll.ErUsers.GetAllAsync(User.GetUserId()!.Value), nameof(ErUser.Id), nameof(ErUser.FirstName), viewModel.Property.ErUserId);
+            viewModel.PropertyTypeSelectList  = new SelectList(await _bll.PropertyTypes.GetAllAsync(), nameof(PropertyType.Id), nameof(PropertyType.PropertyTypeValue), viewModel.Property.Id);
             return View(viewModel);
         }
 
@@ -122,7 +123,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dproperty =  await _uow.Properties.FirstOrDefaultAsync(id.Value);
+            var dproperty =  await _bll.Properties.FirstOrDefaultAsync(id.Value);
             if (dproperty == null)
             {
                 return NotFound();
@@ -136,8 +137,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Properties.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.Properties.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         

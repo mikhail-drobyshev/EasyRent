@@ -20,24 +20,44 @@ namespace DAL.App.EF.AppDataInit
             ctx.Database.Migrate();
         }
         
-        // public static void SeedAppData(AppDbContext ctx)
-        // {
-        //     var ptypeFlat = new PropertyType()
-        //     {
-        //         PropertyTypeValue = "Flat"
-        //     };
-        //     var ptypeHouse = new PropertyType()
-        //     {
-        //         PropertyTypeValue = "House"
-        //     };
-        //     var ptypeShare = new PropertyType()
-        //     {
-        //         PropertyTypeValue = "PropertyShare"
-        //     };
-        //     
-        //     
-        //     ctx.SaveChanges();
-        // }
+        public static void SeedAppData(AppDbContext ctx)
+        {
+            var ctypeFlat = new PropertyType()
+            {
+                PropertyTypeValue = "Flat"
+            };
+            var ctypeHouse = new PropertyType()
+            {
+                PropertyTypeValue = "House"
+            };
+            var ctypeShare = new PropertyType()
+            {
+                PropertyTypeValue = "FlatShare"
+            };
+            var genderMale = new Gender()
+            {
+                GenderValue = "Male"
+            };
+            var genderFemale = new Gender()
+            {
+                GenderValue = "Female"
+            };
+            var genderOther = new Gender()
+            {
+                GenderValue = "Other"
+            };
+
+
+            ctx.PropertyTypes.Add(ctypeFlat);
+            ctx.PropertyTypes.Add(ctypeHouse);
+            ctx.PropertyTypes.Add(ctypeShare);
+            ctx.Genders.Add(genderMale);
+            ctx.Genders.Add(genderFemale);
+            ctx.Genders.Add(genderOther);
+
+            ctx.SaveChanges();
+        }
+
 
         public static void SeedIdentity(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
         {

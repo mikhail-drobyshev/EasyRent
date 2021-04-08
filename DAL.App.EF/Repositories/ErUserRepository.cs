@@ -7,7 +7,6 @@ using Applications.DAL.Base.Repositories;
 using AutoMapper;
 using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using DTO.App;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -27,7 +26,8 @@ namespace DAL.App.EF.Repositories
 
             query = query
                 .Include(e => e.Gender)
-                .Include(e => e.Properties);
+                .Include(e => e.Properties)
+                .Include(e => e.ErUserPictures);
             if (userId != default)
             {
                 query = query

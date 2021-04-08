@@ -55,7 +55,6 @@ namespace WebApp.Controllers
         {
             var viewModel = new ErUsersCreatEditViewModel();
             viewModel.GenderSelectList = new SelectList(await _bll.Genders.GetAllAsync(), nameof(Gender.Id), nameof(Gender.GenderValue));
-            viewModel.ErUserPictureSelectList  = new SelectList(await _bll.ErUserPictures.GetAllAsync(), nameof(ErUserPicture.Id), nameof(ErUserPicture.PictureUrl));
             return View(viewModel);
         }
 
@@ -74,7 +73,6 @@ namespace WebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             viewModel.GenderSelectList = new SelectList(await _bll.Genders.GetAllAsync(), nameof(Gender.Id), nameof(Gender.GenderValue));
-            viewModel.ErUserPictureSelectList  = new SelectList(await _bll.ErUserPictures.GetAllAsync(), nameof(ErUserPicture.Id), nameof(ErUserPicture.PictureUrl));
             return View(viewModel);
         }
 

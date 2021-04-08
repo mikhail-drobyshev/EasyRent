@@ -7,6 +7,5 @@ namespace WebApp.ViewModels.ErUsers
     {
         public ErUser ErUser { get; set; } = default!;
         public SelectList? GenderSelectList { get; set; }
-        public SelectList? ErUserPictureSelectList { get; set; }
     }
 }
