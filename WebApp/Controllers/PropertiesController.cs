@@ -36,7 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dproperty = await _bll.Properties.FirstOrDefaultAsync(id.Value);
+            var dproperty = await _bll.Properties.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (dproperty == null)
             {
                 return NotFound();
@@ -123,7 +123,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var dproperty =  await _bll.Properties.FirstOrDefaultAsync(id.Value);
+            var dproperty =  await _bll.Properties.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (dproperty == null)
             {
                 return NotFound();
@@ -137,7 +137,7 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _bll.Properties.RemoveAsync(id);
+            await _bll.Properties.RemoveAsync(id, User.GetUserId()!.Value);
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

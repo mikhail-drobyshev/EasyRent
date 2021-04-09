@@ -37,7 +37,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserPicture = await _bll.ErUserPictures.FirstOrDefaultAsync(id.Value);
+            var erUserPicture = await _bll.ErUserPictures.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (erUserPicture == null)
             {
                 return NotFound();
@@ -79,7 +79,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserPicture = await _bll.ErUserPictures.FirstOrDefaultAsync(id.Value);
+            var erUserPicture = await _bll.ErUserPictures.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (erUserPicture == null)
             {
                 return NotFound();
@@ -121,7 +121,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var erUserPicture = await _bll.ErUserPictures.FirstOrDefaultAsync(id.Value);
+            var erUserPicture = await _bll.ErUserPictures.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (erUserPicture == null)
             {
                 return NotFound();
@@ -135,7 +135,7 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _bll.ErUserPictures.RemoveAsync(id);
+            await _bll.ErUserPictures.RemoveAsync(id, User.GetUserId()!.Value);
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

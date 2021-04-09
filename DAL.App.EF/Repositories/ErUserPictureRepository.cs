@@ -34,17 +34,12 @@ namespace DAL.App.EF.Repositories
         }
         public override async Task<DAL.App.DTO.ErUserPicture?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
-            var query = RepoDbSet.AsQueryable();
+            var query = CreateQuery(userId, noTracking);
 
-            if (noTracking)
-            {
-                query = query.AsNoTracking();
-            }
+            // query = query
+            //     .Include(e => e.ErUser);
             
-            query = query
-                .Include(e => e.ErUser);
-
-            var res = Mapper.Map(await query.FirstOrDefaultAsync(m => m.Id == id));
+            var res = Mapper.Map(await query.FirstOrDefaultAsync(m => m.Id == id && m.ErUser!.AppUserId == userId));
 
             return res;
         }
