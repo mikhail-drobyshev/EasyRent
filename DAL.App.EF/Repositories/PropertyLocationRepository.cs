@@ -28,11 +28,6 @@ namespace DAL.App.EF.Repositories
                 .Include(p => p.Property)
                 .Select(x => Mapper.Map(x));
             var res = await queryResult.ToListAsync();
-            // if (res.Count > 0)
-            // {
-            //     await RepoDbContext.Entry(res.First())
-            //         .Reference(x=>)
-            // }
             return res!;
         }
         public override async Task<DAL.App.DTO.PropertyLocation?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
