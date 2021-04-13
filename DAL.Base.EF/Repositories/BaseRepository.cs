@@ -89,7 +89,10 @@ namespace DAL.Base.EF.Repositories
 
         public virtual TDalEntity Add(TDalEntity entity)
         {
-            return Mapper.Map(RepoDbSet.Add(Mapper.Map(entity)!).Entity)!;
+            var domainEntity = Mapper.Map(entity)!;
+            var updatedDomainEntity = RepoDbSet.Add(domainEntity).Entity;
+            var dalEntity = Mapper.Map(updatedDomainEntity)!;
+            return dalEntity;
         }
 
         public virtual TDalEntity Update(TDalEntity entity)

@@ -11,7 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin", AuthenticationSchemes =  JwtBearerDefaults.AuthenticationScheme)]
 
@@ -80,7 +81,13 @@ namespace WebApp.ApiControllers
             _bll.PropertyTypes.Add(propertyType);
             await _bll.SaveChangesAsync();
 
-            return CreatedAtAction("GetPropertyType", new { id = propertyType.Id }, propertyType);
+            return CreatedAtAction(
+                "GetPropertyType",
+                new
+                {
+                    id = propertyType.Id,
+                    version = HttpContext.GetRequestedApiVersion()?.ToString()
+                }, propertyType);
         }
 
         // DELETE: api/PropertyTypes/5

@@ -103,7 +103,10 @@ namespace WebApp
                 typeof(DAL.App.DTO.MappingProfiles.MapperProfile),
                 typeof(BLL.App.DTO.MappingProfiles.MapperProfile)
                 );
-
+            services.AddApiVersioning(o =>
+            {
+                o.ReportApiVersions = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

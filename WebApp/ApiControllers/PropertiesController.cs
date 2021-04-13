@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}[controller]")]
     [ApiController]
     public class PropertiesController : ControllerBase
     {
@@ -64,7 +65,11 @@ namespace WebApp.ApiControllers
             _uow.Properties.Add(@property);
             await _uow.SaveChangesAsync();
 
-            return CreatedAtAction("GetProperty", new { id = @property.Id }, @property);
+            return CreatedAtAction("GetProperty", new
+            {
+                id = @property.Id,
+                version = HttpContext.GetRequestedApiVersion()?.ToString()
+            }, @property);
         }
 
         // DELETE: api/Properties/5

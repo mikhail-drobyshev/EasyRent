@@ -13,7 +13,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes =  JwtBearerDefaults.AuthenticationScheme)]
 
@@ -70,7 +71,11 @@ namespace WebApp.ApiControllers
             _uow.ErUsers.Add(erUser);
             await _uow.SaveChangesAsync();
 
-            return CreatedAtAction("GetErUser", new { id = erUser.Id }, erUser);
+            return CreatedAtAction("GetErUser", new
+            {
+                id = erUser.Id,
+                version = HttpContext.GetRequestedApiVersion()?.ToString()
+            }, erUser);
         }
 
         // DELETE: api/ErUsers/5
