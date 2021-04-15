@@ -12,7 +12,7 @@ using Domain.App;
 namespace WebApp.ApiControllers
 {
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class DisputeStatusesController : ControllerBase
     {

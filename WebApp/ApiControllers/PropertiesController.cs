@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Applications.DAL.App;
+using Extensions.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WebApp.ApiControllers
 {
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class PropertiesController : ControllerBase
     {
@@ -25,7 +26,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.Property>>> GetProperties()
         {
-            return Ok(await _uow.Properties.GetAllAsync());
+            return Ok(await _uow.Properties.GetAllAsync(User.GetUserId()!.Value));
         }
 
         // GET: api/Properties/5

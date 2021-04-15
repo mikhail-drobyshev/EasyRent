@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.BLL.App;
 using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,31 +15,31 @@ using Microsoft.AspNetCore.Authorization;
 namespace WebApp.ApiControllers
 {
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes =  JwtBearerDefaults.AuthenticationScheme)]
 
     public class ErUsersController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public ErUsersController(IAppUnitOfWork uow)
+        public ErUsersController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/ErUsers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.ErUser>>> GetErUsers()
         {
-            return Ok(await _uow.ErUsers.GetAllWithPropertyTypeCountAsync(User.GetUserId()!.Value));
+            return Ok(await _bll.ErUsers.GetAllWithPropertyTypeCountAsync(User.GetUserId()!.Value));
         }
 
         // GET: api/ErUsers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DAL.App.DTO.ErUser>> GetErUser(Guid id)
+        public async Task<ActionResult<BLL.App.DTO.ErUser>> GetErUser(Guid id)
         {
-            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id);
+            var erUser = await _bll.ErUsers.FirstOrDefaultAsync(id);
 
             if (erUser == null)
             {
@@ -51,25 +52,25 @@ namespace WebApp.ApiControllers
         // PUT: api/ErUsers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutErUser(Guid id, DAL.App.DTO.ErUser erUser)
+        public async Task<IActionResult> PutErUser(Guid id, BLL.App.DTO.ErUser erUser)
         {
             if (id != erUser.Id)
             {
                 return BadRequest();
             }
 
-            _uow.ErUsers.Update(erUser);
-            await _uow.SaveChangesAsync();
+            _bll.ErUsers.Update(erUser);
+            await _bll.SaveChangesAsync();
             return NoContent();
         }
 
         // POST: api/ErUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DAL.App.DTO.ErUser>> PostErUser(DAL.App.DTO.ErUser erUser)
+        public async Task<ActionResult<DAL.App.DTO.ErUser>> PostErUser(BLL.App.DTO.ErUser erUser)
         {
-            _uow.ErUsers.Add(erUser);
-            await _uow.SaveChangesAsync();
+            _bll.ErUsers.Add(erUser);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetErUser", new
             {
@@ -82,14 +83,14 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteErUser(Guid id)
         {
-            var erUser = await _uow.ErUsers.FirstOrDefaultAsync(id);
+            var erUser = await _bll.ErUsers.FirstOrDefaultAsync(id);
             if (erUser == null)
             {
                 return NotFound();
             }
 
-            _uow.ErUsers.Remove(erUser);
-            await _uow.SaveChangesAsync();
+            _bll.ErUsers.Remove(erUser);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }

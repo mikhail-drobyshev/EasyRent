@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Applications.BLL.App;
+using Domain.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace WebApp.ApiControllers
 {
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin", AuthenticationSchemes =  JwtBearerDefaults.AuthenticationScheme)]
 
@@ -28,6 +29,10 @@ namespace WebApp.ApiControllers
         // GET: api/PropertyTypes
         [HttpGet]
         [AllowAnonymous]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(IEnumerable<PropertyType>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<PropertyType>), StatusCodes.Status404NotFound)]
+
         public async Task<ActionResult<IEnumerable<BLL.App.DTO.PropertyType>>> GetPropertyTypes()
         {
             // var data = await _bll.PropertyTypes.GetAllAsync();
