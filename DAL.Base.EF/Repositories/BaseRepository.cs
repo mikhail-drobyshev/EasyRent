@@ -31,6 +31,9 @@ namespace DAL.Base.EF.Repositories
         protected readonly TDbContext RepoDbContext;
         protected readonly DbSet<TDomainEntity> RepoDbSet;
         protected readonly IBaseMapper<TDalEntity, TDomainEntity> Mapper;
+        
+        private readonly Dictionary<TDalEntity, TDomainEntity> _entityCache = new();
+
 
         public BaseRepository(TDbContext dbContext, IBaseMapper<TDalEntity,TDomainEntity> mapper)
         {
@@ -92,6 +95,15 @@ namespace DAL.Base.EF.Repositories
             var domainEntity = Mapper.Map(entity)!;
             var updatedDomainEntity = RepoDbSet.Add(domainEntity).Entity;
             var dalEntity = Mapper.Map(updatedDomainEntity)!;
+            
+            _entityCache.Add(entity, domainEntity);
+            return dalEntity;
+        }
+        
+        public TDalEntity GetEntityAfterSavingChanges(TDalEntity entity)
+        {
+            var updatedEntity = _entityCache[entity]!;
+            var dalEntity = Mapper.Map(updatedEntity)!;
             return dalEntity;
         }
 
@@ -112,6 +124,8 @@ namespace DAL.Base.EF.Repositories
 
             return Mapper.Map(RepoDbSet.Remove(Mapper.Map(entity)!).Entity)!;
         }
+
+        
 
         public virtual async Task<TDalEntity> RemoveAsync(TKey id, TKey? userId = default)
         {

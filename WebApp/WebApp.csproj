@@ -3,6 +3,11 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <UserSecretsId>aspnet-WebApp-DE1FE3DC-CFCF-43D6-96A2-BCF966F19F44</UserSecretsId>
+    
+    </PropertyGroup>
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <!--<NoWarn>$(NoWarn);1591</NoWarn>-->
     </PropertyGroup>
 
     <ItemGroup>

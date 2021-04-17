@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Applications.BLL.App;
 using Applications.DAL.App;
+using DAL.App.EF;
+using Domain.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,11 +24,13 @@ namespace WebApp.ApiControllers
 
     public class ErUsersController : ControllerBase
     {
+        private readonly AppDbContext _context;
         private readonly IAppBLL _bll;
 
-        public ErUsersController(IAppBLL bll)
+        public ErUsersController(IAppBLL bll, AppDbContext context)
         {
             _bll = bll;
+            _context = context;
         }
 
         // GET: api/ErUsers
@@ -37,16 +42,19 @@ namespace WebApp.ApiControllers
 
         // GET: api/ErUsers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<BLL.App.DTO.ErUser>> GetErUser(Guid id)
+        public async Task<ActionResult<BLL.App.DTO.ErUser>> GetErUser(Guid id, ErUser erUser)
         {
-            var erUser = await _bll.ErUsers.FirstOrDefaultAsync(id);
-
-            if (erUser == null)
+            if (id != erUser.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            return erUser;
+            _context.Entry(erUser).State = EntityState.Modified;
+            
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+
         }
 
         // PUT: api/ErUsers/5
@@ -67,16 +75,31 @@ namespace WebApp.ApiControllers
         // POST: api/ErUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DAL.App.DTO.ErUser>> PostErUser(BLL.App.DTO.ErUser erUser)
+        public async Task<ActionResult<PublicApi.DTO.v1.ErUser>> PostErUser(PublicApi.DTO.v1.ErUser erUser)
         {
-            _bll.ErUsers.Add(erUser);
+            var bllUser = new BLL.App.DTO.ErUser()
+            {
+                FirstName = erUser.FirstName,
+                LastName = erUser.LastName,
+            };
+            bllUser.AppUserId = User.GetUserId()!.Value;
+            
+            var addedUser = _bll.ErUsers.Add(bllUser);
             await _bll.SaveChangesAsync();
+
+            var returnErUser = new PublicApi.DTO.v1.ErUser()
+            {
+                Id = addedUser.Id,
+                FirstName = addedUser.FirstName,
+                LastName = addedUser.LastName,
+                Gendervalue = addedUser.Gendervalue ?? "",
+                PropertiesCount = addedUser.PropertiesCount??0
+            };
 
             return CreatedAtAction("GetErUser", new
             {
-                id = erUser.Id,
-                version = HttpContext.GetRequestedApiVersion()?.ToString()
-            }, erUser);
+                id = returnErUser.Id,
+            }, returnErUser);
         }
 
         // DELETE: api/ErUsers/5

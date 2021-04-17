@@ -32,8 +32,7 @@ namespace WebApp.ApiControllers
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<PropertyType>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(IEnumerable<PropertyType>), StatusCodes.Status404NotFound)]
-
-        public async Task<ActionResult<IEnumerable<BLL.App.DTO.PropertyType>>> GetPropertyTypes()
+        public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.PropertyType>>> GetPropertyTypes()
         {
             // var data = await _bll.PropertyTypes.GetAllAsync();
             // var result = data.Select(propertyType => new PropertyTypeDTO()
@@ -42,7 +41,11 @@ namespace WebApp.ApiControllers
             //     PropertyCount = propertyType.Properties!.Count
             // });
 
-            var result = await _bll.PropertyTypes.GetAllWithPropertyTypeCountAsync();
+            var result = (await _bll.PropertyTypes.GetAllWithPropertyTypeCountAsync()).Select(p=>new PublicApi.DTO.v1.PropertyType()
+            {
+                PropertyTypeValue = p.PropertyTypeValue,
+                PropertyCount = p.Properties?.Count
+            });
             return Ok(result);
         }
 

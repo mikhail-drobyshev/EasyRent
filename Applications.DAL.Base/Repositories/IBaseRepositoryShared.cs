@@ -11,6 +11,8 @@ namespace Applications.DAL.Base.Repositories
         TEntity Add(TEntity entity);
         TEntity Update(TEntity entity);
         TEntity Remove(TEntity entity, TKey? userId = default);
-        
+
+        TEntity GetEntityAfterSavingChanges(TEntity entity);
+
     }
 }
