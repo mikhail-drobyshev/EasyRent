@@ -44,7 +44,7 @@ namespace WebApp.ApiControllers
             var result = (await _bll.PropertyTypes.GetAllWithPropertyTypeCountAsync()).Select(p=>new PublicApi.DTO.v1.PropertyType()
             {
                 PropertyTypeValue = p.PropertyTypeValue,
-                PropertyCount = p.Properties?.Count
+                PropertyCount = p.PropertiesCount ?? 0
             });
             return Ok(result);
         }

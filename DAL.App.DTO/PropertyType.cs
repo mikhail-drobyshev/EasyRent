@@ -10,6 +10,6 @@ namespace DAL.App.DTO
         
         public ICollection<Property>? Properties { get; set; }
         
-        public int? PropertyCount { get; set; }
+        public int? PropertiesCount { get; set; }
     }
 }

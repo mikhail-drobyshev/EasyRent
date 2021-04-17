@@ -28,7 +28,6 @@ namespace WebApp.Controllers
         // GET: ErUsers
         public async Task<IActionResult> Index()
         {
-            //TODO figure out why gender is empty
             var res = await _bll.ErUsers.GetAllWithPropertyTypeCountAsync(User.GetUserId()!.Value);
             return View(res);
         }

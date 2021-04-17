@@ -15,6 +15,10 @@
             <th>
                 @Html.DisplayNameFor(model => model.PropertyTypeValue)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PropertiesCount)
+            </th>
+            
             <th></th>
         </tr>
     </thead>
@@ -23,6 +27,9 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.PropertyTypeValue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PropertiesCount)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

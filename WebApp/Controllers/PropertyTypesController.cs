@@ -27,8 +27,7 @@ namespace WebApp.Controllers
         // GET: PropertyTypes
         public async Task<IActionResult> Index()
         {
-            var res = await _bll.PropertyTypes.GetAllAsync();
-            await _bll.SaveChangesAsync();
+            var res = await _bll.PropertyTypes.GetAllWithPropertyTypeCountAsync();
             return View(res);
         }
 

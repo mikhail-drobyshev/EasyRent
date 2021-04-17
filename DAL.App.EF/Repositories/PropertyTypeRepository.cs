@@ -7,7 +7,6 @@ using Applications.DAL.Base.Repositories;
 using AutoMapper;
 using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain.App;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
@@ -35,8 +34,9 @@ namespace DAL.App.EF.Repositories
             {
                 Id = propertyType.Id,
                 PropertyTypeValue = propertyType.PropertyTypeValue,
-                PropertyCount = propertyType.Properties!.Count
+                PropertiesCount = propertyType.Properties!.Count
             });
+            
             var result = await resultQuery.ToListAsync();
             return result;
         }

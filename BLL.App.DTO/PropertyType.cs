@@ -8,6 +8,6 @@ namespace BLL.App.DTO
     {
         [MaxLength(32)] public string PropertyTypeValue { get; set; } = default!;
         
-        public ICollection<Property>? Properties { get; set; }
+        public int? PropertiesCount { get; set; }
     }
 }
