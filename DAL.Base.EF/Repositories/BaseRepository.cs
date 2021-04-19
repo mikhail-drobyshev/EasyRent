@@ -85,6 +85,7 @@ namespace DAL.Base.EF.Repositories
             //     var res = Mapper.Map(await query.FirstOrDefaultAsync(m => m.id.Equals(id));
 
             var res = Mapper.Map(await query.FirstOrDefaultAsync(e => e!.Id.Equals(id)));
+            
             return res;
         }
 

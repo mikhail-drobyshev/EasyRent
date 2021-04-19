@@ -43,6 +43,7 @@ namespace WebApp.ApiControllers
 
             var result = (await _bll.PropertyTypes.GetAllWithPropertyTypeCountAsync()).Select(p=>new PublicApi.DTO.v1.PropertyType()
             {
+                Id = p.Id,
                 PropertyTypeValue = p.PropertyTypeValue,
                 PropertyCount = p.PropertiesCount ?? 0
             });
