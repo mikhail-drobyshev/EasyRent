@@ -10,14 +10,25 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace WebApp
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
     {
         private readonly IApiVersionDescriptionProvider _provider;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
         public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider)
         {
             _provider = provider;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="options"></param>
         public void Configure(SwaggerGenOptions options)
         {
             foreach (var apiVersionDescription in _provider.ApiVersionDescriptions)

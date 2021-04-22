@@ -9,18 +9,29 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.ApiControllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class PropertyPicturesController : ControllerBase
     {
         private readonly IAppUnitOfWork _uow;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uow"></param>
         public PropertyPicturesController(IAppUnitOfWork uow)
         {
             _uow = uow;
         }
 
         // GET: api/PropertyPictures
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.PropertyPicture>>> GetPropertyPictures()
         {
@@ -28,6 +39,11 @@ namespace WebApp.ApiControllers
         }
 
         // GET: api/PropertyPictures/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<DAL.App.DTO.PropertyPicture>> GetPropertyPicture(Guid id)
         {
@@ -43,6 +59,12 @@ namespace WebApp.ApiControllers
 
         // PUT: api/PropertyPictures/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="propertyPicture"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPropertyPicture(Guid id, DAL.App.DTO.PropertyPicture propertyPicture)
         {
@@ -58,6 +80,11 @@ namespace WebApp.ApiControllers
 
         // POST: api/PropertyPictures
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="propertyPicture"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<DAL.App.DTO.PropertyPicture>> PostPropertyPicture(DAL.App.DTO.PropertyPicture propertyPicture)
         {
@@ -68,6 +95,11 @@ namespace WebApp.ApiControllers
         }
 
         // DELETE: api/PropertyPictures/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePropertyPicture(Guid id)
         {

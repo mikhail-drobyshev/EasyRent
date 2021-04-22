@@ -11,16 +11,27 @@ using Extensions.Base;
 
 namespace WebApp.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DisputeStatusesController : Controller
     {
         private readonly IAppUnitOfWork _uow;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uow"></param>
         public DisputeStatusesController(IAppUnitOfWork uow)
         {
             _uow = uow;
         }
 
         // GET: DisputeStatuses
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             var res = await _uow.DisputeStatuses.GetAllAsync();
@@ -29,6 +40,11 @@ namespace WebApp.Controllers
         }
 
         // GET: DisputeStatuses/Details/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -46,6 +62,10 @@ namespace WebApp.Controllers
         }
 
         // GET: DisputeStatuses/Create
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
             return View();
@@ -54,6 +74,11 @@ namespace WebApp.Controllers
         // POST: DisputeStatuses/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disputeStatus"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DisputeStatus disputeStatus)
@@ -68,6 +93,11 @@ namespace WebApp.Controllers
         }
 
         // GET: DisputeStatuses/Edit/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -86,6 +116,12 @@ namespace WebApp.Controllers
         // POST: DisputeStatuses/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="disputeStatus"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, DisputeStatus disputeStatus)
@@ -105,6 +141,11 @@ namespace WebApp.Controllers
         }
 
         // GET: DisputeStatuses/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -122,6 +163,11 @@ namespace WebApp.Controllers
         }
 
         // POST: DisputeStatuses/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

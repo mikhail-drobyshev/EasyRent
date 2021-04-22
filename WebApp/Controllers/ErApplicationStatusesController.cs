@@ -11,16 +11,27 @@ using Extensions.Base;
 
 namespace WebApp.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ErApplicationStatusesController : Controller
     {
         private readonly IAppUnitOfWork _uow;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uow"></param>
         public ErApplicationStatusesController(IAppUnitOfWork uow)
         {
             _uow = uow;
         }
 
         // GET: ErApplicationStatuses
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             var res = await _uow.ErApplicationStatuses.GetAllAsync();
@@ -29,6 +40,11 @@ namespace WebApp.Controllers
         }
 
         // GET: ErApplicationStatuses/Details/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -46,6 +62,10 @@ namespace WebApp.Controllers
         }
 
         // GET: ErApplicationStatuses/Create
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
             return View();
@@ -54,6 +74,11 @@ namespace WebApp.Controllers
         // POST: ErApplicationStatuses/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="erApplicationStatus"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ErApplicationStatus erApplicationStatus)
@@ -68,6 +93,11 @@ namespace WebApp.Controllers
         }
 
         // GET: ErApplicationStatuses/Edit/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -86,6 +116,12 @@ namespace WebApp.Controllers
         // POST: ErApplicationStatuses/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="erApplicationStatus"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ErApplicationStatus erApplicationStatus)
@@ -104,6 +140,11 @@ namespace WebApp.Controllers
         }
 
         // GET: ErApplicationStatuses/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -121,6 +162,11 @@ namespace WebApp.Controllers
         }
 
         // POST: ErApplicationStatuses/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

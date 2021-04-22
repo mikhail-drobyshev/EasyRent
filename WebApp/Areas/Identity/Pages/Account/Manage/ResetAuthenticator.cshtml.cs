@@ -10,12 +10,21 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ResetAuthenticatorModel : PageModel
     {
         UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         ILogger<ResetAuthenticatorModel> _logger;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
+        /// <param name="signInManager"></param>
+        /// <param name="logger"></param>
         public ResetAuthenticatorModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
@@ -26,9 +35,16 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             _logger = logger;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [TempData]
         public string StatusMessage { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGet()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -40,6 +56,10 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);

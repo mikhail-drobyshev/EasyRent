@@ -10,11 +10,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ExternalLoginsModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
+        /// <param name="signInManager"></param>
         public ExternalLoginsModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager)
@@ -23,15 +31,31 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IList<UserLoginInfo> CurrentLogins { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IList<AuthenticationScheme> OtherLogins { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool ShowRemoveButton { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [TempData]
         public string StatusMessage { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -48,6 +72,12 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="loginProvider"></param>
+        /// <param name="providerKey"></param>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostRemoveLoginAsync(string loginProvider, string providerKey)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -68,6 +98,11 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             return RedirectToPage();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostLinkLoginAsync(string provider)
         {
             // Clear the existing external cookie to ensure a clean login process
@@ -79,6 +114,11 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             return new ChallengeResult(provider, properties);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public async Task<IActionResult> OnGetLinkLoginCallbackAsync()
         {
             var user = await _userManager.GetUserAsync(User);

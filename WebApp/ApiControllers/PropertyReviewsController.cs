@@ -9,18 +9,29 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class PropertyReviewsController : ControllerBase
     {
         private readonly IAppUnitOfWork _uow;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uow"></param>
         public PropertyReviewsController(IAppUnitOfWork uow)
         {
             _uow = uow;
         }
 
         // GET: api/PropertyReviews
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.PropertyReview>>> GetPropertyReviews()
         {
@@ -28,6 +39,11 @@ namespace WebApp.ApiControllers
         }
 
         // GET: api/PropertyReviews/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<DAL.App.DTO.PropertyReview>> GetPropertyReview(Guid id)
         {
@@ -43,6 +59,12 @@ namespace WebApp.ApiControllers
 
         // PUT: api/PropertyReviews/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="propertyReview"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPropertyReview(Guid id, DAL.App.DTO.PropertyReview propertyReview)
         {
@@ -58,6 +80,11 @@ namespace WebApp.ApiControllers
 
         // POST: api/PropertyReviews
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="propertyReview"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<DAL.App.DTO.PropertyReview>> PostPropertyReview(DAL.App.DTO.PropertyReview propertyReview)
         {
@@ -68,6 +95,11 @@ namespace WebApp.ApiControllers
         }
 
         // DELETE: api/PropertyReviews/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePropertyReview(Guid id)
         {

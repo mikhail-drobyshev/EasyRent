@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class GendersController : ControllerBase
@@ -16,12 +19,20 @@ namespace WebApp.ApiControllers
         private readonly IAppUnitOfWork _uow;
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uow"></param>
         public GendersController(IAppUnitOfWork uow)
         {
             _uow = uow;
         }
 
         // GET: api/Genders
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.Gender>>> GetGenders()
         {
@@ -29,6 +40,11 @@ namespace WebApp.ApiControllers
         }
 
         // GET: api/Genders/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<DAL.App.DTO.Gender>> GetGender(Guid id)
         {
@@ -44,6 +60,12 @@ namespace WebApp.ApiControllers
 
         // PUT: api/Genders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="gender"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutGender(Guid id, DAL.App.DTO.Gender gender)
         {
@@ -59,6 +81,11 @@ namespace WebApp.ApiControllers
 
         // POST: api/Genders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gender"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<DAL.App.DTO.Gender>> PostGender(DAL.App.DTO.Gender gender)
         {
@@ -69,6 +96,11 @@ namespace WebApp.ApiControllers
         }
 
         // DELETE: api/Genders/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGender(Guid id)
         {

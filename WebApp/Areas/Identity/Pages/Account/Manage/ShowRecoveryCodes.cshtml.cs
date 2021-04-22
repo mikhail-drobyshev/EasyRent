@@ -10,14 +10,27 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ShowRecoveryCodesModel : PageModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         [TempData]
         public string[] RecoveryCodes { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [TempData]
         public string StatusMessage { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnGet()
         {
             if (RecoveryCodes == null || RecoveryCodes.Length == 0)

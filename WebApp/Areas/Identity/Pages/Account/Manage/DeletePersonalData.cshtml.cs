@@ -9,12 +9,21 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DeletePersonalDataModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
+        /// <param name="signInManager"></param>
+        /// <param name="logger"></param>
         public DeletePersonalDataModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
@@ -25,18 +34,34 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             _logger = logger;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public class InputModel
         {
+            /// <summary>
+            /// 
+            /// </summary>
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; } = default!;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool RequirePassword { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGet()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -49,6 +74,11 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);

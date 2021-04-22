@@ -6,9 +6,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WebApp.Areas.Identity.Pages.Account
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [AllowAnonymous]
     public class ForgotPasswordConfirmation : PageModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public void OnGet()
         {
         }

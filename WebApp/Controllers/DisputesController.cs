@@ -19,6 +19,9 @@ using WebApp.ViewModels.Disputes;
 
 namespace WebApp.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DisputesController : Controller
     {
         private readonly IAppBLL _bll;
@@ -31,6 +34,17 @@ namespace WebApp.Controllers
         private readonly IDiTransient _diTransient;
         private readonly IServiceProvider _serviceProvider;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="singleton"></param>
+        /// <param name="transient"></param>
+        /// <param name="scoped"></param>
+        /// <param name="diScoped"></param>
+        /// <param name="diSingleton"></param>
+        /// <param name="diTransient"></param>
+        /// <param name="serviceProvider"></param>
+        /// <param name="bll"></param>
         public DisputesController(Singleton singleton, Transient transient, Scoped scoped, IDiScoped diScoped,
             IDiSingleton diSingleton, IDiTransient diTransient, IServiceProvider serviceProvider, IAppBLL bll)
         {
@@ -45,6 +59,10 @@ namespace WebApp.Controllers
         }
 
         // GET: Disputes
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             var res = await _bll.Disputes.GetAllAsync(User.GetUserId()!.Value);
@@ -53,6 +71,10 @@ namespace WebApp.Controllers
             return View(res);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string TestId()
         {
             var res = $"singleton id: {_singleton.Id}, transient id: {_transient.Id}, scoped id: {_scoped.Id}";
@@ -66,6 +88,11 @@ namespace WebApp.Controllers
         }
 
         // GET: Disputes/Details/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -84,6 +111,10 @@ namespace WebApp.Controllers
         }
 
         // GET: Disputes/Create
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Create()
         {
             var viewModel = new DisputesCreatEditViewModel();
@@ -95,6 +126,11 @@ namespace WebApp.Controllers
         // POST: Disputes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DisputesCreatEditViewModel viewModel)
@@ -111,6 +147,11 @@ namespace WebApp.Controllers
         }
 
         // GET: Disputes/Edit/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -134,6 +175,12 @@ namespace WebApp.Controllers
         // POST: Disputes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, DisputesCreatEditViewModel viewModel)
@@ -156,6 +203,11 @@ namespace WebApp.Controllers
         }
 
         // GET: Disputes/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -173,6 +225,11 @@ namespace WebApp.Controllers
         }
 
         // POST: Disputes/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

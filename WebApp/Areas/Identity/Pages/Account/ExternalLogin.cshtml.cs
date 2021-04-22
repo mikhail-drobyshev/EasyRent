@@ -17,6 +17,9 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApp.Areas.Identity.Pages.Account
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
@@ -25,6 +28,13 @@ namespace WebApp.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="signInManager"></param>
+        /// <param name="userManager"></param>
+        /// <param name="logger"></param>
+        /// <param name="emailSender"></param>
         public ExternalLoginModel(
             SignInManager<AppUser> signInManager,
             UserManager<AppUser> userManager,
@@ -37,28 +47,56 @@ namespace WebApp.Areas.Identity.Pages.Account
             _emailSender = emailSender;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string ProviderDisplayName { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string? ReturnUrl { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [TempData]
         public string ErrorMessage { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public class InputModel
         {
+            /// <summary>
+            /// 
+            /// </summary>
             [Required]
             [EmailAddress]
             public string Email { get; set; } = default!;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IActionResult OnGetAsync()
         {
             return RedirectToPage("./Login");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         public IActionResult OnPost(string provider, string returnUrl = null!)
         {
             // Request a redirect to the external login provider.
@@ -68,6 +106,12 @@ namespace WebApp.Areas.Identity.Pages.Account
         }
 
 #pragma warning disable 1998
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="returnUrl"></param>
+        /// <param name="remoteError"></param>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetCallbackAsync(string? returnUrl = null!, string remoteError = null!)
 #pragma warning restore 1998
         {
@@ -108,6 +152,11 @@ namespace WebApp.Areas.Identity.Pages.Account
             // }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostConfirmationAsync(string? returnUrl = null!)
         {
             returnUrl ??= Url.Content("~/");

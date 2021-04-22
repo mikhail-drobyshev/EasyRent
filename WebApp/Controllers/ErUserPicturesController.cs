@@ -13,16 +13,27 @@ using WebApp.ViewModels.ErUserPictures;
 
 namespace WebApp.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ErUserPicturesController : Controller
     {
         private readonly IAppBLL _bll;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bll"></param>
         public ErUserPicturesController(IAppBLL bll)
         {
             _bll = bll;
         }
 
         // GET: ErUserPictures
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             var res = await _bll.ErUserPictures.GetAllAsync(User.GetUserId()!.Value);
@@ -30,6 +41,11 @@ namespace WebApp.Controllers
         }
 
         // GET: ErUserPictures/Details/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -47,6 +63,10 @@ namespace WebApp.Controllers
         }
 
         // GET: ErUserPictures/Create
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Create()
         {
             var viewModel = new ErUserPicturesCreatEditViewModel();
@@ -57,6 +77,11 @@ namespace WebApp.Controllers
         // POST: ErUserPictures/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ErUserPicturesCreatEditViewModel viewModel)
@@ -72,6 +97,11 @@ namespace WebApp.Controllers
         }
 
         // GET: ErUserPictures/Edit/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -94,6 +124,12 @@ namespace WebApp.Controllers
         // POST: ErUserPictures/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ErUserPicturesCreatEditViewModel viewModel)
@@ -114,6 +150,11 @@ namespace WebApp.Controllers
         }
 
         // GET: ErUserPictures/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -131,6 +172,11 @@ namespace WebApp.Controllers
         }
 
         // POST: ErUserPictures/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

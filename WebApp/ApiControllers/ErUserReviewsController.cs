@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ErUserReviewsController : ControllerBase
@@ -17,18 +20,31 @@ namespace WebApp.ApiControllers
         private readonly IAppUnitOfWork _uow;
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uow"></param>
         public ErUserReviewsController(IAppUnitOfWork uow)
         {
             _uow = uow;
         }
 
         // GET: api/ErUserReviews
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.ErUserReview>>> GetErUserReviews()
         {
             return Ok(await _uow.ErUserReviews.GetAllAsync());        }
 
         // GET: api/ErUserReviews/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<DAL.App.DTO.ErUserReview>> GetErUserReview(Guid id)
         {
@@ -44,6 +60,12 @@ namespace WebApp.ApiControllers
 
         // PUT: api/ErUserReviews/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="erUserReview"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutErUserReview(Guid id, DAL.App.DTO.ErUserReview erUserReview)
         {
@@ -59,6 +81,11 @@ namespace WebApp.ApiControllers
 
         // POST: api/ErUserReviews
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="erUserReview"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<DAL.App.DTO.ErUserReview>> PostErUserReview(DAL.App.DTO.ErUserReview erUserReview)
         {
@@ -69,6 +96,11 @@ namespace WebApp.ApiControllers
         }
 
         // DELETE: api/ErUserReviews/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteErUserReview(Guid id)
         {

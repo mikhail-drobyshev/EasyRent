@@ -12,16 +12,27 @@ using WebApp.ViewModels.PropertyReviews;
 
 namespace WebApp.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PropertyReviewsController : Controller
     {
         private readonly IAppUnitOfWork _uow;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uow"></param>
         public PropertyReviewsController(IAppUnitOfWork uow)
         {
             _uow = uow;
         }
 
         // GET: PropertyReviews
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             var res = await _uow.PropertyReviews.GetAllAsync();
@@ -29,6 +40,11 @@ namespace WebApp.Controllers
         }
 
         // GET: PropertyReviews/Details/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -46,6 +62,10 @@ namespace WebApp.Controllers
         }
 
         // GET: PropertyReviews/Create
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task <IActionResult> Create()
         {
             var viewModel = new PropertyReviewsCreatEditViewModel();
@@ -57,6 +77,11 @@ namespace WebApp.Controllers
         // POST: PropertyReviews/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PropertyReviewsCreatEditViewModel viewModel)
@@ -73,6 +98,11 @@ namespace WebApp.Controllers
         }
 
         // GET: PropertyReviews/Edit/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -94,6 +124,12 @@ namespace WebApp.Controllers
         // POST: PropertyReviews/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, PropertyReviewsCreatEditViewModel viewModel)
@@ -115,6 +151,11 @@ namespace WebApp.Controllers
         }
 
         // GET: PropertyReviews/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -132,6 +173,11 @@ namespace WebApp.Controllers
         }
 
         // POST: PropertyReviews/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

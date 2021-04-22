@@ -14,6 +14,9 @@ using PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers.Identity
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]/[action]")]
@@ -24,6 +27,13 @@ namespace WebApp.ApiControllers.Identity
         private readonly ILogger<AccountController> _logger;
         private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="signInManager"></param>
+        /// <param name="userManager"></param>
+        /// <param name="logger"></param>
+        /// <param name="configuration"></param>
         public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ILogger<AccountController> logger, IConfiguration configuration)
         {
             _signInManager = signInManager;
@@ -32,6 +42,11 @@ namespace WebApp.ApiControllers.Identity
             _configuration = configuration;
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(typeof(IEnumerable<JwtResponse>), StatusCodes.Status200OK)]
@@ -70,6 +85,11 @@ namespace WebApp.ApiControllers.Identity
             _logger.LogWarning("login. user {User} bad password", dto.Email);
             return NotFound(new PublicApi.DTO.v1.Message("Email/Password not found"));
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] PublicApi.DTO.v1.Register dto)
         {

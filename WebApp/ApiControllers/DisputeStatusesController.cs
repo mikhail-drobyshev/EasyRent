@@ -11,6 +11,9 @@ using Domain.App;
 
 namespace WebApp.ApiControllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
@@ -18,12 +21,20 @@ namespace WebApp.ApiControllers
     {
         private readonly IAppUnitOfWork _uow;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uow"></param>
         public DisputeStatusesController(IAppUnitOfWork uow)
         {
             _uow = uow;
         }
 
         // GET: api/DisputeStatuses
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DisputeStatus>>> GetDisputeStatuses()
         {
@@ -31,6 +42,11 @@ namespace WebApp.ApiControllers
         }
 
         // GET: api/DisputeStatuses/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<DAL.App.DTO.DisputeStatus>> GetDisputeStatus(Guid id)
         {
@@ -46,6 +62,12 @@ namespace WebApp.ApiControllers
 
         // PUT: api/DisputeStatuses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="disputeStatus"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDisputeStatus(Guid id, DAL.App.DTO.DisputeStatus disputeStatus)
         {
@@ -61,6 +83,11 @@ namespace WebApp.ApiControllers
 
         // POST: api/DisputeStatuses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disputeStatus"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<DisputeStatus>> PostDisputeStatus(DAL.App.DTO.DisputeStatus disputeStatus)
         {
@@ -71,6 +98,11 @@ namespace WebApp.ApiControllers
         }
 
         // DELETE: api/DisputeStatuses/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDisputeStatus(Guid id)
         {

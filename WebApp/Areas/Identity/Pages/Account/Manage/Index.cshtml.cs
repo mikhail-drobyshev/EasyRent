@@ -10,12 +10,21 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class IndexModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<AppRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
+        /// <param name="signInManager"></param>
+        /// <param name="roleManager"></param>
         public IndexModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager)
@@ -25,23 +34,44 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Username { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [TempData]
         public string StatusMessage { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public class InputModel
         {
+            /// <summary>
+            /// 
+            /// </summary>
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; } = default!;
+                    /// <summary>
+                    /// 
+                    /// </summary>
                     [Display(Name = "First name")]
             [StringLength(128, MinimumLength = 1)]
             public string Firstname { get; set; } = default!;
 
+            /// <summary>
+            /// 
+            /// </summary>
             [Display(Name = "Last name")]
             [StringLength(128, MinimumLength = 1)]
             public string Lastname { get; set; } = default!;
@@ -62,6 +92,10 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             };
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -76,6 +110,10 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);

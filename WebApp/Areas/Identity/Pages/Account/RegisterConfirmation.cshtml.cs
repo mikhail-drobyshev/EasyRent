@@ -10,24 +10,47 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace WebApp.Areas.Identity.Pages.Account
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEmailSender _sender;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
+        /// <param name="sender"></param>
         public RegisterConfirmationModel(UserManager<AppUser> userManager, IEmailSender sender)
         {
             _userManager = userManager;
             _sender = sender;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Email { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool DisplayConfirmAccountLink { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string EmailConfirmationUrl { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         public async Task<IActionResult> OnGetAsync(string email, string? returnUrl = null)
         {
             if (email == null)

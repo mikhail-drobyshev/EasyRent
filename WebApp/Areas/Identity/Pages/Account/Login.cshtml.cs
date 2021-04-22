@@ -15,13 +15,22 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApp.Areas.Identity.Pages.Account
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [AllowAnonymous]
-    public class LoginModel : PageModel
+    public abstract class LoginModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="signInManager"></param>
+        /// <param name="logger"></param>
+        /// <param name="userManager"></param>
         public LoginModel(SignInManager<AppUser> signInManager, 
             ILogger<LoginModel> logger,
             UserManager<AppUser> userManager)
@@ -31,30 +40,59 @@ namespace WebApp.Areas.Identity.Pages.Account
             _logger = logger;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string? ReturnUrl { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [TempData]
         public string ErrorMessage { get; set; } = default!;
 
-        public class InputModel
+        /// <summary>
+        /// 
+        /// </summary>
+        public abstract class InputModel
         {
+            /// <summary>
+            /// 
+            /// </summary>
             [Required]
             [EmailAddress]
             public string Email { get; set; } = default!;
 
+            /// <summary>
+            /// 
+            /// </summary>
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; } = default!;
 
+            /// <summary>
+            /// 
+            /// </summary>
             [Display(Name = "Remember me?")]
             public bool RememberMe { get; set; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         public async Task OnGetAsync(string? returnUrl = null)
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
@@ -72,6 +110,11 @@ namespace WebApp.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");

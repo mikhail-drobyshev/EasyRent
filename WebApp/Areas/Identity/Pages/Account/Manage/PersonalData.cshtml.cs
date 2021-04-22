@@ -7,11 +7,19 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PersonalDataModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ILogger<PersonalDataModel> _logger;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
+        /// <param name="logger"></param>
         public PersonalDataModel(
             UserManager<AppUser> userManager,
             ILogger<PersonalDataModel> logger)
@@ -20,6 +28,10 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             _logger = logger;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnGet()
         {
             var user = await _userManager.GetUserAsync(User);

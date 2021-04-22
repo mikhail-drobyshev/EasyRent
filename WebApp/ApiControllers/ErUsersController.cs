@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
@@ -27,6 +30,11 @@ namespace WebApp.ApiControllers
         private readonly AppDbContext _context;
         private readonly IAppBLL _bll;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bll"></param>
+        /// <param name="context"></param>
         public ErUsersController(IAppBLL bll, AppDbContext context)
         {
             _bll = bll;
@@ -34,6 +42,10 @@ namespace WebApp.ApiControllers
         }
 
         // GET: api/ErUsers
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.ErUser>>> GetErUsers()
         {
@@ -41,6 +53,12 @@ namespace WebApp.ApiControllers
         }
 
         // GET: api/ErUsers/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="erUser"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<BLL.App.DTO.ErUser>> GetErUser(Guid id, ErUser erUser)
         {
@@ -59,6 +77,12 @@ namespace WebApp.ApiControllers
 
         // PUT: api/ErUsers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="erUser"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutErUser(Guid id, BLL.App.DTO.ErUser erUser)
         {
@@ -74,6 +98,11 @@ namespace WebApp.ApiControllers
 
         // POST: api/ErUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="erUser"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<PublicApi.DTO.v1.ErUser>> PostErUser(PublicApi.DTO.v1.ErUser erUser)
         {
@@ -103,6 +132,11 @@ namespace WebApp.ApiControllers
         }
 
         // DELETE: api/ErUsers/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteErUser(Guid id)
         {

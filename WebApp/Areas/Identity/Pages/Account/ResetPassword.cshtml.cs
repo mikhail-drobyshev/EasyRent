@@ -13,38 +13,68 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace WebApp.Areas.Identity.Pages.Account
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [AllowAnonymous]
     public class ResetPasswordModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
         public ResetPasswordModel(UserManager<AppUser> userManager)
         {
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; } = default!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public class InputModel
         {
+            /// <summary>
+            /// 
+            /// </summary>
             [Required]
             [EmailAddress]
             public string Email { get; set; } = default!;
 
+            /// <summary>
+            /// 
+            /// </summary>
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             public string Password { get; set; } = default!;
 
+            /// <summary>
+            /// 
+            /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; } = default!;
 
+            /// <summary>
+            /// 
+            /// </summary>
             public string Code { get; set; } = default!;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         public IActionResult OnGet(string? code = null)
         {
             if (code == null)
@@ -61,6 +91,10 @@ namespace WebApp.Areas.Identity.Pages.Account
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)

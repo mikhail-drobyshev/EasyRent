@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ErApplicationStatusesController : ControllerBase
@@ -17,12 +20,20 @@ namespace WebApp.ApiControllers
         private readonly IAppUnitOfWork _uow;
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uow"></param>
         public ErApplicationStatusesController(IAppUnitOfWork uow)
         {
             _uow = uow;
         }
 
         // GET: api/ErApplicationStatuses
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.ErApplicationStatus>>> GetErApplicationStatuses()
         {
@@ -31,6 +42,11 @@ namespace WebApp.ApiControllers
         }
 
         // GET: api/ErApplicationStatuses/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<DAL.App.DTO.ErApplicationStatus>> GetErApplicationStatus(Guid id)
         {
@@ -46,6 +62,12 @@ namespace WebApp.ApiControllers
 
         // PUT: api/ErApplicationStatuses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="erApplicationStatus"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutErApplicationStatus(Guid id, DAL.App.DTO.ErApplicationStatus erApplicationStatus)
         {
@@ -61,6 +83,11 @@ namespace WebApp.ApiControllers
 
         // POST: api/ErApplicationStatuses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="erApplicationStatus"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<DAL.App.DTO.ErApplicationStatus>> PostErApplicationStatus(DAL.App.DTO.ErApplicationStatus erApplicationStatus)
         {
@@ -71,6 +98,11 @@ namespace WebApp.ApiControllers
         }
 
         // DELETE: api/ErApplicationStatuses/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteErApplicationStatus(Guid id)
         {

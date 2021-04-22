@@ -11,6 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
@@ -19,12 +22,20 @@ namespace WebApp.ApiControllers
         private readonly IAppBLL _bll;
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bll"></param>
         public DisputesController(IAppBLL bll)
         {
             _bll = bll;
         }
 
         // GET: api/Disputes
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BLL.App.DTO.Dispute>>> GetDisputes()
         {
@@ -32,6 +43,11 @@ namespace WebApp.ApiControllers
         }
 
         // GET: api/Disputes/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<BLL.App.DTO.Dispute>> GetDispute(Guid id)
         {
@@ -47,6 +63,12 @@ namespace WebApp.ApiControllers
 
         // PUT: api/Disputes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="dispute"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDispute(Guid id, BLL.App.DTO.Dispute dispute)
         {
@@ -62,6 +84,11 @@ namespace WebApp.ApiControllers
 
         // POST: api/Disputes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dispute"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<DAL.App.DTO.Dispute>> PostDispute(BLL.App.DTO.Dispute dispute)
         {
@@ -72,6 +99,11 @@ namespace WebApp.ApiControllers
         }
 
         // DELETE: api/Disputes/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDispute(Guid id)
         {

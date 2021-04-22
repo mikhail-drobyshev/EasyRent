@@ -14,17 +14,28 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Authorize(Roles = "Admin")]
     public class PropertyTypesController : Controller
     {
         private readonly IAppBLL _bll;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bll"></param>
         public PropertyTypesController(IAppBLL bll)
         {
             _bll = bll;
         }
 
         // GET: PropertyTypes
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             var res = await _bll.PropertyTypes.GetAllWithPropertyTypeCountAsync();
@@ -32,6 +43,11 @@ namespace WebApp.Controllers
         }
 
         // GET: PropertyTypes/Details/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -49,6 +65,10 @@ namespace WebApp.Controllers
         }
 
         // GET: PropertyTypes/Create
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
             return View();
@@ -57,6 +77,11 @@ namespace WebApp.Controllers
         // POST: PropertyTypes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="propertyType"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PropertyType propertyType)
@@ -71,6 +96,11 @@ namespace WebApp.Controllers
         }
 
         // GET: PropertyTypes/Edit/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -89,6 +119,12 @@ namespace WebApp.Controllers
         // POST: PropertyTypes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="propertyType"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, PropertyType propertyType)
@@ -107,6 +143,11 @@ namespace WebApp.Controllers
         }
 
         // GET: PropertyTypes/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -124,6 +165,11 @@ namespace WebApp.Controllers
         }
 
         // POST: PropertyTypes/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
