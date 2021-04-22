@@ -9,7 +9,6 @@
       <ProjectReference Include="..\DAL.App.DTO\DAL.App.DTO.csproj" />
       <ProjectReference Include="..\DAL.Base.EF\DAL.Base.EF.csproj" />
       <ProjectReference Include="..\Domain.App\Domain.App.csproj" />
-      <ProjectReference Include="..\DTO.App\DTO.App.csproj" />
     </ItemGroup>
 
 </Project>

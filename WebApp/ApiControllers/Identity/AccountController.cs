@@ -1,13 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.App.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers.Identity
 {
@@ -28,9 +31,13 @@ namespace WebApp.ApiControllers.Identity
             _logger = logger;
             _configuration = configuration;
         }
-
+        
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(IEnumerable<JwtResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Message>), StatusCodes.Status404NotFound)]
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] PublicApi.DTO.v1.Login dto)
+        public async Task<ActionResult<PublicApi.DTO.v1.JwtResponse>> Login([FromBody] PublicApi.DTO.v1.Login dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
             // TODO protections against timing attack

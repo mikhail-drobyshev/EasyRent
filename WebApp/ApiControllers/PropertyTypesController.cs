@@ -52,7 +52,6 @@ namespace WebApp.ApiControllers
 
         // GET: api/PropertyTypes/5
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<BLL.App.DTO.PropertyType>> GetPropertyType(Guid id)
         {
             var propertyType = await _bll.PropertyTypes.FirstOrDefaultAsync(id);
