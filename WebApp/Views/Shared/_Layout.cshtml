@@ -28,9 +28,6 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="ErUsers" asp-action="Index">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ErUserPictures" asp-action="Index">Pictures</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Properties" asp-action="Index">Properties</a>
                         </li>
                         <li class="nav-item">
@@ -42,8 +39,11 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="ErApplicationStatuses" asp-action="Index">ApplicationStatus</a>
                         </li>
+                    }
+                    else
+                    {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Disputes" asp-action="Index">Disputes</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="PropertyTypes" asp-action="Index">PropertyTypes</a>
                         </li>
                     }
                     @if (User.IsInRole("Admin"))
@@ -59,6 +59,7 @@
                             </div>
                         </div>
                     }
+                    <partial name="_LanguageSelection"/>
 
                 </ul>
                 <partial name="_LoginPartial"/>

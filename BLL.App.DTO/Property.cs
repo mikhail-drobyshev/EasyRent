@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using BLL.App.DTO;
 using DAL.App.DTO;
 using Domain.Base;

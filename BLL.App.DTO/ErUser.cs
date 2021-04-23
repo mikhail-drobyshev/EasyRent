@@ -11,7 +11,10 @@ namespace BLL.App.DTO
     public class ErUser : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
     {
 
-        [MaxLength(64)] public string FirstName { get; set; } = default!;
+        [MinLength(2, ErrorMessageResourceType = typeof(Resources.Base.Shared), ErrorMessageResourceName = "ErrorMessageMInLength")]
+        [MaxLength(64)] 
+        [Display(ResourceType = typeof(Resources.BLL.App.DTO.ErUser), Name = nameof(FirstName))]
+        public string FirstName { get; set; } = default!;
         [MaxLength(64)] public string LastName { get; set; } = default!;
         
         public ICollection<ErUserReview>? ErUserReviews { get; set; }

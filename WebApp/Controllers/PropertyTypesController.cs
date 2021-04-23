@@ -36,6 +36,7 @@ namespace WebApp.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var res = await _bll.PropertyTypes.GetAllWithPropertyTypeCountAsync();
