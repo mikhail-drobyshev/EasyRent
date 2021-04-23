@@ -19,7 +19,7 @@ namespace WebApp.Areas.Identity.Pages.Account
     /// 
     /// </summary>
     [AllowAnonymous]
-    public abstract class LoginModel : PageModel
+    public class LoginModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
@@ -65,7 +65,7 @@ namespace WebApp.Areas.Identity.Pages.Account
         /// <summary>
         /// 
         /// </summary>
-        public abstract class InputModel
+        public class InputModel
         {
             /// <summary>
             /// 

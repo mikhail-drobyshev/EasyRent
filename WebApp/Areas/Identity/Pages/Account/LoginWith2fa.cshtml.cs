@@ -16,7 +16,7 @@ namespace WebApp.Areas.Identity.Pages.Account
     /// 
     /// </summary>
     [AllowAnonymous]
-    public abstract class LoginWith2faModel : PageModel
+    public class LoginWith2faModel : PageModel
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<LoginWith2faModel> _logger;
