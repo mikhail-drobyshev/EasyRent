@@ -32,7 +32,6 @@
       <ProjectReference Include="..\Applications.BLL.App\Applications.BLL.App.csproj" />
       <ProjectReference Include="..\BLL.App.DTO\BLL.App.DTO.csproj" />
       <ProjectReference Include="..\BLL.App\BLL.App.csproj" />
-      <ProjectReference Include="..\BLL.LHVService\BLL.LHVService.csproj" />
       <ProjectReference Include="..\DAL.App.DTO\DAL.App.DTO.csproj" />
       <ProjectReference Include="..\DAL.App.EF\DAL.App.EF.csproj" />
       <ProjectReference Include="..\Extensions.Base\Extensions.Base.csproj" />
