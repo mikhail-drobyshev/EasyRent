@@ -1,9 +1,13 @@
+using System;
 using System.Linq;
 using DAL.App.EF;
+using Domain.App;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
+
 
 namespace TestProject
 {
@@ -26,8 +30,9 @@ namespace TestProject
                 services.AddDbContext<AppDbContext>(options =>
                 {
                     // do we need unique db?
-                    options.UseInMemoryDatabase(builder.GetSetting("test_database_name"));
+                    options.UseInMemoryDatabase("testdb");
                 });
+                
 
                 var sp = services.BuildServiceProvider();
                 using var scope = sp.CreateScope();
@@ -40,9 +45,9 @@ namespace TestProject
                 if (db.PropertyTypes.Any()) return;
                 
                 // seed data
-                db.PropertyTypes.Add(new PropertyTypes()
+                db.PropertyTypes.Add(new PropertyType()
                 {
-                    PropertyTypeValue = new LangString("Type 0")
+                    PropertyTypeValue = "flat-share"
                 });
                 db.SaveChanges();
             });
