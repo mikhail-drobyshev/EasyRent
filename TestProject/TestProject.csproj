@@ -25,11 +25,15 @@
     <ItemGroup>
       <Folder Include="Helpers" />
       <Folder Include="IntegrationTests" />
-      <Folder Include="UnitTests" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\DAL.App.EF\DAL.App.EF.csproj" />
+      <ProjectReference Include="..\WebApp\WebApp.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Pages\Test\Test.cshtml" />
     </ItemGroup>
 
 </Project>
