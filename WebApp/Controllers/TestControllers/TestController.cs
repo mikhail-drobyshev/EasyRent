@@ -29,7 +29,7 @@ namespace WebApp.Controllers.TestControllers
             {
                 PropertyTypes = await _ctx
                     .PropertyTypes
-                    .Include(x => x.PropertyTypeValue)
+                    //.Include(x => x.PropertyTypeValue)
                     .ToListAsync()
             };
             _logger.LogInformation("Test method pre-return");
