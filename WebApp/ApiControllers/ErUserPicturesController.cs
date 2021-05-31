@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.BLL.App;
+using Applications.BLL.Base;
 using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +19,15 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class ErUserPicturesController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="uow"></param>
-        public ErUserPicturesController(IAppUnitOfWork uow)
+        /// <param name="bll"></param>
+        public ErUserPicturesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/ErUserPictures
@@ -36,7 +38,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.ErUserPicture>>> GetErUserPictures()
         {
-            return Ok(await _uow.ErUserPictures.GetAllAsync());
+            return Ok(await _bll.ErUserPictures.GetAllAsync());
         }
 
         // GET: api/ErUserPictures/5
@@ -48,14 +50,14 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DAL.App.DTO.ErUserPicture>> GetErUserPicture(Guid id)
         {
-            var erUserPicture = await _uow.ErUserPictures.FirstOrDefaultAsync(id);
+            var erUserPicture = await _bll.ErUserPictures.FirstOrDefaultAsync(id);
 
             if (erUserPicture == null)
             {
                 return NotFound();
             }
 
-            return erUserPicture;
+            return Ok(erUserPicture);
         }
 
         // PUT: api/ErUserPictures/5
@@ -67,15 +69,15 @@ namespace WebApp.ApiControllers
         /// <param name="erUserPicture"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutErUserPicture(Guid id, DAL.App.DTO.ErUserPicture erUserPicture)
+        public async Task<IActionResult> PutErUserPicture(Guid id, BLL.App.DTO.ErUserPicture erUserPicture)
         {
             if (id != erUserPicture.Id)
             {
                 return BadRequest();
             }
 
-            _uow.ErUserPictures.Update(erUserPicture);
-            await _uow.SaveChangesAsync();
+            _bll.ErUserPictures.Update(erUserPicture);
+            await _bll.SaveChangesAsync();
             return NoContent();
         }
 
@@ -87,12 +89,18 @@ namespace WebApp.ApiControllers
         /// <param name="erUserPicture"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<DAL.App.DTO.ErUserPicture>> PostErUserPicture(DAL.App.DTO.ErUserPicture erUserPicture)
+        public async Task<ActionResult<BLL.App.DTO.ErUserPicture>> PostErUserPicture(BLL.App.DTO.ErUserPicture erUserPicture)
         {
-            _uow.ErUserPictures.Add(erUserPicture);
-            await _uow.SaveChangesAsync();
+            _bll.ErUserPictures.Add(erUserPicture);
+            await _bll.SaveChangesAsync();
 
-            return CreatedAtAction("GetErUserPicture", new { id = erUserPicture.Id }, erUserPicture);
+            return CreatedAtAction(
+                "GetErUserPicture",
+                new
+                {
+                    id = erUserPicture.Id,
+                    version = HttpContext.GetRequestedApiVersion()?.ToString()
+                }, erUserPicture);
         }
 
         // DELETE: api/ErUserPictures/5
@@ -104,14 +112,14 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteErUserPicture(Guid id)
         {
-            var erUserPicture = await _uow.ErUserPictures.FirstOrDefaultAsync(id);
+            var erUserPicture = await _bll.ErUserPictures.FirstOrDefaultAsync(id);
             if (erUserPicture == null)
             {
                 return NotFound();
             }
 
-            _uow.ErUserPictures.Remove(erUserPicture);
-            await _uow.SaveChangesAsync();
+            _bll.ErUserPictures.Remove(erUserPicture);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }

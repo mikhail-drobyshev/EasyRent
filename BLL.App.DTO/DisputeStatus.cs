@@ -10,6 +10,6 @@ namespace BLL.App.DTO
         [MaxLength(32)] 
         public string DisputeStatusValue { get; set; } = default!;
         
-        public ICollection<Dispute>? Disputes { get; set; }
+       // public ICollection<Dispute>? Disputes { get; set; }
     }
 }

@@ -28,7 +28,9 @@ COPY Resources/*.csproj ./Resources/
 COPY Applications.DAL.App/*.csproj ./Applications.DAL.App/
 COPY WebApp/*.csproj ./WebApp/
 
+#Test
 
+COPY TestProject/*.csproj ./TestProject/
 
 RUN dotnet restore
 
@@ -56,6 +58,10 @@ COPY PublicApi.DTO.v1/. ./PublicApi.DTO.v1/
 COPY Resources/. ./Resources/
 COPY Applications.DAL.App/. ./Applications.DAL.App/
 COPY WebApp/. ./WebApp/
+
+# Test
+COPY TestProject/. ./TestProject/
+
 
 WORKDIR /source/WebApp
 

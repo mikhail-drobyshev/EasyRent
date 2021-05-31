@@ -51,12 +51,7 @@ namespace WebApp.ApiControllers
             //     PropertyCount = propertyType.Properties!.Count
             // });
 
-            var result = (await _bll.PropertyTypes.GetAllWithPropertyTypeCountAsync()).Select(p=>new PublicApi.DTO.v1.PropertyType()
-            {
-                Id = p.Id,
-                PropertyTypeValue = p.PropertyTypeValue,
-                PropertyCount = p.PropertiesCount ?? 0
-            });
+            var result = await _bll.PropertyTypes.GetAllWithPropertyTypeCountAsync();
             return Ok(result);
         }
 
@@ -67,16 +62,11 @@ namespace WebApp.ApiControllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<BLL.App.DTO.PropertyType>> GetPropertyType(Guid id)
+        public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.PropertyType>>> GetPropertyType(Guid id)
         {
-            var propertyType = await _bll.PropertyTypes.FirstOrDefaultAsync(id);
-
-            if (propertyType == null)
-            {
-                return NotFound();
-            }
-
-            return propertyType;
+            var result = (await _bll.PropertyTypes.GetAllWithPropertyTypeCountAsync()).Where(p=>p.Id.Equals(id));
+            
+            return Ok(result.First());
         }
 
         // PUT: api/PropertyTypes/5

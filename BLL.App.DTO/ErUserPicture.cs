@@ -6,7 +6,7 @@ namespace BLL.App.DTO
 {
     public class ErUserPicture : DomainEntityId
     {
-        [MaxLength(255)] 
+        [MaxLength(255)]
         public string PictureUrl { get; set; } = default!;
 
         public Guid ErUserId { get; set; }

@@ -1,4 +1,4 @@
-using DAL.App.DTO;
+using BLL.App.DTO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebApp.ViewModels.PropertyPictures

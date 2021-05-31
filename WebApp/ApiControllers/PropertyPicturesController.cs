@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.BLL.App;
 using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +17,15 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class PropertyPicturesController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="uow"></param>
-        public PropertyPicturesController(IAppUnitOfWork uow)
+        /// <param name="bll"></param>
+        public PropertyPicturesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/PropertyPictures
@@ -35,7 +36,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.PropertyPicture>>> GetPropertyPictures()
         {
-            return Ok(await _uow.PropertyPictures.GetAllAsync());
+            return Ok(await _bll.PropertyPictures.GetAllAsync());
         }
 
         // GET: api/PropertyPictures/5
@@ -47,14 +48,14 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DAL.App.DTO.PropertyPicture>> GetPropertyPicture(Guid id)
         {
-            var propertyPicture = await _uow.PropertyPictures.FirstOrDefaultAsync(id);
+            var propertyPicture = await _bll.PropertyPictures.FirstOrDefaultAsync(id);
 
             if (propertyPicture == null)
             {
                 return NotFound();
             }
 
-            return propertyPicture;
+            return Ok(propertyPicture);
         }
 
         // PUT: api/PropertyPictures/5
@@ -66,15 +67,15 @@ namespace WebApp.ApiControllers
         /// <param name="propertyPicture"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPropertyPicture(Guid id, DAL.App.DTO.PropertyPicture propertyPicture)
+        public async Task<IActionResult> PutPropertyPicture(Guid id, BLL.App.DTO.PropertyPicture propertyPicture)
         {
             if (id != propertyPicture.Id)
             {
                 return BadRequest();
             }
 
-            _uow.PropertyPictures.Update(propertyPicture);
-            await _uow.SaveChangesAsync();
+            _bll.PropertyPictures.Update(propertyPicture);
+            await _bll.SaveChangesAsync();
             return NoContent();
         }
 
@@ -86,10 +87,10 @@ namespace WebApp.ApiControllers
         /// <param name="propertyPicture"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<DAL.App.DTO.PropertyPicture>> PostPropertyPicture(DAL.App.DTO.PropertyPicture propertyPicture)
+        public async Task<ActionResult<BLL.App.DTO.PropertyPicture>> PostPropertyPicture(BLL.App.DTO.PropertyPicture propertyPicture)
         {
-            _uow.PropertyPictures.Add(propertyPicture);
-            await _uow.SaveChangesAsync();
+            _bll.PropertyPictures.Add(propertyPicture);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetPropertyPicture", new { id = propertyPicture.Id }, propertyPicture);
         }
@@ -103,14 +104,14 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePropertyPicture(Guid id)
         {
-            var propertyPicture = await _uow.PropertyPictures.FirstOrDefaultAsync(id);
+            var propertyPicture = await _bll.PropertyPictures.FirstOrDefaultAsync(id);
             if (propertyPicture == null)
             {
                 return NotFound();
             }
 
-            _uow.PropertyPictures.Remove(propertyPicture);
-            await _uow.SaveChangesAsync();
+            _bll.PropertyPictures.Remove(propertyPicture);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }

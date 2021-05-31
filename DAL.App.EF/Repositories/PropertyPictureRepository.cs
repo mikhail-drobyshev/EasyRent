@@ -23,11 +23,10 @@ namespace DAL.App.EF.Repositories
         {
             var query = CreateQuery(userId, noTracking);
 
-            var resultQuery = query
-                .Include(p => p.Property)
-                .Select(x => Mapper.Map(x));
+            query = query
+                .Include(p => p.Property);
 
-            var res = await resultQuery.ToListAsync();
+            var res = await query.Select(x=>Mapper.Map(x)).ToListAsync();
             return res!;
         }
         public override async Task<DAL.App.DTO.PropertyPicture?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)

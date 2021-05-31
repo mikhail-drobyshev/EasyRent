@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.BLL.App;
 using Applications.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,15 +20,15 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class DisputeStatusesController : ControllerBase
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="uow"></param>
-        public DisputeStatusesController(IAppUnitOfWork uow)
+        /// <param name="bll"></param>
+        public DisputeStatusesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/DisputeStatuses
@@ -38,7 +39,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DisputeStatus>>> GetDisputeStatuses()
         {
-            return Ok(await _uow.DisputeStatuses.GetAllAsync());
+            return Ok(await _bll.DisputeStatuses.GetAllAsync());
         }
 
         // GET: api/DisputeStatuses/5
@@ -50,14 +51,14 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DAL.App.DTO.DisputeStatus>> GetDisputeStatus(Guid id)
         {
-            var disputeStatus = await _uow.DisputeStatuses.FirstOrDefaultAsync(id);
+            var disputeStatus = await _bll.DisputeStatuses.FirstOrDefaultAsync(id);
 
             if (disputeStatus == null)
             {
                 return NotFound();
             }
 
-            return disputeStatus;
+            return Ok(disputeStatus);
         }
 
         // PUT: api/DisputeStatuses/5
@@ -69,15 +70,15 @@ namespace WebApp.ApiControllers
         /// <param name="disputeStatus"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDisputeStatus(Guid id, DAL.App.DTO.DisputeStatus disputeStatus)
+        public async Task<IActionResult> PutDisputeStatus(Guid id, BLL.App.DTO.DisputeStatus disputeStatus)
         {
             if (id != disputeStatus.Id)
             {
                 return BadRequest();
             }
 
-            _uow.DisputeStatuses.Update(disputeStatus);
-            await _uow.SaveChangesAsync();
+            _bll.DisputeStatuses.Update(disputeStatus);
+            await _bll.SaveChangesAsync();
             return NoContent();
         }
 
@@ -89,12 +90,18 @@ namespace WebApp.ApiControllers
         /// <param name="disputeStatus"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<DisputeStatus>> PostDisputeStatus(DAL.App.DTO.DisputeStatus disputeStatus)
+        public async Task<ActionResult<DisputeStatus>> PostDisputeStatus(BLL.App.DTO.DisputeStatus disputeStatus)
         {
-            _uow.DisputeStatuses.Add(disputeStatus);
-            await _uow.SaveChangesAsync();
+            _bll.DisputeStatuses.Add(disputeStatus);
+            await _bll.SaveChangesAsync();
 
-            return CreatedAtAction("GetDisputeStatus", new { id = disputeStatus.Id }, disputeStatus);
+            return CreatedAtAction(
+                "GetDisputeStatus",
+                new
+                {
+                    id = disputeStatus.Id,
+                    version = HttpContext.GetRequestedApiVersion()?.ToString()
+                }, disputeStatus);
         }
 
         // DELETE: api/DisputeStatuses/5
@@ -106,14 +113,14 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDisputeStatus(Guid id)
         {
-            var disputeStatus = await _uow.DisputeStatuses.FirstOrDefaultAsync(id);
+            var disputeStatus = await _bll.DisputeStatuses.FirstOrDefaultAsync(id);
             if (disputeStatus == null)
             {
                 return NotFound();
             }
 
-            _uow.DisputeStatuses.Remove(disputeStatus);
-            await _uow.SaveChangesAsync();
+            _bll.DisputeStatuses.Remove(disputeStatus);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }

@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Applications.BLL.App;
 using Applications.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.DTO;
+using BLL.App.DTO;
 using Extensions.Base;
 using WebApp.ViewModels.PropertyPictures;
 
@@ -17,15 +18,15 @@ namespace WebApp.Controllers
     /// </summary>
     public class PropertyPicturesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="uow"></param>
-        public PropertyPicturesController(IAppUnitOfWork uow)
+        /// <param name="bll"></param>
+        public PropertyPicturesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: PropertyPictures
@@ -35,7 +36,7 @@ namespace WebApp.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.PropertyPictures.GetAllAsync();
+            var res = await _bll.PropertyPictures.GetAllAsync(User.GetUserId()!.Value);
             return View(res);
         }
 
@@ -52,7 +53,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyPicture = await _uow.PropertyPictures.FirstOrDefaultAsync(id.Value);
+            var propertyPicture = await _bll.PropertyPictures.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (propertyPicture == null)
             {
                 return NotFound();
@@ -69,7 +70,7 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Create()
         {
             var viewModel = new PropertyPicturesCreatEditViewModel();
-            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title));
+            viewModel.PropertySelectList = new SelectList(await _bll.Properties.GetAllAsync(User.GetUserId()!.Value), nameof(Property.Id), nameof(Property.Title));
             return View(viewModel);
         }
 
@@ -87,11 +88,11 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _uow.PropertyPictures.Add(viewModel.PropertyPicture);
-                await _uow.SaveChangesAsync();
+                _bll.PropertyPictures.Add(viewModel.PropertyPicture);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title), viewModel.PropertyPicture.PropertyId);
+            viewModel.PropertySelectList = new SelectList(await _bll.Properties.GetAllAsync(User.GetUserId()!.Value), nameof(Property.Id), nameof(Property.Title), viewModel.PropertyPicture.PropertyId);
             return View(viewModel);
         }
 
@@ -108,14 +109,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyPicture = await _uow.PropertyPictures.FirstOrDefaultAsync(id.Value);
+            var propertyPicture = await _bll.PropertyPictures.FirstOrDefaultAsync(id.Value);
             if (propertyPicture == null)
             {
                 return NotFound();
             }
             var viewModel = new PropertyPicturesCreatEditViewModel();
             viewModel.PropertyPicture = propertyPicture;
-            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title));
+            viewModel.PropertySelectList = new SelectList(await _bll.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title));
             return View(viewModel);
         }
 
@@ -139,12 +140,12 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.PropertyPictures.Update(viewModel.PropertyPicture);
-                await _uow.SaveChangesAsync();
+                _bll.PropertyPictures.Update(viewModel.PropertyPicture);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            viewModel.PropertySelectList = new SelectList(await _uow.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title), viewModel.PropertyPicture.PropertyId);
+            viewModel.PropertySelectList = new SelectList(await _bll.Properties.GetAllAsync(), nameof(Property.Id), nameof(Property.Title), viewModel.PropertyPicture.PropertyId);
             return View(viewModel);
         }
 
@@ -161,7 +162,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var propertyPicture = await _uow.PropertyPictures.FirstOrDefaultAsync(id.Value);
+            var propertyPicture = await _bll.PropertyPictures.FirstOrDefaultAsync(id.Value);
             if (propertyPicture == null)
             {
                 return NotFound();
@@ -181,8 +182,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             
-            await _uow.PropertyPictures.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.PropertyPictures.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         
