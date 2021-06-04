@@ -40,6 +40,7 @@ namespace DAL.App.EF.Repositories
 
             var query = CreateQuery(userId, noTracking);
             var resultQuery = query
+                .Include(p=>p.PropertyPictures)
                 .Select(e => new DAL.App.DTO.Property()
                 {
                     Id = e.Id,
@@ -52,18 +53,28 @@ namespace DAL.App.EF.Repositories
                     PropertyTypeId = e.PropertyTypeId
                 });
             var res = await resultQuery.ToListAsync();
-
+            
 
             return res;
         }
         public override async Task<DAL.App.DTO.Property?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
-            var query = CreateQuery(userId, noTracking);
+            // var query = CreateQuery(userId, noTracking);
+            //
+            //
+            //
+            //
+            // var res = Mapper.Map(await query.FirstOrDefaultAsync(m => m.Id == id && m.ErUser!.AppUserId == userId));
+            //
+            // return res;
+            var query = RepoDbSet.AsQueryable();
 
-            
-            
+            if (noTracking)
+            {
+                query = query.AsNoTracking();
+            }
 
-            var res = Mapper.Map(await query.FirstOrDefaultAsync(m => m.Id == id && m.ErUser!.AppUserId == userId));
+            var res = Mapper.Map(await query.FirstOrDefaultAsync(m => m.Id == id));
 
             return res;
         }

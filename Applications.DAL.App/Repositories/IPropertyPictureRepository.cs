@@ -14,6 +14,7 @@ namespace Applications.DAL.App.Repositories
     public interface IPropertyPictureRepositoryCustom<TEntity>
     {
         Task<IEnumerable<TEntity>> GetAllWithPropertyIdAsync(Guid userId = default, bool noTracking = true);
+        Task<IEnumerable<TEntity>> GetAllWithMediaAsync(Guid id);
 
     }
 }

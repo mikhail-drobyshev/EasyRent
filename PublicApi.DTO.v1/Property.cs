@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Base;
+using DAL.App.DTO;
 
-namespace DAL.App.DTO
+namespace PublicApi.DTO.v1
 {
-    public class Property : DomainEntityId
+    public class Property
     {
+        public Guid Id { get; set; }
+        
         public string Title { get; set; } = default!;
         
         public int Price { get; set; } = default!;
@@ -18,10 +20,8 @@ namespace DAL.App.DTO
         public int? TenantsCount { get; set; }
         
         
-        public ICollection<PropertyReview>? PropertyReviews { get; set; }
         public ICollection<PropertyPicture>? PropertyPictures { get; set; }
-        public ICollection<ErApplication>? ErApplications { get; set; }
-        public PropertyLocation? PropertyLocation { get; set; }
+
 
         public Guid ErUserId { get; set; }
         public ErUser? ErUser { get; set; }

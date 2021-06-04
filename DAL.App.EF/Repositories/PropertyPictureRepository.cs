@@ -8,6 +8,7 @@ using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
 using Domain.App;
 using Microsoft.EntityFrameworkCore;
+using PropertyPicture = DAL.App.DTO.PropertyPicture;
 
 namespace DAL.App.EF.Repositories
 {
@@ -45,6 +46,28 @@ namespace DAL.App.EF.Repositories
 
             return res;
         }
+
+        public async Task<IEnumerable<DAL.App.DTO.PropertyPicture>> GetAllWithMediaAsync(Guid id)
+        {
+            var query = CreateQuery();
+            var resultQuery = query
+                .Select(e => new DAL.App.DTO.PropertyPicture()
+                {
+                    Id = e.Id,
+                    PictureUrl = e.PictureUrl,
+                    Title = e.Title,
+                    PropertyId = e.PropertyId
+                })
+                .Where(e =>e.PropertyId.Equals(id));
+            
+
+            
+            
+
+            var res = await resultQuery.ToListAsync();
+            return res;
+        }
+
         public override async Task<DAL.App.DTO.PropertyPicture?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
             var query = RepoDbSet.AsQueryable();
@@ -54,9 +77,7 @@ namespace DAL.App.EF.Repositories
                 query = query.AsNoTracking();
             }
 
-            query = query
-                .Include(p => p.Property);
-
+            
             var res = Mapper.Map(await query.FirstOrDefaultAsync(m => m.Id == id));
 
             return res;

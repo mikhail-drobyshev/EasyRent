@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Applications.BLL.App;
 using Applications.DAL.App;
+using DAL.App.DTO;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Property = BLL.App.DTO.Property;
+using PropertyPicture = BLL.App.DTO.PropertyPicture;
 
 namespace WebApp.ApiControllers
 {
@@ -42,6 +45,7 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.Property>>> GetProperties()
         {
             var res = await _bll.Properties.GetAllWithUserIdAsync();
+            
             return Ok(res);
         }
 
@@ -52,16 +56,54 @@ namespace WebApp.ApiControllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<BLL.App.DTO.Property>> GetProperty(Guid id)
+        public async Task<ActionResult<DAL.App.DTO.Property>> GetProperty(Guid id)
         {
-            var property = await _bll.Properties.FirstOrDefaultAsync(id, User.GetUserId()!.Value);
+            var property = await _bll.Properties.FirstOrDefaultAsync(id);
 
             if (property?.Id == null)
             {
                 return NotFound();
             }
 
-            return property;
+            return Ok(property);
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("house_with_media")]
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.Property>>> GetPropertiesWithMedia()
+        {
+            var res = await _bll.Properties.GetAllWithUserIdAsync();
+            ICollection<BLL.App.DTO.Property> resultHouse = new List<Property>();
+
+            foreach (var house in res)
+            {
+                var pictures = await _bll.PropertyPictures.GetAllWithMediaAsync(house.Id);
+                house.PropertyPictures = pictures.ToList();
+                resultHouse.Add(house);
+            }
+            return Ok(resultHouse);
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("house_with_media/{id}")]
+        public async Task<ActionResult<IEnumerable<DAL.App.DTO.Property>>> GetPropertyWithMediaById(Guid id)
+        {
+            var res = await _bll.Properties.FirstOrDefaultAsync(id);
+            if (res?.Id == null)
+            {
+                return NotFound();
+            }
+            var pictures = await _bll.PropertyPictures.GetAllWithMediaAsync(res.Id);
+            res.PropertyPictures = pictures.ToList();
+
+            return Ok(res);
         }
 
         // PUT: api/Properties/5

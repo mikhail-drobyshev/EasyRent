@@ -133,6 +133,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, PropertyPicturesCreatEditViewModel viewModel)
         {
+            
+            
             if (id != viewModel.PropertyPicture.Id)
             {
                 return NotFound();

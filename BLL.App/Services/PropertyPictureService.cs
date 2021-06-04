@@ -25,5 +25,11 @@ namespace BLL.App.Services
         {
             return (await ServiceRepository.GetAllWithPropertyIdAsync(userId, noTracking)).Select(x=>Mapper.Map(x))!;
         }
+
+        public async Task<IEnumerable<BLLAppDTO.PropertyPicture>> GetAllWithMediaAsync(Guid id)
+        {
+            return (await ServiceRepository.GetAllWithMediaAsync(id)).Select(x=>Mapper.Map(x))!;
+
+        }
     }
 }
