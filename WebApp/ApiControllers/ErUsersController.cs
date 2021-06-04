@@ -27,7 +27,6 @@ namespace WebApp.ApiControllers
 
     public class ErUsersController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IAppBLL _bll;
 
         /// <summary>
@@ -35,10 +34,9 @@ namespace WebApp.ApiControllers
         /// </summary>
         /// <param name="bll"></param>
         /// <param name="context"></param>
-        public ErUsersController(IAppBLL bll, AppDbContext context)
+        public ErUsersController(IAppBLL bll)
         {
             _bll = bll;
-            _context = context;
         }
 
         // GET: api/ErUsers
@@ -60,18 +58,16 @@ namespace WebApp.ApiControllers
         /// <param name="erUser"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<BLL.App.DTO.ErUser>> GetErUser(Guid id, ErUser erUser)
+        public async Task<ActionResult<BLL.App.DTO.ErUser>> GetErUser(Guid id)
         {
-            if (id != erUser.Id)
+            var erUser = await _bll.ErUsers.FirstOrDefaultAsync(id, User.GetUserId()!.Value);
+
+            if (erUser?.Id == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(erUser).State = EntityState.Modified;
-            
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return erUser;
 
         }
 

@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Applications.BLL.App.Services;
 using Applications.DAL.App;
 using Applications.DAL.App.Repositories;
@@ -15,5 +19,17 @@ namespace BLL.App.Services
             : base(serviceUow, serviceRepository, new PropertyMapper(mapper))
         {
         }
+
+        public async Task<IEnumerable<BLLAppDTO.Property>> GetAllWithUserIdAsync(Guid userId,
+            bool noTracking)
+        {
+            return (await ServiceRepository.GetAllWithUserIdAsync(userId, noTracking)).Select(x=>Mapper.Map(x))!;
+        }
+        
+        public async Task<IEnumerable<BLLAppDTO.Property>> GetAllWithUserIdAsync(Guid userId = default)
+        {
+            return (await ServiceRepository.GetAllWithUserIdAsync(userId)).Select(x=>Mapper.Map(x))!;
+        }
+        
     }
 }

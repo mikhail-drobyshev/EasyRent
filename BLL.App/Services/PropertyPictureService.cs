@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Applications.BLL.App.Services;
 using Applications.DAL.App;
 using Applications.DAL.App.Repositories;
@@ -15,6 +19,11 @@ namespace BLL.App.Services
             : base(serviceUow, serviceRepository, new PropertyPictureMapper(mapper))
         
         {
+        }
+
+        public async Task<IEnumerable<BLLAppDTO.PropertyPicture>> GetAllWithPropertyIdAsync(Guid userId = default, bool noTracking = true)
+        {
+            return (await ServiceRepository.GetAllWithPropertyIdAsync(userId, noTracking)).Select(x=>Mapper.Map(x))!;
         }
     }
 }

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Applications.DAL.Base.Repositories;
 using DAL.App.DTO;
 
@@ -10,6 +13,7 @@ namespace Applications.DAL.App.Repositories
     
     public interface IPropertyPictureRepositoryCustom<TEntity>
     {
-        
+        Task<IEnumerable<TEntity>> GetAllWithPropertyIdAsync(Guid userId = default, bool noTracking = true);
+
     }
 }

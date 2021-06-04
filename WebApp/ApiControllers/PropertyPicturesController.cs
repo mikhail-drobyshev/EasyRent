@@ -13,7 +13,7 @@ namespace WebApp.ApiControllers
     /// <summary>
     /// 
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class PropertyPicturesController : ControllerBase
     {
@@ -36,7 +36,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DAL.App.DTO.PropertyPicture>>> GetPropertyPictures()
         {
-            return Ok(await _bll.PropertyPictures.GetAllAsync());
+            return Ok(await _bll.PropertyPictures.GetAllWithPropertyIdAsync());
         }
 
         // GET: api/PropertyPictures/5
@@ -50,7 +50,7 @@ namespace WebApp.ApiControllers
         {
             var propertyPicture = await _bll.PropertyPictures.FirstOrDefaultAsync(id);
 
-            if (propertyPicture == null)
+            if (propertyPicture?.Id == null)
             {
                 return NotFound();
             }

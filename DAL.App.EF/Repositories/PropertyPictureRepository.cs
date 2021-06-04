@@ -29,6 +29,22 @@ namespace DAL.App.EF.Repositories
             var res = await query.Select(x=>Mapper.Map(x)).ToListAsync();
             return res!;
         }
+        public async Task<IEnumerable<DAL.App.DTO.PropertyPicture>> GetAllWithPropertyIdAsync(Guid userId = default, bool noTracking = true)
+        {
+            var query = CreateQuery(userId, noTracking);
+            var resultQuery = query
+                .Select(e => new DAL.App.DTO.PropertyPicture()
+                {
+                    Id = e.Id,
+                    PictureUrl = e.PictureUrl,
+                    Title = e.Title,
+                    PropertyId = e.PropertyId
+                });
+            var res = await resultQuery.ToListAsync();
+
+
+            return res;
+        }
         public override async Task<DAL.App.DTO.PropertyPicture?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
             var query = RepoDbSet.AsQueryable();

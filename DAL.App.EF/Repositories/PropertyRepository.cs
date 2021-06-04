@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Applications.DAL.App.Repositories;
+using Applications.DAL.Base.Repositories;
 using AutoMapper;
 using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain.App;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace DAL.App.EF.Repositories
 {
@@ -32,22 +33,28 @@ namespace DAL.App.EF.Repositories
                 .Select(x => Mapper.Map(x));
             var res = await resultQuery.ToListAsync();
             return res!;
-            
-            // var query = CreateQuery(userId, noTracking);
-            // var resultQuery = query
-            //     .Select(e => new DAL.App.DTO.Property()
-            //     {
-            //         Id = e.Id,
-            //         Title = e.Title,
-            //         Description = e.Description,
-            //         BedroomCount = e.BedroomCount,
-            //         ErUser = e.ErUser!,
-            //         LastName = e.LastName,
-            //         PropertiesCount = e.Properties!.Count,
-            //         Gendervalue = e.Gender!.GenderValue,
-            //     }).OrderBy(x => x.LastName).ThenBy(x => x.FirstName);
-            //     
-            // return await resultQuery.ToListAsync();
+        }
+        
+        public async Task<IEnumerable<DAL.App.DTO.Property>> GetAllWithUserIdAsync(Guid userId = default, bool noTracking = true)
+        {
+
+            var query = CreateQuery(userId, noTracking);
+            var resultQuery = query
+                .Select(e => new DAL.App.DTO.Property()
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    Description = e.Description,
+                    BedroomCount = e.BedroomCount,
+                    TenantsCount = e.TenantsCount,
+                    Price = e.Price,
+                    ErUserId = e.ErUserId,
+                    PropertyTypeId = e.PropertyTypeId
+                });
+            var res = await resultQuery.ToListAsync();
+
+
+            return res;
         }
         public override async Task<DAL.App.DTO.Property?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
