@@ -50,7 +50,8 @@ namespace DAL.App.EF.Repositories
                     TenantsCount = e.TenantsCount,
                     Price = e.Price,
                     ErUserId = e.ErUserId,
-                    PropertyTypeId = e.PropertyTypeId
+                    PropertyTypeId = e.PropertyTypeId,
+                    CreateAt = e.CreateAt
                 });
             var res = await resultQuery.ToListAsync();
             

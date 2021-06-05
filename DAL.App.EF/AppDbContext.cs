@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.App;
 using Domain.App.Identity;
+using Domain.Base;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,8 +43,10 @@ namespace DAL.App.EF
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+
             base.OnModelCreating(builder);
             
+
 
             // disable cascade delete initially for everything
             foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
@@ -51,6 +54,7 @@ namespace DAL.App.EF
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
         }
+        
 
         /*
         builder.Entity<Contact>()
@@ -72,10 +76,7 @@ namespace DAL.App.EF
                 .OnDelete(DeleteBehavior.Cascade);
             */
             
-            public override int SaveChanges(bool acceptAllChangesOnSuccess)
-            {
-                return base.SaveChanges(acceptAllChangesOnSuccess);
-            }
+            
 
 
     }

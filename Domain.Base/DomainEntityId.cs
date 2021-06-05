@@ -1,5 +1,7 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using Applications.Domain.Base;
+using Microsoft.VisualBasic;
 
 namespace Domain.Base
 {
@@ -11,5 +13,9 @@ namespace Domain.Base
         where TKey : IEquatable<TKey>
     {
         public TKey Id { get; set; } = default!;
+        public string CreatedBy { get; set; } = "system";
+        public DateTime CreateAt { get; set; }
+        public string UpdateBy { get; set; } = "system";
+        public DateTime UpdatedAt { get; set; }
     }
 }
