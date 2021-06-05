@@ -51,7 +51,8 @@ namespace DAL.App.EF.Repositories
                     Price = e.Price,
                     ErUserId = e.ErUserId,
                     PropertyTypeId = e.PropertyTypeId,
-                    CreateAt = e.CreateAt
+                    CreateAt = e.CreateAt,
+                    UpdatedAt = e.UpdatedAt
                 });
             var res = await resultQuery.ToListAsync();
             

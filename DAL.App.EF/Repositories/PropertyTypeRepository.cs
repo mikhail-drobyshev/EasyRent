@@ -34,7 +34,8 @@ namespace DAL.App.EF.Repositories
             {
                 Id = propertyType.Id,
                 PropertyTypeValue = propertyType.PropertyTypeValue,
-                PropertiesCount = propertyType.Properties!.Count
+                PropertiesCount = propertyType.Properties!.Count,
+                CreateAt = propertyType.CreateAt
             });
             
             var result = await resultQuery.ToListAsync();

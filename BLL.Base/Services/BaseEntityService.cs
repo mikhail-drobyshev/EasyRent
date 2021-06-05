@@ -46,6 +46,8 @@ namespace BLL.Base.Services
 
         public TBllEntity Add(TBllEntity entity)
         {
+            entity.CreateAt = DateTime.Now;
+            entity.UpdatedAt = DateTime.Now;
             var dalEntity = Mapper.Map(entity)!;
             var updatedDalEntity = ServiceRepository.Add(dalEntity);
             var returnedBllEntity = Mapper.Map(updatedDalEntity)!;
@@ -63,7 +65,7 @@ namespace BLL.Base.Services
 
         public TBllEntity Update(TBllEntity entity)
         {
-            
+            entity.UpdatedAt = DateTime.Now;
             return Mapper.Map(ServiceRepository.Update(Mapper.Map(entity)!))!;
         }
 

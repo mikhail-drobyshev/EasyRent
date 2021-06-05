@@ -12,9 +12,9 @@ namespace Applications.Domain.Base
         where TKey: IEquatable<TKey>
     {
         TKey Id { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime CreateAt { get; set; }
-        public string UpdateBy { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        string CreatedBy { get; set; }
+        DateTime CreateAt { get; set; }
+        string UpdateBy { get; set; }
+        DateTime UpdatedAt { get; set; }
     }
 }
